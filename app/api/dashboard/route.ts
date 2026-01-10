@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/src/lib/firebaseAdmin";
 import { AdminAuthError, requireAdminSession } from "@/src/lib/adminSession";
+import { Registration } from "@/src/types/Registration";
+import { Invitation } from "@/src/types/Invitation";
 
 export async function GET() {
   try {
@@ -9,14 +11,15 @@ export async function GET() {
     const regSnapshot = await db.collection("registrations").get();
     const invSnapshot = await db.collection("invitations").get();
 
-    const registrations = regSnapshot.docs.map((doc) => ({
+    const registrations: Registration[] = regSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-    }));
-    const invitations = invSnapshot.docs.map((doc) => ({
+    })) as Registration[];
+    
+    const invitations: Invitation[] = invSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-    }));
+    })) as Invitation[];
 
     // Calculate stats
     const totalRegistrations = registrations.length;
@@ -24,9 +27,9 @@ export async function GET() {
 
     // Top inviters calculation
     const inviterCounts: Record<string, number> = {};
-    invitations.forEach((inv: any) => {
-      inviterCounts[inv.inviterName] =
-        (inviterCounts[inv.inviterName] || 0) + 1;
+    invitations.forEach((inv) => {
+      const inviterName = inv.inviterName || 'Unknown';
+      inviterCounts[inviterName] = (inviterCounts[inviterName] || 0) + 1;
     });
 
     const topInviters = Object.entries(inviterCounts)
@@ -41,15 +44,16 @@ export async function GET() {
       registrations,
       invitations,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof AdminAuthError) {
       return NextResponse.json(
         { success: false, error: error.code },
         { status: error.code === "FORBIDDEN" ? 403 : 401 }
       );
     }
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

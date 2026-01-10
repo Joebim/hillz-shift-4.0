@@ -73,7 +73,7 @@ export const RegistrationForm = () => {
                 <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                     Address
                     <div className="group relative">
-                        <Info size={14} className="text-gray-400 cursor-help" title="Example: Gbagada, Lagos" />
+                        <Info size={14} className="text-gray-400 cursor-help" aria-label="Example: Gbagada, Lagos" />
                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block group-focus-within:block w-48 p-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg z-10 pointer-events-none">
                             Example: Gbagada, Lagos
                             <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-800"></div>

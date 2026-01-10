@@ -28,9 +28,10 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, id: docRef.id });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Failed to process registration";
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }
@@ -49,15 +50,16 @@ export async function GET() {
       ...doc.data(),
     }));
     return NextResponse.json(registrations);
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof AdminAuthError) {
       return NextResponse.json(
         { success: false, error: error.code },
         { status: error.code === "FORBIDDEN" ? 403 : 401 }
       );
     }
+    const errorMessage = error instanceof Error ? error.message : "Failed to fetch registrations";
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

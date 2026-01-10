@@ -50,11 +50,12 @@ export async function GET() {
       authenticated: true,
       user: { uid: user.uid, email: user.email },
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
+    const errorMessage = e instanceof Error ? e.message : "Error";
     return NextResponse.json({
       authenticated: false,
       reason: "ERROR",
-      error: e?.message || "Error",
+      error: errorMessage,
     });
   }
 }
@@ -74,7 +75,7 @@ export async function POST(request: Request) {
     const decoded = await auth.verifyIdToken(idToken);
 
     // Allow either: custom claim admin=true OR email allowlist (if configured).
-    const hasAdminClaim = (decoded as any)?.admin === true;
+    const hasAdminClaim = (decoded as { admin?: boolean })?.admin === true;
     const isEmailAllowed = isAllowedAdminEmail(decoded.email);
 
     if (!hasAdminClaim && !isEmailAllowed) {
@@ -108,9 +109,10 @@ export async function POST(request: Request) {
     res.cookies.set(ADMIN_USER_COOKIE_NAME, signed, cookieOptions);
 
     return res;
-  } catch (e: any) {
+  } catch (e: unknown) {
+    const errorMessage = e instanceof Error ? e.message : "Auth failed";
     const res = NextResponse.json(
-      { success: false, error: e?.message || "Auth failed" },
+      { success: false, error: errorMessage },
       { status: 401 }
     );
     res.cookies.set(ADMIN_USER_COOKIE_NAME, "", {

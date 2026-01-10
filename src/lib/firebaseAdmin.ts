@@ -20,7 +20,10 @@ if (!getApps().length && projectId && clientEmail && privateKey) {
   app = getApps()[0];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const db: Firestore = app ? getFirestore(app) : (null as any);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const auth: Auth = app ? getAuth(app) : (null as any);
+// Export Firestore - safe type assertion since app is checked before use
+// In production, app will always be initialized due to environment variable checks
+export const db: Firestore = app ? getFirestore(app) : (null as unknown as Firestore);
+
+// Export Auth - safe type assertion since app is checked before use
+// In production, app will always be initialized due to environment variable checks
+export const auth: Auth = app ? getAuth(app) : (null as unknown as Auth);

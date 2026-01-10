@@ -9,7 +9,7 @@ type DailyPoint = {
   invitations: number;
 };
 
-function toDate(value: any): Date | null {
+function toDate(value: unknown): Date | null {
   if (!value) return null;
   if (value instanceof Date) return value;
   if (typeof value === "string") {
@@ -17,9 +17,9 @@ function toDate(value: any): Date | null {
     return Number.isNaN(d.getTime()) ? null : d;
   }
   // Firestore Timestamp (admin sdk) has toDate()
-  if (typeof value?.toDate === "function") {
+  if (value && typeof value === "object" && "toDate" in value && typeof (value as { toDate: unknown }).toDate === "function") {
     try {
-      const d = value.toDate();
+      const d = (value as { toDate: () => Date }).toDate();
       return d instanceof Date && !Number.isNaN(d.getTime()) ? d : null;
     } catch {
       return null;
@@ -74,8 +74,8 @@ export async function GET(request: Request) {
     ]);
 
     regSnapshot.docs.forEach((doc) => {
-      const data = doc.data() as any;
-      const d = toDate(data.createdAt);
+      const data = doc.data();
+      const d = toDate(data?.createdAt);
       if (!d) return;
       const key = ymdUTC(d);
       const point = buckets.get(key);
@@ -83,8 +83,8 @@ export async function GET(request: Request) {
     });
 
     invSnapshot.docs.forEach((doc) => {
-      const data = doc.data() as any;
-      const d = toDate(data.createdAt);
+      const data = doc.data();
+      const d = toDate(data?.createdAt);
       if (!d) return;
       const key = ymdUTC(d);
       const point = buckets.get(key);
@@ -104,15 +104,16 @@ export async function GET(request: Request) {
       series,
       totals,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof AdminAuthError) {
       return NextResponse.json(
         { success: false, error: error.code },
         { status: error.code === "FORBIDDEN" ? 403 : 401 }
       );
     }
+    const errorMessage = error instanceof Error ? error.message : "Failed to load analytics";
     return NextResponse.json(
-      { success: false, error: error?.message || "Failed to load analytics" },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

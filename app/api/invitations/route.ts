@@ -48,9 +48,10 @@ export async function POST(request: Request) {
       registrationLink,
       hasEmail: !!inviteeEmail
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Failed to send invitation";
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }
@@ -69,15 +70,16 @@ export async function GET() {
       ...doc.data(),
     }));
     return NextResponse.json(invitations);
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof AdminAuthError) {
       return NextResponse.json(
         { success: false, error: error.code },
         { status: error.code === "FORBIDDEN" ? 403 : 401 }
       );
     }
+    const errorMessage = error instanceof Error ? error.message : "Failed to fetch invitations";
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

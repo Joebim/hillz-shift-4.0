@@ -37,10 +37,11 @@ export async function GET(request: Request) {
       participants,
       total: participants.length,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[API Participants] Error fetching participants:", error);
+    const errorMessage = error instanceof Error ? error.message : "Failed to fetch participants";
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to fetch participants" },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }
