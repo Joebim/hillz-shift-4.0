@@ -5,7 +5,7 @@ import { Button } from '@/src/components/ui/Button';
 import Link from 'next/link';
 import { ROUTES } from '@/src/constants/routes';
 import { EXTERNAL_LINKS } from '@/src/constants/links';
-import { ArrowRight, Shield, Music, Video, Phone, ExternalLink, Youtube, Calendar, Clock, MapPin, UserPlus } from 'lucide-react';
+import { ArrowRight, Music, Video, Phone, ExternalLink, Youtube, Calendar, Clock, MapPin, UserPlus } from 'lucide-react';
 import Image from 'next/image';
 
 export default function HomePage() {
@@ -30,11 +30,8 @@ export default function HomePage() {
                                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-black uppercase tracking-[0.3em] text-xs">
                                             SHIFT 4.0
                                         </div>
-                                        <h2 className="text-3xl md:text-5xl font-black text-primary-dark uppercase tracking-tighter leading-tight"> <span>
-                                            AND TO MAKE ALL MEN SEE WHAT IS THE
-                                            <span className="block text-primary"> FELLOWSHIP OF THE MYSTERY</span>
-                                        </span>
-
+                                        <h2 className="text-3xl md:text-5xl font-black text-primary-dark uppercase tracking-tighter leading-tight">
+                                            AND TO MAKE ALL MEN SEE WHAT IS THE <span className="text-primary">FELLOWSHIP OF THE MYSTERY</span>
                                         </h2>
                                         <p className="text-sm font-bold uppercase tracking-[0.25em] text-gray-500">
                                             EPHESIANS 3:9
@@ -147,11 +144,20 @@ export default function HomePage() {
                             </div>
                             <div className="flex justify-center">
                                 <div className="glass-dark p-6 md:p-8 rounded-3xl md:rounded-[2.5rem] border-white/5 shadow-2xl">
-                                    <div className="aspect-square w-64 bg-white rounded-3xl flex items-center justify-center relative group cursor-pointer overflow-hidden">
-                                        {/* Mocking the QR code from the flyer */}
-                                        <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors"></div>
-                                        <Shield size={120} className="text-primary-dark opacity-50" />
-                                        <div className="absolute bottom-4 text-[10px] font-bold tracking-[0.2em] text-primary-dark uppercase">Scan to Listen</div>
+                                    <div className="flex flex-col items-center gap-4">
+                                        <div className="aspect-square w-52 relative group cursor-pointer overflow-hidden rounded-3xl bg-white flex items-center justify-center">
+                                            <div className="relative w-44 h-44">
+                                                <Image
+                                                    src="/graphics/Mastering_The_Misteries_of_Christ_-_Temi_Adenigba-1024.png"
+                                                    alt="Scan QR code to listen on Spotify"
+                                                    fill
+                                                    className="object-contain rounded-2xl"
+                                                    priority
+                                                />
+                                            </div>
+                                            <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors rounded-3xl pointer-events-none"></div>
+                                        </div>
+                                        <div className="text-[10px] font-bold tracking-[0.2em] text-white/90 uppercase">Scan to Listen</div>
                                     </div>
                                 </div>
                             </div>
@@ -251,23 +257,9 @@ export default function HomePage() {
 
                                 {/* Meeting Details */}
                                 <div className="p-6 rounded-2xl bg-linear-to-br from-green-50/80 to-blue-50/80 backdrop-blur-sm border border-green-100/50">
-                                    <h3 className="text-xl font-black text-gray-900 mb-4">
+                                    <h3 className="text-xl font-black text-gray-900">
                                         {EXTERNAL_LINKS.GOOGLE_MEET.TITLE}
                                     </h3>
-                                    <div className="flex flex-wrap gap-3">
-                                        <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/80 backdrop-blur-sm border border-blue-100">
-                                            <Calendar size={18} className="text-blue-600" />
-                                            <span className="text-sm font-bold text-gray-700">
-                                                {EXTERNAL_LINKS.GOOGLE_MEET.DATE}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/80 backdrop-blur-sm border border-indigo-100">
-                                            <Clock size={18} className="text-indigo-600" />
-                                            <span className="text-sm font-bold text-gray-700">
-                                                {EXTERNAL_LINKS.GOOGLE_MEET.TIME}
-                                            </span>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 {/* Primary Action */}
