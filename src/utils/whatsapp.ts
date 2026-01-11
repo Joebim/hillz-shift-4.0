@@ -35,16 +35,14 @@ export const generateWhatsAppInvite = (
   registrationLink: string,
   inviteePhone?: string | null
 ): string => {
-  // Format: friendly invitation message with custom message, names, and registration link
-  const message = `*Hillz Shift 4.0 - A Personal Invitation*
-
-${customMessage}
+  // Format: header, greeting, custom message, note, invitee/inviter details, call to action, link, closing
+  const message = `*Shift 4.0 - A Personal Invitation*
 
 Hi ${inviteeName},
 
-I hope this message finds you well! I wanted to personally invite you to join us for Hillz Shift 4.0, an incredible gathering where we'll explore deeper truths and experience spiritual transformation together.
+${customMessage}
 
-This invitation comes from the heart, and I believe this event will be meaningful for you.
+This invitation comes from the heart, and we have a lot in stall for you.
 
 *You're Invited:*
 ${inviteeName}
@@ -57,10 +55,7 @@ I would love to have you join us. Please register using the link below, and I'll
 *Register Here:*
 ${registrationLink}
 
-Can't wait to share this experience with you!
-
-Blessings,
-${inviterName}`;
+Looking forward to seeing you at Shift 4.0!`;
 
   const encodedMessage = encodeURIComponent(message);
 
