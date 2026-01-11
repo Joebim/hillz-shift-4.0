@@ -5,10 +5,9 @@ export const invitationTemplate = (
   registrationLink: string
 ) => `
   <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px; background: linear-gradient(135deg, #2b3fd3 0%, #4a108a 100%);">
-    <!-- Banner -->
-    <div style="background: white; padding: 40px 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2b3fd3; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 1px;">Shift 4.0</h1>
-      <p style="color: #666; margin: 12px 0 0 0; font-size: 16px; font-style: italic;">A Life-Changing Experience</p>
+    <!-- Header Image -->
+    <div style="background: white; padding: 0; border-radius: 10px; text-align: center; margin-bottom: 30px; overflow: hidden;">
+      <img src="https://i.ibb.co/0Vj9LWTt/shift-flyer-4-0.jpg" alt="Shift 4.0" style="width: 100%; max-width: 600px; height: auto; display: block; border-radius: 10px;" />
     </div>
     
     <div style="background: white; padding: 40px 30px; border-radius: 10px;">
@@ -27,7 +26,7 @@ export const invitationTemplate = (
       </div>
       
       <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 0 0 25px 0;">
-        This invitation comes from the heart, and I believe this event will be meaningful for you.
+       Come expecting clarity, fellowship and an enveiling of Christ.
       </p>
       
       <!-- Invitation Details -->
@@ -40,23 +39,14 @@ export const invitationTemplate = (
       </div>
       
       <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 0 0 30px 0;">
-        I would love to have you join us. Please register using the link below, and I'll be looking forward to seeing you there!
+        Please register using the link below,
       </p>
-      
+
       <!-- Registration Link -->
       <div style="text-align: center; margin: 35px 0;">
         <a href="${registrationLink}" style="background: linear-gradient(135deg, #2b3fd3 0%, #4a108a 100%); color: white; padding: 16px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 15px rgba(43,63,211,0.3); transition: transform 0.2s;">Register Now</a>
         <p style="color: #999; font-size: 12px; margin: 15px 0 0 0; word-break: break-all; line-height: 1.6;">Or copy this link: ${registrationLink}</p>
       </div>
-      
-      <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 30px 0 0 0;">
-        Can't wait to share this experience with you!
-      </p>
-      
-      <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 20px 0 0 0;">
-        Blessings,<br>
-        <strong style="color: #2b3fd3;">${inviterName}</strong>
-      </p>
       
       <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0 20px 0;">
       <p style="font-size: 12px; color: #999; text-align: center; margin: 0;">Shift 4.0 Team</p>
@@ -66,10 +56,9 @@ export const invitationTemplate = (
 
 export const registrationTemplate = (userName: string) => `
   <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px; background: linear-gradient(135deg, #2b3fd3 0%, #4a108a 100%);">
-    <!-- Banner -->
-    <div style="background: white; padding: 40px 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2b3fd3; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 1px;">SHIFT 4.0</h1>
-      <p style="color: #666; margin: 12px 0 0 0; font-size: 16px; font-style: italic;">A Life-Changing Experience</p>
+    <!-- Header Image -->
+    <div style="background: white; padding: 0; border-radius: 10px; text-align: center; margin-bottom: 30px; overflow: hidden;">
+      <img src="https://i.ibb.co/0Vj9LWTt/shift-flyer-4-0.jpg" alt="Shift 4.0" style="width: 100%; max-width: 600px; height: auto; display: block; border-radius: 10px;" />
     </div>
     
     <div style="background: white; padding: 40px 30px; border-radius: 10px;">
@@ -111,7 +100,7 @@ export const registrationTemplate = (userName: string) => `
       </p>
       
       <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0 20px 0;">
-      <p style="font-size: 12px; color: #999; text-align: center; margin: 0;">If you have any questions, please contact us at hillz.conference@gmail.com</p>
+      <p style="font-size: 12px; color: #999; text-align: center; margin: 0;">If you have any questions, please contact us at Convener@themysteryofchrist.org</p>
     </div>
   </div>
 `;

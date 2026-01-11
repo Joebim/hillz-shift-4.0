@@ -97,13 +97,13 @@ export default function HomePage() {
                                     </div>
 
                                     <div className="glass p-6 rounded-2xl">
-                                        <div className="text-xs font-black uppercase tracking-[0.25em] text-gray-400 mb-2">Why this matters</div>
+                                        <div className="text-xs font-black uppercase tracking-[0.25em] text-gray-400 mb-2">Introducing Shift Conference</div>
                                         <p className="text-sm text-gray-600 font-medium leading-relaxed">
                                             SHIFT Conference is established by the instruction of the Holy Spirit with a mandate to bring men and women up the hill - The holy hill of Zion, the place of Christ&apos;s dominion on earth.
                                             <br /><br />
                                             It is a time of full immersion into the mysteries of Christ via His word and a time of supplication thereby transforming men and women into a people of God&apos;s presence - true carriers of divine presence into every room they enter and exercising Christ&apos;s dominion on earth.
                                             <br /><br />
-                                            Come expecting clarity, communion, and an unveiling of Christ.
+                                            Come expecting clarity, fellowship, and an unveiling of Christ.
                                         </p>
                                     </div>
                                 </div>

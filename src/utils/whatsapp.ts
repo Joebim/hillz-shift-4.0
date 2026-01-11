@@ -42,7 +42,7 @@ Hi ${inviteeName},
 
 ${customMessage}
 
-This invitation comes from the heart, and we have a lot in stall for you.
+This is a special invitation. Come expecting clarity, fellowship and an enveiling of Christ.
 
 *You're Invited:*
 ${inviteeName}
@@ -50,7 +50,7 @@ ${inviteeName}
 *Invited By:*
 ${inviterName}
 
-I would love to have you join us. Please register using the link below, and I'll be looking forward to seeing you there!
+Please register using the link below,
 
 *Register Here:*
 ${registrationLink}

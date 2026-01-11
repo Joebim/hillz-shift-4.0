@@ -72,7 +72,7 @@ export const sendEmail = async ({
     });
 
     const info = await transporter.sendMail({
-      from: `"Hillz Shift 4.0" <${user}>`,
+      from: `"Hillz Conference" <${user}>`,
       to,
       subject,
       html,
