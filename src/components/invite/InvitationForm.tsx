@@ -178,7 +178,7 @@ export const InvitationForm = () => {
 
             <Button type="submit" className="w-full gap-2 text-[15px] sm:text-lg" size="lg" isLoading={isSubmitting}>
                 <Share2 size={20} />
-                Send invite by WhatsApp
+                Send invite by WhatsApp and Email
             </Button>
         </form>
     );

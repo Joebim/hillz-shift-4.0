@@ -31,7 +31,7 @@ export default function HomePage() {
                                             SHIFT 4.0
                                         </div>
                                         <h2 className="text-3xl md:text-5xl font-black text-primary-dark uppercase tracking-tighter leading-tight">
-                                            A DATE WITH JESUS - <span className="text-primary">THE WORD SEATED AT THE RIGHT HAND OF POWER</span>
+                                            A DATE WITH JESUS <span className="text-primary">THE WORD SEATED AT THE RIGHT HAND OF POWER</span>
                         </h2>
                                         <p className="text-sm font-bold uppercase tracking-[0.25em] text-gray-500">
                                             EPHESIANS 3:9
