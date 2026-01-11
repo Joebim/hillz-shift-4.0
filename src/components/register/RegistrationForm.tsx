@@ -113,8 +113,8 @@ export const RegistrationForm = () => {
                     className="flex h-11 w-full rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
                 >
                     <option value="">Select an option</option>
-                    <option value="online">Online</option>
                     <option value="in-person">In Person</option>
+                    <option value="online">Online</option>
                 </select>
             </div>
 
