@@ -31,11 +31,11 @@ export default function HomePage() {
                                             SHIFT 4.0
                                         </div>
                                         <h2 className="text-3xl md:text-5xl font-black text-primary-dark uppercase tracking-tighter leading-tight">
-                                            A DATE WITH JESUS, <span className="text-primary">THE WORD SEATED AT THE RIGHT HAND OF POWER</span>
-                        </h2>
+                                            A DATE WITH JESUS THE WORD, <span className="text-primary">SEATED AT THE RIGHT HAND OF POWER</span>
+                                        </h2>
                                         <p className="text-sm font-bold uppercase tracking-[0.25em] text-gray-500">
-                                            MARK 14 VS 62
-                        </p>
+                                            MARK 14:62
+                                        </p>
                                     </div>
 
                                     <div className="flex flex-wrap gap-4">
@@ -99,7 +99,11 @@ export default function HomePage() {
                                     <div className="glass p-6 rounded-2xl">
                                         <div className="text-xs font-black uppercase tracking-[0.25em] text-gray-400 mb-2">Why this matters</div>
                                         <p className="text-sm text-gray-600 font-medium leading-relaxed">
-                                            SHIFT Conference is established by the instruction of the Holy Spirit with a mandate to bring men and women up the hill - The holy hill of Zion, the place of Christ dominion on earth. It is a time of full immersion into the mysteries of Christ via His word and a time of supplication thereby transforming men and women into a people of God&apos;s presence - true carriers of divine prescense into every room they enter and exercing Christ dominion on earth. Come expecting clarity, communion, and an unveiling of Christ
+                                            SHIFT Conference was established by the instruction of the Holy Spirit with a mandate to bring men and women up the hill, the holy hill of Zion, the place of Christ&apos;s dominion on earth.
+                                            <br /><br />
+                                            It is a time of deep immersion into the mysteries of Christ through His Word and a season of earnest supplication, transforming men and women into carriers of God&apos;s presence, true bearers of divine presence wherever they go, exercising Christ&apos;s dominion on earth.
+                                            <br /><br />
+                                            Come expecting clarity, communion, and a fresh unveiling of Christ.
                                         </p>
                                     </div>
                                 </div>
@@ -322,7 +326,7 @@ export default function HomePage() {
                 <div className="container mx-auto container-px space-y-10">
                     <div className="space-y-4">
                         <h2 className="text-4xl font-black text-primary-dark md:text-7xl tracking-tighter uppercase">
-                            Ready for the <span className="text-primary">Shift?</span>
+                            Ready for A <span className="text-primary">Shift?</span>
                         </h2>
                         <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto">
                             Join us at <strong>Ikenga Hall, Radisson Ikeja</strong> on Jan 31st. Limited seats available for this encounter.
