@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     AreaChart, Area
 } from 'recharts';
 import { Skeleton } from '@/src/components/ui/Skeleton';
+import { useQuery } from '@tanstack/react-query';
 
 type AnalyticsResponse = {
     success: boolean;
@@ -16,30 +17,25 @@ type AnalyticsResponse = {
 };
 
 export default function AnalyticsPage() {
-    const [data, setData] = useState<AnalyticsResponse | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        setLoading(true);
-        setError(null);
-        fetch('/api/analytics?days=14')
-            .then(async (res) => {
-                const json = (await res.json().catch(() => ({}))) as AnalyticsResponse;
-                if (!res.ok || json?.success === false) {
-                    throw new Error(json?.error || 'Failed to load analytics');
-                }
-                return json;
-            })
-            .then((json) => {
-                setData(json);
-                setLoading(false);
-            })
-            .catch((e) => {
-                setError(e?.message || 'Failed to load analytics');
-                setLoading(false);
-            });
-    }, []);
+    const {
+        data,
+        isLoading: loading,
+        isFetching,
+        error,
+        refetch,
+    } = useQuery({
+        queryKey: ['admin', 'analytics', 14],
+        queryFn: async (): Promise<AnalyticsResponse> => {
+            const res = await fetch('/api/analytics?days=14');
+            const json = (await res.json().catch(() => ({}))) as AnalyticsResponse;
+            if (!res.ok || json?.success === false) {
+                throw new Error(json?.error || 'Failed to load analytics');
+            }
+            return json;
+        },
+        staleTime: 60 * 1000,
+        refetchOnWindowFocus: true,
+    });
 
     const series = useMemo(() => data?.series || [], [data]);
     const totals = data?.totals;
@@ -49,6 +45,24 @@ export default function AnalyticsPage() {
         const ticks = [0, 10, 20, 30, 40, 50];
         return { yMax, ticks };
     }, []);
+
+    if (error) {
+        return (
+            <div className="rounded-2xl border border-red-100 bg-red-50 p-6">
+                <div className="flex flex-col gap-2">
+                    <p className="font-bold text-red-700">Failed to load analytics</p>
+                    <p className="text-sm text-red-600">{error instanceof Error ? error.message : 'Unknown error'}</p>
+                    <button
+                        type="button"
+                        onClick={() => refetch()}
+                        className="mt-3 inline-flex w-fit items-center rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700 cursor-pointer"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     if (loading) return (
         <div className="space-y-8">

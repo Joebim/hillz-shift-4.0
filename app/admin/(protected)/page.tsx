@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Card } from '@/src/components/ui/Card';
 import { Skeleton } from '@/src/components/ui/Skeleton';
 import Link from 'next/link';
@@ -9,28 +9,28 @@ import { Users, UserPlus, TrendingUp, Activity, ArrowRight } from 'lucide-react'
 import { cn } from '@/src/lib/utils';
 
 import { DashboardStats } from '@/src/types/Admin';
+import { useQuery } from '@tanstack/react-query';
 
 export default function AdminDashboard() {
-    const [stats, setStats] = useState<DashboardStats | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        fetch('/api/dashboard')
-            .then(res => {
-                if (!res.ok) throw new Error('Failed to fetch dashboard data');
-                return res.json();
-            })
-            .then(data => {
-                if (data.success === false) throw new Error(data.error || 'Unknown error');
-                setStats(data);
-                setLoading(false);
-            })
-            .catch(err => {
-                setError(err.message);
-                setLoading(false);
-            });
-    }, []);
+    const {
+        data: stats,
+        isLoading: loading,
+        isFetching,
+        error,
+        refetch,
+    } = useQuery({
+        queryKey: ['admin', 'dashboard'],
+        queryFn: async (): Promise<DashboardStats> => {
+            const res = await fetch('/api/dashboard');
+            const json = await res.json().catch(() => null);
+            if (!res.ok || (json as any)?.success === false) {
+                throw new Error((json as any)?.error || 'Failed to fetch dashboard data');
+            }
+            return json as DashboardStats;
+        },
+        staleTime: 60 * 1000,
+        refetchOnWindowFocus: true,
+    });
 
     if (loading) return (
         <div className="space-y-10 py-6">
@@ -104,9 +104,9 @@ export default function AdminDashboard() {
                 <Activity size={32} />
             </div>
             <h2 className="mb-2 text-2xl font-bold text-gray-900">Connection Issue</h2>
-            <p className="text-gray-500 mb-8">{error}</p>
+            <p className="text-gray-500 mb-8">{error instanceof Error ? error.message : 'Failed to load dashboard'}</p>
             <button
-                onClick={() => window.location.reload()}
+                onClick={() => refetch()}
                 className="rounded-2xl bg-primary px-8 py-3 font-bold text-white shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95 cursor-pointer"
             >
                 Try Again
@@ -148,6 +148,7 @@ export default function AdminDashboard() {
                         </h1>
                         <p className="text-sm font-medium text-gray-500">
                             Hillz Shift 4.0 registrations and invitations.
+                            {isFetching && <span className="ml-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Refreshing…</span>}
                         </p>
                     </div>
 

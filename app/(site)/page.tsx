@@ -31,12 +31,12 @@ export default function HomePage() {
                                             SHIFT 4.0
                                         </div>
                                         <h2 className="text-3xl md:text-5xl font-black text-primary-dark uppercase tracking-tighter leading-tight">
-                                            AND TO MAKE ALL MEN SEE WHAT IS THE <span className="text-primary">FELLOWSHIP OF THE MYSTERY</span>
-                                        </h2>
+                                            A DATE WITH JESUS - <span className="text-primary">THE WORD SEATED AT THE RIGHT HAND OF POWER</span>
+                        </h2>
                                         <p className="text-sm font-bold uppercase tracking-[0.25em] text-gray-500">
                                             EPHESIANS 3:9
-                                        </p>
-                                    </div>
+                        </p>
+                    </div>
 
                                     <div className="flex flex-wrap gap-4">
                                         <Link href={ROUTES.REGISTER}>
@@ -47,15 +47,30 @@ export default function HomePage() {
                                         </Link>
                                         <Link href={ROUTES.INVITE}>
                                             <Button size="lg" variant="outline" className="gap-3 rounded-2xl border-gray-300 text-gray-700 hover:bg-gray-50">
-                                                Invite a Person
+                                                Invite someone
                                                 <UserPlus size={18} />
                                             </Button>
                                         </Link>
                                     </div>
-                                </div>
+                            </div>
 
                                 {/* Right: Event info */}
                                 <div className="space-y-6">
+                                    <div className="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-sm p-6 shadow-sm">
+                                        <div className="flex items-start gap-3">
+                                            <div className="rounded-xl bg-primary/10 p-2 text-primary">
+                                                <MapPin size={18} />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <div className="text-xs font-black uppercase tracking-[0.25em] text-gray-400">Venue</div>
+                                                <div className="mt-1 text-lg font-black text-primary-dark">IKENGA HALL</div>
+                                                <div className="mt-2 text-sm font-semibold text-gray-600">
+                                                    RADISSON IKEJA LAGOS, 42/44 ISAAC JOHN STREET, GRA IKEJA LAGOS, NIGERIA.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-sm p-6 shadow-sm">
                                             <div className="flex items-start gap-3">
@@ -81,25 +96,10 @@ export default function HomePage() {
                                         </div>
                                     </div>
 
-                                    <div className="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-sm p-6 shadow-sm">
-                                        <div className="flex items-start gap-3">
-                                            <div className="rounded-xl bg-primary/10 p-2 text-primary">
-                                                <MapPin size={18} />
-                                            </div>
-                                            <div className="min-w-0">
-                                                <div className="text-xs font-black uppercase tracking-[0.25em] text-gray-400">Venue</div>
-                                                <div className="mt-1 text-lg font-black text-primary-dark">IKENGA HALL</div>
-                                                <div className="mt-2 text-sm font-semibold text-gray-600">
-                                                    RADISSON IKEJA LAGOS, 42/44 ISAAC JOHN STREET, GRA IKEJA LAGOS, NIGERIA.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     <div className="glass p-6 rounded-2xl">
                                         <div className="text-xs font-black uppercase tracking-[0.25em] text-gray-400 mb-2">Why this matters</div>
                                         <p className="text-sm text-gray-600 font-medium leading-relaxed">
-                                            Come expecting clarity, communion, and an unveiling of Christ — a gathering centered on the mystery.
+                                            SHIFT Conference is established by the instruction of the Holy Spirit with a mandate to bring men and women up the hill - The holy hill of Zion, the place of Christ dominion on earth. It is a time of full immersion into the mysteries of Christ via His word and a time of supplication thereby transforming men and women into a people of God&apos;s presence - true carriers of divine prescense into every room they enter and exercing Christ dominion on earth. Come expecting clarity, communion, and an unveiling of Christ
                                         </p>
                                     </div>
                                 </div>
@@ -130,10 +130,10 @@ export default function HomePage() {
                                 </div>
                                 <div className="flex flex-wrap gap-4">
                                     <a href={EXTERNAL_LINKS.SPOTIFY} target="_blank" rel="noopener noreferrer">
-                                        <Button variant="secondary" className="gap-3 rounded-2xl group">
-                                            <Music size={20} />
-                                            Open on Spotify
-                                        </Button>
+                                    <Button variant="secondary" className="gap-3 rounded-2xl group">
+                                        <Music size={20} />
+                                        Open on Spotify
+                                    </Button>
                                     </a>
                                     <Link href={ROUTES.REGISTER}>
                                         <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 rounded-2xl">
@@ -253,13 +253,6 @@ export default function HomePage() {
                                             Can&apos;t make it in person? Join us live via Google Meet for an immersive online experience.
                                         </p>
                                     </div>
-                                </div>
-
-                                {/* Meeting Details */}
-                                <div className="p-6 rounded-2xl bg-linear-to-br from-green-50/80 to-blue-50/80 backdrop-blur-sm border border-green-100/50">
-                                    <h3 className="text-xl font-black text-gray-900">
-                                        {EXTERNAL_LINKS.GOOGLE_MEET.TITLE}
-                                    </h3>
                                 </div>
 
                                 {/* Primary Action */}

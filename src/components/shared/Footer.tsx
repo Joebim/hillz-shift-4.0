@@ -1,10 +1,10 @@
 import React from 'react';
-import { Mail, Phone, ExternalLink, Music, Video } from 'lucide-react';
+import { Mail, ExternalLink, Music, Video } from 'lucide-react';
 import { EXTERNAL_LINKS } from '@/src/constants/links';
 
 export const Footer = () => {
     return (
-        <footer className="w-full border-t border-white/10 bg-gradient-to-br from-primary-dark via-[#1a1a3a] to-[#0a0a1f] py-16 md:py-20 text-white/80">
+        <footer className="w-full border-t border-white/10 bg-linear-to-br from-primary-dark via-[#1a1a3a] to-[#0a0a1f] py-16 md:py-20 text-white/80">
             <div className="container mx-auto container-px">
                 <div className="grid grid-cols-1 gap-12 md:gap-16 md:grid-cols-3">
                     <div className="space-y-6">
@@ -32,12 +32,6 @@ export const Footer = () => {
                                 >
                                     Convener@themysteryofchrist.org
                                 </a>
-                            </li>
-                            <li className="flex items-center gap-4 group">
-                                <div className="rounded-lg bg-white/10 p-2 text-white group-hover:bg-accent group-hover:text-primary-dark transition-colors">
-                                    <Phone size={18} />
-                                </div>
-                                <span className="font-medium text-white/80 group-hover:text-accent transition-colors">+234 800 123 4567</span>
                             </li>
                         </ul>
                     </div>
@@ -78,7 +72,7 @@ export const Footer = () => {
 
                 <div className="mt-14 md:mt-20 border-t border-white/10 pt-8 md:pt-10 text-center">
                     <p className="text-xs font-semibold text-white/50">
-                        © {new Date().getFullYear()} Hillz Shift Ministries. All rights reserved.
+                        © {new Date().getFullYear()} Hillz. All rights reserved.
                         <span className="mx-3 text-white/20">|</span>
                         Designed with Heart for the Kingdom.
                     </p>

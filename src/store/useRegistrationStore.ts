@@ -17,6 +17,7 @@ export const useRegistrationStore = create<RegistrationState>((set) => ({
     address: "",
     whoInvited: "",
     heardFrom: "",
+    joiningMethod: "",
   },
   setField: (key, value) =>
     set((state) => ({
@@ -24,7 +25,7 @@ export const useRegistrationStore = create<RegistrationState>((set) => ({
     })),
   resetForm: () =>
     set({
-      form: { name: "", email: "", phone: "", address: "", whoInvited: "", heardFrom: "" },
+      form: { name: "", email: "", phone: "", address: "", whoInvited: "", heardFrom: "", joiningMethod: "" },
     }),
   isSubmitting: false,
   setIsSubmitting: (status) => set({ isSubmitting: status }),

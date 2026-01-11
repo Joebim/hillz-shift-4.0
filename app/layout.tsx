@@ -21,9 +21,9 @@ export default function RootLayout({
       <body className={inter.className} suppressHydrationWarning>
         <QueryProvider>
           <ToastProvider>
-            <div className="flex min-h-screen flex-col">
-              {children}
-            </div>
+        <div className="flex min-h-screen flex-col">
+          {children}
+        </div>
           </ToastProvider>
         </QueryProvider>
       </body>

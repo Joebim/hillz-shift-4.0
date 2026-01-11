@@ -6,6 +6,7 @@ export interface Registration {
   address: string;
   whoInvited: string;
   heardFrom: string;
+  joiningMethod: string;
   createdAt: string | Date;
 }
 
@@ -16,4 +17,5 @@ export interface RegistrationFormData {
   address: string;
   whoInvited: string;
   heardFrom: string;
+  joiningMethod: string;
 }

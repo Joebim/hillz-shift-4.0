@@ -20,6 +20,7 @@ interface ParticipantsSearchSelectProps {
     label?: string;
     placeholder?: string;
     required?: boolean;
+    showRegisterPrompt?: boolean; // Show register button when no matches found
 }
 
 async function fetchParticipants(search: string): Promise<Participant[]> {
@@ -45,6 +46,7 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
     label = 'Your Name',
     placeholder = 'Type your name to search...',
     required = false,
+    showRegisterPrompt = true,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -163,13 +165,14 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
     // Show register button if no matches and user has typed something
     // Show when there are no results and search is complete (not loading)
     const shouldShowRegisterButton = useMemo(() => {
+        if (!showRegisterPrompt) return false; // Don't show if disabled
         if (value.length < 2) return false;
         if (isLoading) return false;
         if (normalizedSearchQuery.length < 2) return false;
         if (hasExactMatch || hasSimilarMatches) return false;
         // Only show if we've searched and got no results (not just initial state)
         return filteredParticipants.length === 0 && !shouldShowDropdown;
-    }, [value.length, isLoading, normalizedSearchQuery.length, hasExactMatch, hasSimilarMatches, filteredParticipants.length, shouldShowDropdown]);
+    }, [showRegisterPrompt, value.length, isLoading, normalizedSearchQuery.length, hasExactMatch, hasSimilarMatches, filteredParticipants.length, shouldShowDropdown]);
 
     return (
         <div className="space-y-1.5" ref={wrapperRef}>
@@ -221,7 +224,6 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
                                     >
                                         <div className="flex-1 min-w-0">
                                             <div className="font-medium text-gray-900 truncate">{participant.name}</div>
-                                            <div className="text-xs text-gray-500 truncate">{participant.email}</div>
                                         </div>
                                         {selectedParticipant?.id === participant.id && (
                                             <Check className="h-4 w-4 text-primary shrink-0" />

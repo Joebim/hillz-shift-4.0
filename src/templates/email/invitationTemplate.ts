@@ -65,12 +65,53 @@ export const invitationTemplate = (
 `;
 
 export const registrationTemplate = (userName: string) => `
-  <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
-    <h2 style="color: #6366f1;">Registration Confirmed!</h2>
-    <p>Hi <strong>${userName}</strong>,</p>
-    <p>Thank you for registering for <strong>Hillz Shift 4.0</strong>. Your spot is secured!</p>
-    <p>Stay tuned for more updates as we get closer to the event.</p>
-    <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-    <p style="font-size: 12px; color: #666;">Hillz Shift Team</p>
+  <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px; background: linear-gradient(135deg, #2b3fd3 0%, #4a108a 100%);">
+    <!-- Banner -->
+    <div style="background: white; padding: 40px 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #2b3fd3; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 1px;">HILLZ SHIFT 4.0</h1>
+      <p style="color: #666; margin: 12px 0 0 0; font-size: 16px; font-style: italic;">A Life-Changing Experience</p>
+    </div>
+    
+    <div style="background: white; padding: 40px 30px; border-radius: 10px;">
+      <!-- Greeting -->
+      <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 0 0 25px 0;">
+        Hi <strong style="color: #2b3fd3;">${userName}</strong>,
+      </p>
+      
+      <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 0 0 25px 0;">
+        Thank you for registering for <strong style="color: #2b3fd3;">Hillz Shift 4.0</strong>! We're thrilled to have you join us for this transformative experience.
+      </p>
+      
+      <!-- Confirmation Details -->
+      <div style="background: #f5f7fa; padding: 25px; border-radius: 8px; margin: 30px 0;">
+        <p style="color: #666; font-size: 14px; margin: 0 0 10px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Your Registration is Confirmed</p>
+        <p style="color: #2b3fd3; font-size: 18px; margin: 0 0 20px 0; font-weight: bold;">${userName}</p>
+        
+        <p style="color: #333; font-size: 15px; line-height: 1.8; margin: 20px 0 0 0;">
+          Your spot is secured! We'll be sending you more details as we get closer to the event date.
+        </p>
+      </div>
+      
+      <!-- Event Details -->
+      <div style="background: #f9f9f9; padding: 25px; border-radius: 8px; margin: 30px 0; border-left: 4px solid #2b3fd3;">
+        <p style="color: #666; font-size: 14px; margin: 0 0 15px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Event Details</p>
+        <p style="color: #333; font-size: 15px; line-height: 1.8; margin: 8px 0;"><strong>Date:</strong> 31st January, 2026</p>
+        <p style="color: #333; font-size: 15px; line-height: 1.8; margin: 8px 0;"><strong>Time:</strong> 10AM - 5PM</p>
+        <p style="color: #333; font-size: 15px; line-height: 1.8; margin: 8px 0;"><strong>Venue:</strong> Ikenga Hall, Radisson Ikeja Lagos</p>
+        <p style="color: #333; font-size: 15px; line-height: 1.8; margin: 8px 0 0 0;"><strong>Address:</strong> 42/44 Isaac John Street, GRA Ikeja Lagos, Nigeria</p>
+      </div>
+      
+      <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 30px 0 0 0;">
+        We're looking forward to seeing you there and sharing this powerful experience together!
+      </p>
+      
+      <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 20px 0 0 0;">
+        Blessings,<br>
+        <strong style="color: #2b3fd3;">Hillz Shift 4.0 Team</strong>
+      </p>
+      
+      <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0 20px 0;">
+      <p style="font-size: 12px; color: #999; text-align: center; margin: 0;">If you have any questions, please contact us at hillz.conference@gmail.com</p>
+    </div>
   </div>
 `;

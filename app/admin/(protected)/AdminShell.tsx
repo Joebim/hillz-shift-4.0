@@ -57,7 +57,7 @@ export default function AdminShell({
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 w-full overflow-x-hidden">
       {/* Sidebar Desktop */}
       <aside className="hidden w-64 border-r border-gray-200 bg-white lg:block">
         <div className="flex h-16 items-center px-6">
@@ -88,7 +88,7 @@ export default function AdminShell({
       </aside>
 
       {/* Main Content */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col min-w-0">
         {/* Header */}
         <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 md:px-8">
           <button
@@ -123,7 +123,7 @@ export default function AdminShell({
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 px-4 py-6 md:px-8 md:py-10 lg:px-10">
+        <main className="flex-1 px-4 py-6 md:px-8 md:py-10 lg:px-10 min-w-0">
           {children}
         </main>
       </div>

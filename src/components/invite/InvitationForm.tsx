@@ -41,10 +41,7 @@ export const InvitationForm = () => {
                 resetForm();
 
                 // Show success message
-                const message = result.hasEmail
-                    ? 'Invitation sent via Email! Opening WhatsApp...'
-                    : 'Invitation saved! Opening WhatsApp...';
-                toast.success(message, 2000);
+                toast.success('Invitation sent via Email! Opening WhatsApp...', 2000);
 
                 // Open WhatsApp immediately using anchor click (most reliable method)
                 // This must happen immediately after the async call completes
@@ -114,7 +111,7 @@ export const InvitationForm = () => {
             <div className="space-y-6 rounded-2xl border border-primary/5 bg-primary/5 p-8">
                 <h3 className="text-lg font-bold text-primary-dark flex items-center gap-2">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-white uppercase">1</span>
-                    About You (the Inviter)
+                    About You (The Inviter)
                 </h3>
                 <ParticipantsSearchSelect
                     label="Your Name"
@@ -143,7 +140,7 @@ export const InvitationForm = () => {
                         onChange={(e) => setField('inviteeName', e.target.value)}
                     />
                     <Input
-                        label="Phone of Invitee"
+                        label="WhatsApp number of invitee"
                         type="tel"
                         placeholder="+234 ..."
                         required
@@ -151,10 +148,11 @@ export const InvitationForm = () => {
                         onChange={(e) => setField('inviteePhone', e.target.value)}
                     />
                     <Input
-                        label="Email of Invitee (Optional)"
+                        label="Email of Invitee"
                         type="email"
                         className="md:col-span-2"
                         placeholder="jane@example.com"
+                        required
                         value={form.inviteeEmail || ''}
                         onChange={(e) => setField('inviteeEmail', e.target.value)}
                     />
@@ -169,7 +167,7 @@ export const InvitationForm = () => {
                     />
                 </div>
                 <Textarea
-                    label="Custom Message"
+                    label="Short invitation note"
                     placeholder="Write a personal message for your invitee..."
                     required
                     value={form.customMessage}
@@ -180,7 +178,7 @@ export const InvitationForm = () => {
 
             <Button type="submit" className="w-full gap-2 text-[15px] sm:text-lg" size="lg" isLoading={isSubmitting}>
                 <Share2 size={20} />
-                Send Invitation via Email & WhatsApp
+                Send invite by WhatsApp
             </Button>
         </form>
     );

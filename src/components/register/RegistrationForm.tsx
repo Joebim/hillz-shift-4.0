@@ -4,6 +4,7 @@ import React from 'react';
 import { useRegistrationStore } from '@/src/store/useRegistrationStore';
 import { Input } from '@/src/components/ui/Input';
 import { Button } from '@/src/components/ui/Button';
+import { ParticipantsSearchSelect } from '@/src/components/invite/ParticipantsSearchSelect';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/src/constants/routes';
 import { Info } from 'lucide-react';
@@ -29,7 +30,7 @@ export const RegistrationForm = () => {
             if (result.success) {
                 toast.success('Registration successful! Redirecting...', 2000);
                 setTimeout(() => {
-                router.push(ROUTES.SUCCESS);
+                    router.push(ROUTES.SUCCESS);
                 }, 500);
             } else {
                 const errorMessage = result.error || 'Registration failed. Please try again.';
@@ -90,13 +91,32 @@ export const RegistrationForm = () => {
                 />
             </div>
 
-            <Input
+            <ParticipantsSearchSelect
                 label="Who invited you?"
-                type="text"
-                placeholder="Name of the person who invited you (optional)"
+                placeholder="Type the name of the person who invited you..."
                 value={form.whoInvited}
-                onChange={(e) => setField('whoInvited', e.target.value)}
+                onChange={(value) => setField('whoInvited', value)}
+                onSelect={(participant) => {
+                    if (participant) {
+                        setField('whoInvited', participant.name);
+                    }
+                }}
+                showRegisterPrompt={false}
             />
+
+            <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-gray-700">How will you be joining us?</label>
+                <select
+                    value={form.joiningMethod}
+                    onChange={(e) => setField('joiningMethod', e.target.value)}
+                    required
+                    className="flex h-11 w-full rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
+                >
+                    <option value="">Select an option</option>
+                    <option value="online">Online</option>
+                    <option value="in-person">In Person</option>
+                </select>
+            </div>
 
             <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-gray-700">How did you hear about us?</label>
@@ -116,7 +136,7 @@ export const RegistrationForm = () => {
             </div>
 
             <Button type="submit" className="w-full" size="lg" isLoading={isSubmitting}>
-                Register for Hillz Shift 4.0
+                Register for Shift 4.0
             </Button>
         </form>
     );

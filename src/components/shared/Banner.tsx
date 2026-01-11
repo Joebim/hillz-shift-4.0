@@ -7,7 +7,7 @@ export const Banner = () => {
                 <div className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-1.5 shadow-sm border border-primary/10">
                     <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
                     <p className="text-xs font-bold tracking-wide text-primary-dark uppercase text-center">
-                        Early Bird: <span className="text-primary">Registrations are filling fast!</span>
+                        Join us for a <span className="text-primary">life-transforming encounter</span>
                     </p>
                 </div>
             </div>
