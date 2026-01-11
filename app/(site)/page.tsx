@@ -31,12 +31,12 @@ export default function HomePage() {
                                             SHIFT 4.0
                                         </div>
                                         <h2 className="text-3xl md:text-5xl font-black text-primary-dark uppercase tracking-tighter leading-tight">
-                                            A DATE WITH JESUS <span className="text-primary">THE WORD SEATED AT THE RIGHT HAND OF POWER</span>
+                                            A DATE WITH JESUS, <span className="text-primary">THE WORD SEATED AT THE RIGHT HAND OF POWER</span>
                         </h2>
                                         <p className="text-sm font-bold uppercase tracking-[0.25em] text-gray-500">
-                                            EPHESIANS 3:9
+                                            MARK 14 VS 62
                         </p>
-                    </div>
+                                    </div>
 
                                     <div className="flex flex-wrap gap-4">
                                         <Link href={ROUTES.REGISTER}>
@@ -52,7 +52,7 @@ export default function HomePage() {
                                             </Button>
                                         </Link>
                                     </div>
-                            </div>
+                                </div>
 
                                 {/* Right: Event info */}
                                 <div className="space-y-6">
@@ -130,10 +130,10 @@ export default function HomePage() {
                                 </div>
                                 <div className="flex flex-wrap gap-4">
                                     <a href={EXTERNAL_LINKS.SPOTIFY} target="_blank" rel="noopener noreferrer">
-                                    <Button variant="secondary" className="gap-3 rounded-2xl group">
-                                        <Music size={20} />
-                                        Open on Spotify
-                                    </Button>
+                                        <Button variant="secondary" className="gap-3 rounded-2xl group">
+                                            <Music size={20} />
+                                            Open on Spotify
+                                        </Button>
                                     </a>
                                     <Link href={ROUTES.REGISTER}>
                                         <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 rounded-2xl">
