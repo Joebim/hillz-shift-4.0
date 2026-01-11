@@ -85,7 +85,7 @@ export default function HomePage() {
                                         </div>
                                         <div className="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-sm p-6 shadow-sm">
                                             <div className="flex items-start gap-3">
-                                                <div className="rounded-xl bg-accent/15 p-2 text-accent-foreground">
+                                                <div className="rounded-xl bg-primary/10 p-2 text-primary">
                                                     <Clock size={18} />
                                                 </div>
                                                 <div>
@@ -325,8 +325,8 @@ export default function HomePage() {
             <section className="py-24 md:py-32 text-center bg-gray-50/50">
                 <div className="container mx-auto container-px space-y-10">
                     <div className="space-y-4">
-                        <h2 className="text-4xl font-black text-primary-dark md:text-7xl tracking-tighter uppercase">
-                            Ready for A <span className="text-primary">Shift?</span>
+                        <h2 className="text-4xl font-black text-primary md:text-7xl tracking-tighter uppercase">
+                            Ready for A Shift?
                         </h2>
                         <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto">
                             Join us at <strong>Ikenga Hall, Radisson Ikeja</strong> on Jan 31st. Limited seats available for this encounter.
