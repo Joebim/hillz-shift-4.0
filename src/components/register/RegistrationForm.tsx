@@ -105,7 +105,7 @@ export const RegistrationForm = () => {
             />
 
             <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-gray-700">How will you be joining us?</label>
+                <label className="text-sm font-medium text-gray-700">How will you be attending?</label>
                 <select
                     value={form.joiningMethod}
                     onChange={(e) => setField('joiningMethod', e.target.value)}

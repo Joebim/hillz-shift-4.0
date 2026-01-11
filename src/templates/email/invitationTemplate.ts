@@ -7,7 +7,7 @@ export const invitationTemplate = (
   <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px; background: linear-gradient(135deg, #2b3fd3 0%, #4a108a 100%);">
     <!-- Banner -->
     <div style="background: white; padding: 40px 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2b3fd3; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 1px;">Hillz Shift 4.0</h1>
+      <h1 style="color: #2b3fd3; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 1px;">Shift 4.0</h1>
       <p style="color: #666; margin: 12px 0 0 0; font-size: 16px; font-style: italic;">A Life-Changing Experience</p>
     </div>
     
@@ -18,7 +18,7 @@ export const invitationTemplate = (
       </p>
       
       <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 0 0 25px 0;">
-        I hope this message finds you well! I wanted to personally invite you to join us for <strong style="color: #2b3fd3;">Hillz Shift 4.0</strong>, an incredible gathering where we'll explore deeper truths and experience spiritual transformation together.
+        I hope this message finds you well! I wanted to personally invite you to join us for <strong style="color: #2b3fd3;">Shift 4.0</strong>, an incredible gathering where we'll explore deeper truths and experience spiritual transformation together.
       </p>
       
       <!-- Custom Message -->
@@ -59,7 +59,7 @@ export const invitationTemplate = (
       </p>
       
       <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0 20px 0;">
-      <p style="font-size: 12px; color: #999; text-align: center; margin: 0;">Hillz Shift 4.0 Team</p>
+      <p style="font-size: 12px; color: #999; text-align: center; margin: 0;">Shift 4.0 Team</p>
     </div>
   </div>
 `;
@@ -68,7 +68,7 @@ export const registrationTemplate = (userName: string) => `
   <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px; background: linear-gradient(135deg, #2b3fd3 0%, #4a108a 100%);">
     <!-- Banner -->
     <div style="background: white; padding: 40px 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2b3fd3; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 1px;">HILLZ SHIFT 4.0</h1>
+      <h1 style="color: #2b3fd3; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 1px;">SHIFT 4.0</h1>
       <p style="color: #666; margin: 12px 0 0 0; font-size: 16px; font-style: italic;">A Life-Changing Experience</p>
     </div>
     
@@ -79,7 +79,7 @@ export const registrationTemplate = (userName: string) => `
       </p>
       
       <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 0 0 25px 0;">
-        Thank you for registering for <strong style="color: #2b3fd3;">Hillz Shift 4.0</strong>! We're thrilled to have you join us for this transformative experience.
+        Thank you for registering for <strong style="color: #2b3fd3;">Shift 4.0</strong>! We're thrilled to have you join us for this transformative experience.
       </p>
       
       <!-- Confirmation Details -->
@@ -107,7 +107,7 @@ export const registrationTemplate = (userName: string) => `
       
       <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 20px 0 0 0;">
         Blessings,<br>
-        <strong style="color: #2b3fd3;">Hillz Shift 4.0 Team</strong>
+        <strong style="color: #2b3fd3;">Shift 4.0 Team</strong>
       </p>
       
       <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0 20px 0;">
