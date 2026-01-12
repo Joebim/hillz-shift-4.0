@@ -14,7 +14,7 @@ export interface InvitationFormData {
   inviterName: string;
   inviteeName: string;
   inviteePhone: string;
-  inviteeEmail: string;
+  inviteeEmail?: string;
   location: string;
   customMessage: string;
 }

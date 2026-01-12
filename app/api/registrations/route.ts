@@ -30,6 +30,72 @@ export async function POST(request: Request) {
       joiningMethod,
     });
 
+    // Validate required fields
+    if (!name || !name.trim()) {
+      const errorMsg = "Name is required";
+      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
+      return NextResponse.json(
+        { success: false, error: errorMsg },
+        { status: 400 }
+      );
+    }
+
+    if (!email || !email.trim()) {
+      const errorMsg = "Email is required";
+      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
+      return NextResponse.json(
+        { success: false, error: errorMsg },
+        { status: 400 }
+      );
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      const errorMsg = "Invalid email format";
+      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
+      return NextResponse.json(
+        { success: false, error: errorMsg },
+        { status: 400 }
+      );
+    }
+
+    if (!phone || !phone.trim()) {
+      const errorMsg = "Phone number is required";
+      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
+      return NextResponse.json(
+        { success: false, error: errorMsg },
+        { status: 400 }
+      );
+    }
+
+    if (!address || !address.trim()) {
+      const errorMsg = "Address is required";
+      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
+      return NextResponse.json(
+        { success: false, error: errorMsg },
+        { status: 400 }
+      );
+    }
+
+    if (!joiningMethod) {
+      const errorMsg = "Joining method is required";
+      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
+      return NextResponse.json(
+        { success: false, error: errorMsg },
+        { status: 400 }
+      );
+    }
+
+    if (!heardFrom) {
+      const errorMsg = "How you heard about us is required";
+      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
+      return NextResponse.json(
+        { success: false, error: errorMsg },
+        { status: 400 }
+      );
+    }
+
     // Save to Firestore
     const docRef = await db.collection("registrations").add({
       name,

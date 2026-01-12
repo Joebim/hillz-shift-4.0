@@ -13,9 +13,59 @@ import { useToast } from '@/src/contexts/ToastContext';
 export const InvitationForm = () => {
     const { form, setField, isSubmitting, setIsSubmitting, resetForm } = useInvitationStore();
     const toast = useToast();
+    const [errors, setErrors] = React.useState<Record<string, string>>({});
+
+    // Validation function
+    const validateForm = (): boolean => {
+        const newErrors: Record<string, string> = {};
+
+        if (!form.inviterName?.trim()) {
+            newErrors.inviterName = 'Your name is required';
+        }
+
+        if (!form.inviteeName?.trim()) {
+            newErrors.inviteeName = 'Invitee name is required';
+        }
+
+        if (!form.inviteePhone?.trim()) {
+            newErrors.inviteePhone = 'WhatsApp number is required';
+        } else {
+            // Basic phone validation (should contain digits and optional + at start)
+            const phoneRegex = /^\+?[\d\s-]{10,}$/;
+            if (!phoneRegex.test(form.inviteePhone.trim())) {
+                newErrors.inviteePhone = 'Please enter a valid phone number';
+            }
+        }
+
+        // Email is optional but if provided, must be valid
+        if (form.inviteeEmail?.trim()) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(form.inviteeEmail.trim())) {
+                newErrors.inviteeEmail = 'Please enter a valid email address';
+            }
+        }
+
+        if (!form.location?.trim()) {
+            newErrors.location = 'Location is required';
+        }
+
+        if (!form.customMessage?.trim()) {
+            newErrors.customMessage = 'Invitation message is required';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validate form
+        if (!validateForm()) {
+            toast.error('Please fix the errors in the form');
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -118,7 +168,16 @@ export const InvitationForm = () => {
                     placeholder="Type your name to search..."
                     required
                     value={form.inviterName}
-                    onChange={(value) => setField('inviterName', value)}
+                    onChange={(value) => {
+                        setField('inviterName', value);
+                        if (errors.inviterName) {
+                            setErrors((prev) => {
+                                const newErrors = { ...prev };
+                                delete newErrors.inviterName;
+                                return newErrors;
+                            });
+                        }
+                    }}
                     onSelect={(participant) => {
                         // Optional: You can store participant ID or other info if needed
                         console.log('Selected participant:', participant);
@@ -137,7 +196,17 @@ export const InvitationForm = () => {
                         placeholder="Jane Smith"
                         required
                         value={form.inviteeName}
-                        onChange={(e) => setField('inviteeName', e.target.value)}
+                        onChange={(e) => {
+                            setField('inviteeName', e.target.value);
+                            if (errors.inviteeName) {
+                                setErrors((prev) => {
+                                    const newErrors = { ...prev };
+                                    delete newErrors.inviteeName;
+                                    return newErrors;
+                                });
+                            }
+                        }}
+                        error={errors.inviteeName}
                     />
                     <Input
                         label="WhatsApp number of invitee"
@@ -145,16 +214,36 @@ export const InvitationForm = () => {
                         placeholder="+234 ..."
                         required
                         value={form.inviteePhone}
-                        onChange={(e) => setField('inviteePhone', e.target.value)}
+                        onChange={(e) => {
+                            setField('inviteePhone', e.target.value);
+                            if (errors.inviteePhone) {
+                                setErrors((prev) => {
+                                    const newErrors = { ...prev };
+                                    delete newErrors.inviteePhone;
+                                    return newErrors;
+                                });
+                            }
+                        }}
+                        error={errors.inviteePhone}
                     />
                     <Input
                         label="Email of Invitee"
                         type="email"
                         className="md:col-span-2"
-                        placeholder="jane@example.com"
-                        required
+                        placeholder="jane@example.com (optional)"
                         value={form.inviteeEmail || ''}
-                        onChange={(e) => setField('inviteeEmail', e.target.value)}
+                        onChange={(e) => {
+                            setField('inviteeEmail', e.target.value);
+                            // Clear error when user starts typing
+                            if (errors.inviteeEmail) {
+                                setErrors((prev) => {
+                                    const newErrors = { ...prev };
+                                    delete newErrors.inviteeEmail;
+                                    return newErrors;
+                                });
+                            }
+                        }}
+                        error={errors.inviteeEmail}
                     />
                     <Input
                         label="Location"
@@ -163,7 +252,17 @@ export const InvitationForm = () => {
                         placeholder="e.g., Lagos, Nigeria"
                         required
                         value={form.location}
-                        onChange={(e) => setField('location', e.target.value)}
+                        onChange={(e) => {
+                            setField('location', e.target.value);
+                            if (errors.location) {
+                                setErrors((prev) => {
+                                    const newErrors = { ...prev };
+                                    delete newErrors.location;
+                                    return newErrors;
+                                });
+                            }
+                        }}
+                        error={errors.location}
                     />
                 </div>
                 <Textarea
@@ -171,8 +270,18 @@ export const InvitationForm = () => {
                     placeholder="Write a personal message for your invitee..."
                     required
                     value={form.customMessage}
-                    onChange={(e) => setField('customMessage', e.target.value)}
+                    onChange={(e) => {
+                        setField('customMessage', e.target.value);
+                        if (errors.customMessage) {
+                            setErrors((prev) => {
+                                const newErrors = { ...prev };
+                                delete newErrors.customMessage;
+                                return newErrors;
+                            });
+                        }
+                    }}
                     className="min-h-[120px]"
+                    error={errors.customMessage}
                 />
             </div>
 

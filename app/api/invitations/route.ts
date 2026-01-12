@@ -30,13 +30,81 @@ export async function POST(request: Request) {
     });
 
     // Validate required fields
-    if (!inviteeEmail || !inviteeEmail.trim()) {
-      const errorMsg = "Email of invitee is required";
-      console.error("[invitations:POST] validation_error", { requestId, error: errorMsg });
+    if (!inviterName || !inviterName.trim()) {
+      const errorMsg = "Inviter name is required";
+      console.error("[invitations:POST] validation_error", {
+        requestId,
+        error: errorMsg,
+      });
       return NextResponse.json(
         { success: false, error: errorMsg },
         { status: 400 }
       );
+    }
+
+    if (!inviteeName || !inviteeName.trim()) {
+      const errorMsg = "Invitee name is required";
+      console.error("[invitations:POST] validation_error", {
+        requestId,
+        error: errorMsg,
+      });
+      return NextResponse.json(
+        { success: false, error: errorMsg },
+        { status: 400 }
+      );
+    }
+
+    if (!inviteePhone || !inviteePhone.trim()) {
+      const errorMsg = "WhatsApp number is required";
+      console.error("[invitations:POST] validation_error", {
+        requestId,
+        error: errorMsg,
+      });
+      return NextResponse.json(
+        { success: false, error: errorMsg },
+        { status: 400 }
+      );
+    }
+
+    if (!location || !location.trim()) {
+      const errorMsg = "Location is required";
+      console.error("[invitations:POST] validation_error", {
+        requestId,
+        error: errorMsg,
+      });
+      return NextResponse.json(
+        { success: false, error: errorMsg },
+        { status: 400 }
+      );
+    }
+
+    if (!customMessage || !customMessage.trim()) {
+      const errorMsg = "Custom message is required";
+      console.error("[invitations:POST] validation_error", {
+        requestId,
+        error: errorMsg,
+      });
+      return NextResponse.json(
+        { success: false, error: errorMsg },
+        { status: 400 }
+      );
+    }
+
+    // Validate email format if provided (email is optional)
+    const trimmedEmail = inviteeEmail?.trim();
+    if (trimmedEmail) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(trimmedEmail)) {
+        const errorMsg = "Invalid email format";
+        console.error("[invitations:POST] validation_error", {
+          requestId,
+          error: errorMsg,
+        });
+        return NextResponse.json(
+          { success: false, error: errorMsg },
+          { status: 400 }
+        );
+      }
     }
 
     // Save to Firestore
@@ -44,7 +112,7 @@ export async function POST(request: Request) {
       inviterName,
       inviteeName,
       inviteePhone,
-      inviteeEmail: inviteeEmail.trim(),
+      inviteeEmail: trimmedEmail || "",
       location,
       customMessage,
       status: "sent",
@@ -56,28 +124,45 @@ export async function POST(request: Request) {
     const registrationLink = `${
       process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
     }/register?ref=${docRef.id}`;
-    console.log("[invitations:POST] registration_link", { requestId, registrationLink });
-
-    // Send invitation email (now required)
-    const emailResult = await sendEmail({
-      to: inviteeEmail.trim(),
-      subject: `You're Invited to Hillz Shift 4.0 by ${inviterName}`,
-      html: invitationTemplate(inviteeName, inviterName, customMessage, registrationLink),
-      context: { requestId, purpose: "invitation" },
-    });
-    console.log("[invitations:POST] email_result", {
+    console.log("[invitations:POST] registration_link", {
       requestId,
-      success: emailResult.success,
+      registrationLink,
     });
 
-    return NextResponse.json({ 
-      success: true, 
+    // Send invitation email only if email is provided
+    let emailResult = null;
+    if (trimmedEmail) {
+      emailResult = await sendEmail({
+        to: trimmedEmail,
+        subject: `You're Invited to Hillz Shift 4.0 by ${inviterName}`,
+        html: invitationTemplate(
+          inviteeName,
+          inviterName,
+          customMessage,
+          registrationLink
+        ),
+        context: { requestId, purpose: "invitation" },
+      });
+      console.log("[invitations:POST] email_result", {
+        requestId,
+        success: emailResult.success,
+      });
+    } else {
+      console.log("[invitations:POST] email_skipped", {
+        requestId,
+        reason: "no_email_provided",
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
       id: docRef.id,
       registrationLink,
-      hasEmail: true
+      hasEmail: Boolean(trimmedEmail),
     });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "Failed to send invitation";
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to send invitation";
     console.error("[invitations:POST] error", { requestId, errorMessage });
     return NextResponse.json(
       { success: false, error: errorMessage },
@@ -106,7 +191,8 @@ export async function GET() {
         { status: error.code === "FORBIDDEN" ? 403 : 401 }
       );
     }
-    const errorMessage = error instanceof Error ? error.message : "Failed to fetch invitations";
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to fetch invitations";
     return NextResponse.json(
       { success: false, error: errorMessage },
       { status: 500 }
