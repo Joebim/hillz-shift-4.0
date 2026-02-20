@@ -1,5 +1,5 @@
-import { Registration } from "./Registration";
-import { Invitation } from "./Invitation";
+import { Registration } from "./registration";
+import { Invitation } from "./invitation";
 
 export interface Admin {
   id: string;

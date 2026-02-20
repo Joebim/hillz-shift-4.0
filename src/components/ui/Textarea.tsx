@@ -1,26 +1,64 @@
-import React from 'react';
+import { TextareaHTMLAttributes, forwardRef, useId } from 'react';
 import { cn } from '@/src/lib/utils';
+import { AlertCircle } from 'lucide-react';
 
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
     label?: string;
     error?: string;
+    helperText?: string;
 }
 
-export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-    ({ className, label, error, ...props }, ref) => {
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+    ({ className, label, error, helperText, id, rows = 4, ...props }, ref) => {
+        const generatedId = useId();
+        const textareaId = id || generatedId;
+
         return (
-            <div className="flex w-full flex-col gap-1.5">
-                {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
-                <textarea
-                    ref={ref}
-                    className={cn(
-                        'flex min-h-[100px] w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 placeholder:text-gray-400 resize-y',
-                        error && 'border-red-500 focus:border-red-500 focus:ring-red-500/10',
-                        className
-                    )}
-                    {...props}
-                />
-                {error && <span className="text-xs text-red-500">{error}</span>}
+            <div className="w-full space-y-2">
+                {label && (
+                    <label
+                        htmlFor={textareaId}
+                        className="block text-sm font-medium text-slate-300"
+                    >
+                        {label}
+                        {props.required && <span className="text-pink-500 ml-1">*</span>}
+                    </label>
+                )}
+
+                <div className="relative">
+                    <textarea
+                        ref={ref}
+                        id={textareaId}
+                        rows={rows}
+                        className={cn(
+                            // Base styles
+                            'w-full px-4 py-3 rounded-xl transition-all duration-300 min-h-[120px] resize-y',
+                            'bg-white border border-slate-200 shadow-sm',
+                            'text-slate-800 placeholder:text-slate-400',
+                            'focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500',
+
+                            // States
+                            error
+                                ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                                : 'hover:border-slate-300',
+
+                            'disabled:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50',
+                            className
+                        )}
+                        {...props}
+                    />
+                </div>
+
+                {error && (
+                    <p className="flex items-center gap-1.5 text-sm text-red-400 animate-in slide-in-from-left-1 duration-200">
+                        <AlertCircle className="w-4 h-4" />
+                        {error}
+                    </p>
+                )}
+
+                {helperText && !error && (
+                    <p className="text-sm text-slate-500">{helperText}</p>
+                )}
             </div>
         );
     }

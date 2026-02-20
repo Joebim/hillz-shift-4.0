@@ -1,5 +1,14 @@
 import { create } from "zustand";
-import { RegistrationFormData } from "../types/Registration";
+
+interface RegistrationFormData {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  whoInvited: string;
+  heardFrom: string;
+  joiningMethod: string;
+}
 
 interface RegistrationState {
   form: RegistrationFormData;
@@ -25,7 +34,15 @@ export const useRegistrationStore = create<RegistrationState>((set) => ({
     })),
   resetForm: () =>
     set({
-      form: { name: "", email: "", phone: "", address: "", whoInvited: "", heardFrom: "", joiningMethod: "" },
+      form: {
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+        whoInvited: "",
+        heardFrom: "",
+        joiningMethod: "",
+      },
     }),
   isSubmitting: false,
   setIsSubmitting: (status) => set({ isSubmitting: status }),

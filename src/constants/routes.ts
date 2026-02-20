@@ -2,22 +2,26 @@ export const ROUTES = {
   HOME: "/",
   REGISTER: "/register",
   INVITE: "/invite",
-  SUCCESS: "/success",
   QR: "/qr",
+  SUCCESS: "/success",
   ADMIN: {
-    DASHBOARD: "/admin",
     LOGIN: "/admin/login",
+    DASHBOARD: "/admin",
+    ANALYTICS: "/admin/analytics",
     REGISTRATIONS: "/admin/registrations",
     INVITATIONS: "/admin/invitations",
-    ANALYTICS: "/admin/analytics",
+    EVENTS: "/admin/events",
+    BLOG: "/admin/blog",
+    SERMONS: "/admin/sermons",
+    MINISTRIES: "/admin/ministries",
   },
-};
-
-export const API_ROUTES = {
-  AUTH: "/api/auth",
-  REGISTRATIONS: "/api/registrations",
-  INVITATIONS: "/api/invitations",
-  EMAIL: "/api/email",
-  DASHBOARD: "/api/dashboard",
-  ANALYTICS: "/api/analytics",
+  PUBLIC: {
+    EVENTS: "/events",
+    SERMONS: "/sermons",
+    BLOG: "/blog",
+    MINISTRIES: "/ministries",
+    GIVE: "/give",
+    PRAYER: "/prayer",
+    CONTACT: "/contact",
+  },
 };

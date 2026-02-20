@@ -1,17 +1,32 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Protect all /admin routes except /admin/login
-  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
-    // In a real app, check for a session cookie or token
-    // For this build, we'll allow it but implement the logic structure
-    const isAuthenticated = true; // Placeholder for actual auth logic
+  // Use the same cookie name as defined in .env.local or fallback to default
+  const SESSION_COOKIE_NAME = "ministry_admin_session";
 
-    if (!isAuthenticated) {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
+  // Check if accessing admin routes (except login)
+  if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
+    const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME);
+
+    if (!sessionCookie) {
+      // Redirect to login if no session
+      const loginUrl = new URL("/admin/login", request.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Session exists, allow access
+    return NextResponse.next();
+  }
+
+  // If accessing login while already logged in, redirect to dashboard
+  if (pathname === "/admin/login") {
+    const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME);
+    if (sessionCookie) {
+      return NextResponse.redirect(new URL("/admin", request.url));
     }
   }
 

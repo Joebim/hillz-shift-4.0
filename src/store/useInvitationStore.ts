@@ -1,5 +1,13 @@
 import { create } from "zustand";
-import { InvitationFormData } from "../types/Invitation";
+
+interface InvitationFormData {
+  inviterName: string;
+  inviteeName: string;
+  inviteePhone: string;
+  inviteeEmail: string;
+  location: string;
+  customMessage: string;
+}
 
 interface InvitationState {
   form: InvitationFormData;

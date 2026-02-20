@@ -1,214 +1,153 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Input } from '@/src/components/ui/Input';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/src/components/ui/Button';
-import { ROUTES } from '@/src/constants/routes';
-import { Lock } from 'lucide-react';
-import { auth } from '@/src/lib/firebaseClient';
+import { Input } from '@/src/components/ui/Input';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/src/lib/firebase/client';
+import { Card } from '@/src/components/ui/Card';
 import { useToast } from '@/src/contexts/ToastContext';
+import { Eye, EyeOff, Sparkles, Lock, Mail } from 'lucide-react';
 
 export default function AdminLoginPage() {
+    const router = useRouter();
+    const { toast } = useToast();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
-    const toast = useToast();
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        console.log('[Admin Login Page] Login page mounted/loaded', {
-            pathname: window.location.pathname,
-            search: window.location.search,
-            referrer: document.referrer,
-            timestamp: new Date().toISOString(),
-        });
+    // Validation
+    const isFormValid = email.includes('@') && password.length >= 6;
 
-        // Check if we were redirected here from a protected route
-        if (document.referrer && document.referrer.includes('/admin')) {
-            console.warn('[Admin Login Page] Redirected to login page from admin route', {
-                referrer: document.referrer,
-                currentPath: window.location.pathname,
-            });
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!isFormValid) {
+            toast('Please enter a valid email and password (min 6 chars).', 'warning');
+            return;
         }
 
-        // If already authenticated, redirect away from login.
-        (async () => {
-            try {
-                console.log('[Admin Login Page] Checking existing session via GET /api/auth ...');
-                const res = await fetch('/api/auth', { method: 'GET', credentials: 'include' });
-                const data = await res.json().catch(() => ({}));
-                console.log('[Admin Login Page] Session check result', {
-                    status: res.status,
-                    ok: res.ok,
-                    data,
-                });
-
-                if (data?.authenticated === true) {
-                    console.log('[Admin Login Page] Already authenticated; redirecting to dashboard', {
-                        destination: ROUTES.ADMIN.DASHBOARD,
-                    });
-                    window.location.replace(ROUTES.ADMIN.DASHBOARD);
-                }
-            } catch (e) {
-                console.warn('[Admin Login Page] Session check failed', e);
-            }
-        })();
-    }, []);
-
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-
-        console.log('[Admin Login] Starting login process...', { email });
+        setIsLoading(true);
 
         try {
-            if (!auth) {
-                console.error('[Admin Login] Firebase auth not available');
-                throw new Error('Firebase auth is not available in this environment.');
-            }
+            // 1. Sign in with Firebase Client SDK
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const idToken = await userCredential.user.getIdToken();
 
-            console.log('[Admin Login] Attempting Firebase authentication...');
-            const cred = await signInWithEmailAndPassword(auth, email, password);
-            console.log('[Admin Login] Firebase authentication successful', { uid: cred.user.uid });
-
-            const idToken = await cred.user.getIdToken();
-            console.log('[Admin Login] ID token obtained', { tokenLength: idToken.length });
-
-            // Make the auth request with credentials
-            console.log('[Admin Login] Sending auth request to /api/auth...');
-            const res = await fetch('/api/auth', {
+            // 2. Create session cookie via API
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include', // Critical: ensures cookies are sent and received
                 body: JSON.stringify({ idToken }),
             });
 
-            console.log('[Admin Login] Auth API response received', {
-                status: res.status,
-                statusText: res.statusText,
-                ok: res.ok,
-            });
-
-            const data = await res.json().catch(() => ({}));
-            console.log('[Admin Login] Auth API response data', {
-                success: data.success,
-                hasError: !!data.error,
-                error: data.error,
-                hasUser: !!data.user,
-            });
-
-            if (!res.ok || data?.success === false) {
-                const errorMessage = data?.error || 'Login failed';
-                console.error('[Admin Login] Auth API request failed', { errorMessage });
-                throw new Error(errorMessage);
+            if (response.ok) {
+                toast('Login successful! Redirecting...', 'success');
+                // Small delay to show toast before redirect
+                setTimeout(() => {
+                    router.push('/admin');
+                }, 500);
+            } else {
+                const data = await response.json();
+                toast(data.message || 'Login failed', 'error');
             }
-
-            // Verify the response was successful
-            if (!data.success) {
-                const errorMessage = data.error || 'Login failed';
-                console.error('[Admin Login] Auth response indicates failure', { errorMessage });
-                throw new Error(errorMessage);
-            }
-
-            // Check if Set-Cookie header is in the response
-            // This helps us verify the cookie was set
-            const setCookieHeader = res.headers.get('set-cookie');
-            console.log('[Admin Login] Checking Set-Cookie header', {
-                hasSetCookie: !!setCookieHeader,
-                setCookieHeader: setCookieHeader ? setCookieHeader.substring(0, 150) : null,
-                allHeaders: Object.fromEntries(res.headers.entries()),
-            });
-
-            // Show success toast
-            console.log('[Admin Login] Login successful! Showing toast and preparing redirect...');
-            toast.success('Login successful! Redirecting...', 2000);
-
-            // IMPORTANT: Wait for the cookie to be set in the browser
-            // Cookies set via Set-Cookie header need a moment to be processed
-            console.log('[Admin Login] Waiting 1000ms for cookie to be set in browser...');
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // Verify session is actually present BEFORE redirecting.
-            console.log('[Admin Login] Verifying session via GET /api/auth before redirect...');
-            const verifyRes = await fetch('/api/auth', { method: 'GET', credentials: 'include' });
-            const verifyData = await verifyRes.json().catch(() => ({}));
-            console.log('[Admin Login] Session verify result', {
-                status: verifyRes.status,
-                ok: verifyRes.ok,
-                verifyData,
-            });
-
-            if (verifyData?.authenticated !== true) {
-                console.error('[Admin Login] Cookie not active yet; staying on login', verifyData);
-                toast.error(
-                    `Not logged in (${verifyData?.reason || 'UNKNOWN'}). Make sure ADMIN_COOKIE_SECRET is set.`,
-                    6000
-                );
-                setLoading(false);
-                return;
-            }
-
-            console.log('[Admin Login] Redirecting to dashboard...', {
-                destination: ROUTES.ADMIN.DASHBOARD,
-                method: 'window.location.href',
-            });
-
-            // Use window.location for a hard redirect that includes cookies
-            // router.push might not trigger a full server-side render that reads cookies
-            window.location.replace(ROUTES.ADMIN.DASHBOARD);
-
         } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : 'Login failed';
-            const errorStack = err instanceof Error ? err.stack : undefined;
-            console.error('[Admin Login] Login error occurred', {
-                error: errorMessage,
-                errorObject: err,
-                stack: errorStack,
-            });
-            toast.error(errorMessage);
-            setLoading(false);
+            console.error('Login error:', err);
+            const errorCode = (err as { code?: string }).code;
+            if (errorCode === 'auth/invalid-credential') {
+                toast('Invalid email or password.', 'error');
+            } else if (errorCode === 'auth/too-many-requests') {
+                toast('Too many attempts. Please try again later.', 'error');
+            } else {
+                toast('An unexpected error occurred. Please try again.', 'error');
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-            <div className="w-full max-w-md space-y-8 rounded-2xl md:rounded-3xl bg-white p-6 md:p-10 shadow-xl border border-gray-100">
-                <div className="text-center">
-                    <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-200">
-                        <Lock size={32} />
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-100 via-gray-50 to-gray-50 overflow-hidden relative">
+
+            {/* Background Decorations */}
+            <div className="absolute top-0 left-0 w-full h-96 bg-linear-to-b from-white/0 via-violet-500/5 to-transparent pointer-events-none" />
+            <div className="absolute -top-20 -right-20 w-64 h-64 bg-violet-400/20 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute top-40 -left-20 w-72 h-72 bg-indigo-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
+
+            <div className="max-w-md w-full px-4 relative z-10 animate-in slide-in-from-bottom-8 fade-in duration-700 ease-out">
+                <div className="text-center mb-8 space-y-2">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br from-violet-600 to-indigo-600 shadow-lg shadow-violet-200 mb-4 ring-4 ring-white">
+                        <Sparkles className="w-6 h-6 text-white" />
                     </div>
-                    <h2 className="text-3xl font-bold tracking-tight text-gray-900">Admin Portal</h2>
-                    <p className="mt-2 text-gray-600">Secure access to Hillz Shift 4.0 management</p>
+                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome Back</h1>
+                    <p className="text-gray-500 text-sm">Sign in to access your administrative dashboard</p>
                 </div>
 
-                <form onSubmit={handleLogin} className="mt-8 space-y-6">
-                    <Input
-                        label="Email address"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        placeholder="admin@hillzshift.org"
-                    />
-                    <Input
-                        label="Password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        placeholder="••••••••"
-                    />
+                <Card variant="elevated" padding="lg" className="border-t-4 border-t-violet-500 shadow-xl shadow-violet-100/50 backdrop-blur-sm bg-white/90">
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        <Input
+                            label="Email Address"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            autoFocus
+                            placeholder="admin@example.com"
+                            className="bg-gray-50 focus:bg-white"
+                            endAdornment={<Mail className="w-5 h-5 text-gray-400" />}
+                        />
 
-                    <Button type="submit" className="w-full" size="lg" isLoading={loading}>
-                        Sign In
-                    </Button>
-                </form>
+                        <Input
+                            label="Password"
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            placeholder="••••••••"
+                            className="bg-gray-50 focus:bg-white"
+                            endAdornment={
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="focus:outline-none hover:text-violet-600 transition-colors p-1"
+                                    tabIndex={-1}
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="w-5 h-5" />
+                                    ) : (
+                                        <Eye className="w-5 h-5" />
+                                    )}
+                                </button>
+                            }
+                        />
 
-                <div className="text-center">
-                    <p className="text-xs text-gray-400">
-                        Forgot your password? Please contact the super admin.
-                    </p>
-                </div>
+                        <div className="pt-2">
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                className="w-full h-12 text-sm font-semibold shadow-lg shadow-violet-500/20 hover:shadow-violet-500/30 transition-all active:scale-[0.98]"
+                                isLoading={isLoading}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <>Sign In</> // Loader handles itself in Button component usually
+                                ) : (
+                                    <span className="flex items-center gap-2">
+                                        Sign In <Lock className="w-4 h-4 opacity-50" />
+                                    </span>
+                                )}
+                            </Button>
+                        </div>
+                    </form>
+
+                    <div className="mt-6 text-center">
+                        <p className="text-xs text-gray-400">
+                            Protected by Hillz Shift Security System &copy; {new Date().getFullYear()}
+                        </p>
+                    </div>
+                </Card>
             </div>
         </div>
     );

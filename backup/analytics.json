@@ -1,0 +1,95 @@
+{
+  "success": true,
+  "rangeDays": 14,
+  "startDate": "2026-01-29T00:00:00.000Z",
+  "series": [
+    {
+      "date": "2026-01-29",
+      "label": "Jan 29",
+      "registrations": 3,
+      "invitations": 3
+    },
+    {
+      "date": "2026-01-30",
+      "label": "Jan 30",
+      "registrations": 2,
+      "invitations": 0
+    },
+    {
+      "date": "2026-01-31",
+      "label": "Jan 31",
+      "registrations": 3,
+      "invitations": 0
+    },
+    {
+      "date": "2026-02-01",
+      "label": "Feb 1",
+      "registrations": 0,
+      "invitations": 0
+    },
+    {
+      "date": "2026-02-02",
+      "label": "Feb 2",
+      "registrations": 0,
+      "invitations": 0
+    },
+    {
+      "date": "2026-02-03",
+      "label": "Feb 3",
+      "registrations": 0,
+      "invitations": 0
+    },
+    {
+      "date": "2026-02-04",
+      "label": "Feb 4",
+      "registrations": 0,
+      "invitations": 0
+    },
+    {
+      "date": "2026-02-05",
+      "label": "Feb 5",
+      "registrations": 0,
+      "invitations": 0
+    },
+    {
+      "date": "2026-02-06",
+      "label": "Feb 6",
+      "registrations": 0,
+      "invitations": 0
+    },
+    {
+      "date": "2026-02-07",
+      "label": "Feb 7",
+      "registrations": 0,
+      "invitations": 0
+    },
+    {
+      "date": "2026-02-08",
+      "label": "Feb 8",
+      "registrations": 0,
+      "invitations": 0
+    },
+    {
+      "date": "2026-02-09",
+      "label": "Feb 9",
+      "registrations": 0,
+      "invitations": 0
+    },
+    {
+      "date": "2026-02-10",
+      "label": "Feb 10",
+      "registrations": 0,
+      "invitations": 0
+    },
+    {
+      "date": "2026-02-11",
+      "label": "Feb 11",
+      "registrations": 0,
+      "invitations": 0
+    }
+  ],
+  "totals": {
+    "registrations": 8,
+    "invitations": 3
+  }
+}

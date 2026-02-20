@@ -178,11 +178,10 @@ export const RegistrationForm = () => {
                             });
                         }
                     }}
-                    className={`flex h-11 w-full rounded-xl border px-4 py-2 text-sm transition-all focus:outline-none focus:ring-4 placeholder:text-gray-400 ${
-                        errors.address
+                    className={`flex h-11 w-full rounded-xl border px-4 py-2 text-sm transition-all focus:outline-none focus:ring-4 placeholder:text-gray-400 ${errors.address
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500/10'
                             : 'border-gray-200 bg-white focus:border-primary focus:ring-primary/10'
-                    }`}
+                        }`}
                 />
                 {errors.address && <span className="text-xs text-red-500">{errors.address}</span>}
             </div>
@@ -215,11 +214,10 @@ export const RegistrationForm = () => {
                         }
                     }}
                     required
-                    className={`flex h-11 w-full rounded-xl border px-4 py-2 text-sm transition-all focus:outline-none focus:ring-4 ${
-                        errors.joiningMethod
+                    className={`flex h-11 w-full rounded-xl border px-4 py-2 text-sm transition-all focus:outline-none focus:ring-4 ${errors.joiningMethod
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500/10'
                             : 'border-gray-200 bg-white focus:border-primary focus:ring-primary/10'
-                    }`}
+                        }`}
                 >
                     <option value="">Select an option</option>
                     <option value="in-person">In Person</option>
@@ -243,11 +241,10 @@ export const RegistrationForm = () => {
                         }
                     }}
                     required
-                    className={`flex h-11 w-full rounded-xl border px-4 py-2 text-sm transition-all focus:outline-none focus:ring-4 ${
-                        errors.heardFrom
+                    className={`flex h-11 w-full rounded-xl border px-4 py-2 text-sm transition-all focus:outline-none focus:ring-4 ${errors.heardFrom
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500/10'
                             : 'border-gray-200 bg-white focus:border-primary focus:ring-primary/10'
-                    }`}
+                        }`}
                 >
                     <option value="">Select an option</option>
                     <option value="social-media">Social Media</option>

@@ -13,8 +13,16 @@ interface Toast {
   duration?: number;
 }
 
+interface ToastOptions {
+  title?: string;
+  description?: string;
+  message?: string;
+  type?: ToastType;
+  duration?: number;
+}
+
 interface ToastContextType {
-  toast: (message: string, type?: ToastType, duration?: number) => void;
+  toast: (options: string | ToastOptions, type?: ToastType, duration?: number) => void;
   success: (message: string, duration?: number) => void;
   error: (message: string, duration?: number) => void;
   info: (message: string, duration?: number) => void;
@@ -31,16 +39,29 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addToast = useCallback(
-    (message: string, type: ToastType = 'info', duration: number = 5000) => {
+    (options: string | ToastOptions, type: ToastType = 'info', duration: number = 5000) => {
       const id = Math.random().toString(36).substring(2, 9);
-      const newToast: Toast = { id, message, type, duration };
+
+      let toastMessage: string;
+      let toastType: ToastType = type;
+      let toastDuration: number = duration;
+
+      if (typeof options === 'object') {
+        toastMessage = options.message || options.description || options.title || '';
+        if (options.type) toastType = options.type;
+        if (options.duration !== undefined) toastDuration = options.duration;
+      } else {
+        toastMessage = options;
+      }
+
+      const newToast: Toast = { id, message: toastMessage, type: toastType, duration: toastDuration };
 
       setToasts((prev) => [...prev, newToast]);
 
-      if (duration > 0) {
+      if (toastDuration > 0) {
         setTimeout(() => {
           removeToast(id);
-        }, duration);
+        }, toastDuration);
       }
     },
     [removeToast]
@@ -139,15 +160,15 @@ function ToastItem({
       )}
       role="alert"
     >
-      <Icon className={cn('h-5 w-5 flex-shrink-0 mt-0.5', iconColor)} />
+      <Icon className={cn('h-5 w-5 shrink-0 mt-0.5', iconColor)} />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold">{title}</p>
-        <p className="text-sm mt-0.5 break-words">{message}</p>
+        <p className="text-sm mt-0.5 wrap-break-word">{message}</p>
       </div>
       <button
         onClick={() => removeToast(id)}
         className={cn(
-          'flex-shrink-0 rounded-lg p-1 hover:bg-black/5 transition-colors',
+          'shrink-0 rounded-lg p-1 hover:bg-black/5 transition-colors',
           text
         )}
         aria-label="Close toast"

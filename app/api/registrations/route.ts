@@ -1,163 +1,88 @@
-import { NextResponse } from "next/server";
-import { db } from "@/src/lib/firebaseAdmin";
-import { sendEmail } from "@/src/lib/email";
-import { registrationTemplate } from "@/src/templates/email/invitationTemplate";
-import { AdminAuthError, requireAdminSession } from "@/src/lib/adminSession";
-import { randomUUID } from "crypto";
+import { NextRequest } from "next/server";
+import {
+  successResponse,
+  errorResponse,
+  unauthorizedResponse,
+  validationErrorResponse,
+} from "@/src/lib/api/response";
+import { queryDocuments } from "@/src/lib/firebase/firestore";
+import { getSession } from "@/src/lib/auth/session";
+import { Registration } from "@/src/types/registration";
+import { registrationQuerySchema } from "@/src/schemas/registration.schema";
+import { ZodError } from "zod";
 
-export async function POST(request: Request) {
-  const requestId = randomUUID();
+/**
+ * GET /api/registrations
+ * List all registrations (admin only)
+ */
+export async function GET(request: NextRequest) {
   try {
-    console.log("[registrations:POST] start", { requestId });
-    const data = await request.json();
-    const {
-      name,
-      email,
-      phone,
-      address,
-      whoInvited,
-      heardFrom,
-      joiningMethod,
-    } = data;
-    console.log("[registrations:POST] payload", {
-      requestId,
-      name,
-      email: typeof email === "string" ? email : null,
-      hasPhone: Boolean(phone),
-      hasAddress: Boolean(address),
-      hasWhoInvited: Boolean(whoInvited),
-      heardFrom,
-      joiningMethod,
-    });
-
-    // Validate required fields
-    if (!name || !name.trim()) {
-      const errorMsg = "Name is required";
-      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
-      return NextResponse.json(
-        { success: false, error: errorMsg },
-        { status: 400 }
-      );
+    // Check authentication
+    const session = await getSession();
+    if (
+      !session ||
+      !["super_admin", "admin", "editor"].includes(session.role)
+    ) {
+      return unauthorizedResponse("Admin access required");
     }
 
-    if (!email || !email.trim()) {
-      const errorMsg = "Email is required";
-      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
-      return NextResponse.json(
-        { success: false, error: errorMsg },
-        { status: 400 }
-      );
+    const { searchParams } = new URL(request.url);
+
+    // Parse and validate query parameters
+    const queryParams = Object.fromEntries(searchParams.entries());
+    const validated = registrationQuerySchema.parse(queryParams);
+
+    // Build filters
+    const filters: Record<string, any> = {};
+
+    if (validated.eventId) {
+      filters.eventId = validated.eventId;
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
-      const errorMsg = "Invalid email format";
-      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
-      return NextResponse.json(
-        { success: false, error: errorMsg },
-        { status: 400 }
-      );
+    if (validated.status) {
+      filters.status = validated.status;
     }
 
-    if (!phone || !phone.trim()) {
-      const errorMsg = "Phone number is required";
-      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
-      return NextResponse.json(
-        { success: false, error: errorMsg },
-        { status: 400 }
-      );
+    if (validated.ticketType) {
+      filters.ticketType = validated.ticketType;
     }
 
-    if (!address || !address.trim()) {
-      const errorMsg = "Address is required";
-      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
-      return NextResponse.json(
-        { success: false, error: errorMsg },
-        { status: 400 }
-      );
+    if (validated.checkedIn !== undefined) {
+      filters.checkedIn = validated.checkedIn;
     }
 
-    if (!joiningMethod) {
-      const errorMsg = "Joining method is required";
-      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
-      return NextResponse.json(
-        { success: false, error: errorMsg },
-        { status: 400 }
-      );
-    }
-
-    if (!heardFrom) {
-      const errorMsg = "How you heard about us is required";
-      console.error("[registrations:POST] validation_error", { requestId, error: errorMsg });
-      return NextResponse.json(
-        { success: false, error: errorMsg },
-        { status: 400 }
-      );
-    }
-
-    // Save to Firestore
-    const docRef = await db.collection("registrations").add({
-      name,
-      email,
-      phone,
-      address,
-      whoInvited,
-      heardFrom,
-      joiningMethod,
-      createdAt: new Date().toISOString(),
-    });
-    console.log("[registrations:POST] saved", { requestId, id: docRef.id });
-
-    // Send confirmation email
-    const emailResult = await sendEmail({
-      to: email,
-      subject: "Registration Confirmed - Hillz Shift 4.0",
-      html: registrationTemplate(name),
-      context: { requestId, purpose: "registration_confirmation" },
-    });
-    console.log("[registrations:POST] email_result", {
-      requestId,
-      success: emailResult.success,
-    });
-
-    return NextResponse.json({ success: true, id: docRef.id });
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Failed to process registration";
-    console.error("[registrations:POST] error", { requestId, errorMessage });
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
+    // Query registrations
+    const registrations = await queryDocuments<Registration>(
+      "registrations",
+      filters,
+      "registrationDate",
+      validated.limit || 100,
     );
-  }
-}
 
-export async function GET() {
-  try {
-    await requireAdminSession();
-
-    const snapshot = await db
-      .collection("registrations")
-      .orderBy("createdAt", "desc")
-      .get();
-    const registrations = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    return NextResponse.json(registrations);
-  } catch (error: unknown) {
-    if (error instanceof AdminAuthError) {
-      return NextResponse.json(
-        { success: false, error: error.code },
-        { status: error.code === "FORBIDDEN" ? 403 : 401 }
+    // Filter by search if provided
+    let filteredRegistrations = registrations;
+    if (validated.search) {
+      const searchLower = validated.search.toLowerCase();
+      filteredRegistrations = registrations.filter(
+        (reg) =>
+          reg.attendee.firstName.toLowerCase().includes(searchLower) ||
+          reg.attendee.lastName.toLowerCase().includes(searchLower) ||
+          reg.attendee.email.toLowerCase().includes(searchLower) ||
+          reg.confirmationCode.toLowerCase().includes(searchLower),
       );
     }
-    const errorMessage =
-      error instanceof Error ? error.message : "Failed to fetch registrations";
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
+
+    return successResponse(filteredRegistrations);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return validationErrorResponse(error.errors);
+    }
+
+    console.error("Fetch registrations error:", error);
+    return errorResponse(
+      "FETCH_ERROR",
+      "Failed to fetch registrations",
+      (error as Error).message,
     );
   }
 }

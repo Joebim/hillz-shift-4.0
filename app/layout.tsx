@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/src/contexts/ToastContext";
-import { QueryProvider } from "@/src/providers/QueryProvider";
+import QueryProvider from "@/src/providers/QueryProvider";
+import { ConfirmModal } from "@/src/components/ui/ConfirmModal";
 
-const inter = Inter({ subsets: ["latin"] });
+const font = Outfit({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700", "800", "900"] });
 
 export const metadata: Metadata = {
   title: "Hillz Shift 4.0 | Spiritual Renewal & Transformation",
@@ -17,13 +18,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={inter.className} suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+      <body className={font.className} suppressHydrationWarning>
         <QueryProvider>
           <ToastProvider>
-        <div className="flex min-h-screen flex-col">
-          {children}
-        </div>
+            <div className="flex min-h-screen flex-col">
+              {children}
+              <ConfirmModal />
+            </div>
           </ToastProvider>
         </QueryProvider>
       </body>
