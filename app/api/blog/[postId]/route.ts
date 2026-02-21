@@ -1,4 +1,3 @@
-import { NextRequest, NextResponse } from "next/server";
 import {
   getDocument,
   updateDocument,
@@ -8,6 +7,8 @@ import { getSession } from "@/src/lib/auth/session";
 import { BlogPost } from "@/src/types/blog";
 import { updateBlogPostSchema } from "@/src/schemas/blog.schema";
 import { successResponse, errorResponse } from "@/src/lib/api/response";
+import { ZodError } from "zod";
+import { NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,
@@ -31,7 +32,7 @@ export async function GET(
     return errorResponse(
       "INTERNAL_ERROR",
       "Failed to fetch blog post",
-      error,
+      (error as Error).message,
       500,
     );
   }
@@ -66,15 +67,15 @@ export async function PATCH(
     const updatedPost = await getDocument<BlogPost>("blog", postId);
 
     return successResponse(updatedPost, "Blog post updated successfully");
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating blog post:", error);
-    if (error.name === "ZodError") {
+    if (error instanceof ZodError) {
       return errorResponse("VALIDATION_ERROR", "Invalid data", error.errors);
     }
     return errorResponse(
       "INTERNAL_ERROR",
       "Failed to update blog post",
-      error,
+      (error as Error).message,
       500,
     );
   }
@@ -100,7 +101,7 @@ export async function DELETE(
     return errorResponse(
       "INTERNAL_ERROR",
       "Failed to delete blog post",
-      error,
+      (error as Error).message,
       500,
     );
   }

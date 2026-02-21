@@ -16,7 +16,7 @@ import { generateSlug } from "@/src/lib/utils";
  * GET /api/ministries
  * List all active ministries (public)
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Check if admin is authenticated
     const session = await getSession();
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       session && ["super_admin", "admin", "editor"].includes(session.role);
 
     // Build filters
-    const filters: Record<string, any> = {};
+    const filters: Record<string, unknown> = {};
 
     // If not admin, only show active ministries
     if (!isAdmin) {

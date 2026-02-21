@@ -59,7 +59,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ success: true, data: { deleted: true } });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Delete upload error:", error);
     return NextResponse.json(
       { success: false, error: "Delete failed" },

@@ -14,6 +14,7 @@ export interface Ministry {
   name: string;
   slug: string;
   description: string;
+  category?: string;
 
   // Visual
   icon: string;

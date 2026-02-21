@@ -3,9 +3,9 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { 
-    Search, Loader2, Image as ImageIcon, Video, 
-    Check, Trash2, X, Upload, Info, 
+import {
+    Search, Loader2, Image as ImageIcon, Video,
+    Check, Trash2, X, Upload, Info,
     Copy, ExternalLink, Filter, Grid, List as ListIcon,
     File, FileVideo, FileImage, Calendar, Box
 } from 'lucide-react';
@@ -149,7 +149,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                             />
                         </div>
                         <div className="flex p-1 bg-gray-50 rounded-xl border border-gray-100">
-                            <button 
+                            <button
                                 onClick={() => setViewMode('grid')}
                                 className={cn(
                                     "p-1.5 rounded-lg transition-all",
@@ -158,7 +158,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                             >
                                 <Grid className="w-4 h-4" />
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setViewMode('list')}
                                 className={cn(
                                     "p-1.5 rounded-lg transition-all",
@@ -169,7 +169,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                             </button>
                         </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-3">
                         <label className="cursor-pointer bg-violet-600 text-white px-5 py-2 rounded-2xl text-sm font-bold shadow-lg shadow-violet-200 hover:bg-violet-700 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2">
                             <input
@@ -209,7 +209,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                         </div>
                     ) : (
                         <div className={cn(
-                            viewMode === 'grid' 
+                            viewMode === 'grid'
                                 ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6 gap-6"
                                 : "flex flex-col gap-2"
                         )}>
@@ -226,7 +226,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                     className={cn(
                                         "group rounded-3xl overflow-hidden transition-all cursor-pointer relative",
                                         viewMode === 'grid' ? "aspect-square" : "flex items-center gap-4 p-3 bg-white border border-transparent shadow-sm hover:border-violet-100",
-                                        selectedMedia?._id === media._id 
+                                        selectedMedia?._id === media._id
                                             ? viewMode === 'grid' ? "ring-4 ring-violet-500/20" : "bg-violet-50/50 border-violet-200"
                                             : "hover:shadow-xl hover:shadow-gray-200/50"
                                     )}
@@ -254,7 +254,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                                         sizes="(max-width: 768px) 50vw, 25vw"
                                                     />
                                                 )}
-                                                
+
                                                 {/* Selection Badge */}
                                                 <div className={cn(
                                                     "absolute top-3 right-3 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center transition-all",
@@ -264,7 +264,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                                 </div>
 
                                                 {/* Meta Overlay */}
-                                                <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="absolute inset-x-0 bottom-0 p-3 bg-linear-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <p className="text-white text-[10px] font-bold uppercase tracking-wider truncate mb-1">{media.public_id.split('/').pop()}</p>
                                                     <div className="flex items-center justify-between">
                                                         <span className="text-white/80 text-[8px] font-medium">{media.format.toUpperCase()} • {media.width}x{media.height}</span>
@@ -313,7 +313,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                     <div className="flex flex-col h-full overflow-hidden">
                         <div className="p-6 border-b border-gray-100 flex items-center justify-between shrink-0">
                             <h4 className="font-bold text-gray-900">Asset Details</h4>
-                            <button 
+                            <button
                                 onClick={() => setSelectedMedia(null)}
                                 className="p-2 hover:bg-gray-50 rounded-xl text-gray-400 transition-colors"
                             >
@@ -327,27 +327,27 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                 {selectedMedia.resource_type === 'video' ? (
                                     <video src={selectedMedia.secure_url} controls className="w-full h-full object-contain" />
                                 ) : (
-                                    <Image 
-                                        src={selectedMedia.secure_url} 
-                                        alt="" 
-                                        fill 
-                                        className="object-contain p-2" 
+                                    <Image
+                                        src={selectedMedia.secure_url}
+                                        alt=""
+                                        fill
+                                        className="object-contain p-2"
                                     />
                                 )}
                             </div>
 
                             {/* Actions */}
                             <div className="grid grid-cols-2 gap-3">
-                                <button 
+                                <button
                                     onClick={() => copyToClipboard(selectedMedia.secure_url)}
                                     className="flex items-center justify-center gap-2 p-3 bg-violet-50 text-violet-700 rounded-2xl text-xs font-bold hover:bg-violet-100 transition-colors active:scale-95"
                                 >
                                     <Copy className="w-3.5 h-3.5" />
                                     Copy URL
                                 </button>
-                                <a 
-                                    href={selectedMedia.secure_url} 
-                                    target="_blank" 
+                                <a
+                                    href={selectedMedia.secure_url}
+                                    target="_blank"
                                     rel="noreferrer"
                                     className="flex items-center justify-center gap-2 p-3 bg-gray-50 text-gray-700 rounded-2xl text-xs font-bold hover:bg-gray-100 transition-colors active:scale-95"
                                 >
@@ -362,7 +362,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                     <Info className="w-4 h-4" />
                                     <span className="text-[10px] font-bold uppercase tracking-widest">Metadata</span>
                                 </div>
-                                
+
                                 <MetadataItem icon={File} label="File Name" value={selectedMedia.public_id.split('/').pop() || ''} />
                                 <MetadataItem icon={ImageIcon} label="Dimensions" value={`${selectedMedia.width} × ${selectedMedia.height}`} />
                                 <MetadataItem icon={Box} label="File Size" value={formatSize(selectedMedia.bytes)} />
@@ -370,7 +370,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                 <MetadataItem icon={Check} label="Extension" value={selectedMedia.format.toUpperCase()} />
                             </div>
 
-                            <button 
+                            <button
                                 onClick={() => handleDelete(selectedMedia.public_id)}
                                 className="w-full flex items-center justify-center gap-2 p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-bold hover:bg-red-100 transition-colors"
                             >

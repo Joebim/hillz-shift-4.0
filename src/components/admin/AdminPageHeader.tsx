@@ -15,7 +15,7 @@ export const AdminPageHeader = ({ title, description, action }: AdminPageHeaderP
     return (
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
-                <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 tracking-tight">{title}</h1>
+                <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-slate-900 to-slate-700 tracking-tight">{title}</h1>
                 {description && <p className="text-slate-500 mt-2 text-lg font-medium">{description}</p>}
             </div>
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/src/lib/firebase/admin";
 import { getSession } from "@/src/lib/auth/session";
+import { QueryDocumentSnapshot, DocumentData } from "firebase-admin/firestore";
 import { Event } from "@/src/types/event";
 
 /**
@@ -36,8 +37,9 @@ export async function GET() {
       });
     }
 
-    let ongoingEventDoc: any = null;
-    let mostRecentPastEventDoc: any = null;
+    let ongoingEventDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+    let mostRecentPastEventDoc: QueryDocumentSnapshot<DocumentData> | null =
+      null;
 
     publishedEventsQuery.docs.forEach((doc) => {
       const data = doc.data();
@@ -64,7 +66,8 @@ export async function GET() {
       }
     });
 
-    const eventDoc = ongoingEventDoc || mostRecentPastEventDoc;
+    const eventDoc = (ongoingEventDoc ||
+      mostRecentPastEventDoc) as QueryDocumentSnapshot<DocumentData> | null;
 
     if (!eventDoc) {
       return NextResponse.json({

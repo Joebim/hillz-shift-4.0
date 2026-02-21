@@ -12,7 +12,7 @@ export interface RegistrationAttendee {
   lastName: string;
   email: string;
   phone: string;
-  customFields: Record<string, any>;
+  customFields: Record<string, unknown>;
 }
 
 export interface RegistrationPayment {
@@ -29,6 +29,8 @@ export interface Registration {
 
   // Attendee Info
   attendee: RegistrationAttendee;
+  name?: string;
+  email?: string;
 
   // Registration Details
   status: RegistrationStatus;

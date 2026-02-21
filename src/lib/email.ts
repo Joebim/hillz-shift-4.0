@@ -87,7 +87,7 @@ export const sendEmail = async ({
     });
     return { success: true, info };
   } catch (error) {
-    const err = error as any;
+    const err = error as Record<string, unknown>;
     console.error("[email] send failed", {
       requestId,
       to: maskEmail(to),

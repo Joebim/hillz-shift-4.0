@@ -1,12 +1,10 @@
 'use client';
 
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Event } from '@/src/types/event';
 import { createEventSchema } from '@/src/schemas/event.schema';
 import { Button } from '@/src/components/ui/Button';
-import { Input } from '@/src/components/ui/Input';
-import { Textarea } from '@/src/components/ui/Textarea';
 import { ImageUpload } from '@/src/components/admin/ImageUpload';
 import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
@@ -15,8 +13,8 @@ import { toJsDate, cn } from '@/src/lib/utils';
 import { z } from 'zod';
 import {
     Plus, Trash2, Link as LinkIcon, User, Image as ImageIcon,
-    AlignLeft, Calendar, Radio, ClipboardList, ChevronRight,
-    Hash, Palette, MapPin, BookOpen, Save, X, Check, AlertCircle, Mail
+    Calendar, Radio, ClipboardList, ChevronRight, AlignLeft,
+    Hash, MapPin, Save, X, Check, Mail, BookOpen
 } from 'lucide-react';
 import { DynamicFormBuilder } from './DynamicFormBuilder';
 import { GoogleMapSelector } from './GoogleMapSelector';
@@ -254,9 +252,9 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
     const registrationEnabled = watch('registrationConfig.enabled');
     const invitationEnabled = watch('invitationConfig.enabled');
 
-    const onError = (errors: any) => {
+    const onError = (errors: FieldErrors<EventFormData>) => {
         console.log('Validation failed for:', Object.keys(errors));
-        const errorDetails = Object.entries(errors).map(([key, value]: [string, any]) => `${key}: ${value?.message || 'Invalid'}`).join(', ');
+        const errorDetails = Object.entries(errors).map(([key, value]) => `${key}: ${(value as { message?: string })?.message || 'Invalid'}`).join(', ');
 
         toast({
             title: 'Validation Error',
@@ -535,7 +533,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                 rows={2}
                                 placeholder="https://website.com, https://form.com"
                                 onChange={e => handleStringArrayChange('links', e.target.value)}
-                                defaultValue={(initialData as any)?.links?.join(', ')}
+                                defaultValue={initialData?.links?.join(', ')}
                             />
                         </div>
                     </Section>
@@ -593,7 +591,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                     <FormInput label="State" placeholder="State" {...register('venue.state')} />
                                     <FormInput label="Country" required placeholder="Country" error={errors.venue?.country?.message} {...register('venue.country')} />
                                 </div>
-                                <FormInput label="Postal Code" placeholder="Postal code" {...register('venue.postalCode' as any)} />
+                                <FormInput label="Postal Code" placeholder="Postal code" {...register('venue.postalCode')} />
                                 <div className="col-span-1 md:col-span-2 space-y-2 mt-2">
                                     <FieldLabel>Map Coordinates</FieldLabel>
                                     <div className="flex items-center gap-4 bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
@@ -670,7 +668,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                             <div className="text-center py-10 text-gray-400">
                                 <User className="w-10 h-10 mx-auto mb-2 opacity-20" />
                                 <p className="text-sm">No ministers added yet.</p>
-                                <p className="text-xs mt-0.5 text-gray-300">Click "Add Minister" to feature speakers.</p>
+                                <p className="text-xs mt-0.5 text-gray-300">Click &quot;Add Minister&quot; to feature speakers.</p>
                             </div>
                         ) : (
                             <div className="space-y-4">

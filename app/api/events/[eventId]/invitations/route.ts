@@ -17,7 +17,7 @@ import { ZodError } from "zod";
 import { generateRandomString } from "@/src/lib/utils";
 import { sendInvitationEmail } from "@/src/lib/email/send";
 import { getSession } from "@/src/lib/auth/session";
-import { Invitation } from "@/src/types/invitation"; // Assuming type exists or I use any
+import { Invitation } from "@/src/types/invitation";
 
 /**
  * POST /api/events/[eventId]/invitations

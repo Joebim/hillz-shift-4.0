@@ -1,6 +1,6 @@
 import { adminAuth } from "../firebase/admin";
 import { cookies } from "next/headers";
-import { AuthSession } from "@/src/types/user";
+import { AuthSession, UserRole } from "@/src/types/user";
 
 const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "admin_session";
 const SESSION_MAX_AGE = parseInt(process.env.SESSION_MAX_AGE || "604800"); // 7 days
@@ -43,7 +43,7 @@ export async function getSession(): Promise<AuthSession | null> {
     return {
       userId: decodedClaims.uid,
       email: decodedClaims.email || "",
-      role: (decodedClaims.role as any) || "viewer",
+      role: (decodedClaims.role as UserRole) || "admin",
       expiresAt: decodedClaims.exp * 1000,
     };
   } catch (error) {

@@ -43,7 +43,7 @@ export const Card = ({
         >
             {/* Optional inner glow/gradient for depth */}
             {variant === 'glass' && (
-                <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-linear-to-br from-white/40 to-transparent pointer-events-none" />
             )}
             <div className="relative z-10">{children}</div>
         </div>
@@ -58,7 +58,11 @@ export const CardHeader = ({ children, className, ...props }: HTMLAttributes<HTM
     );
 };
 
-export const CardTitle = ({ children, className, as: Component = 'h3', ...props }: any) => {
+interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {
+    as?: React.ElementType;
+}
+
+export const CardTitle = ({ children, className, as: Component = 'h3', ...props }: CardTitleProps) => {
     return (
         <Component
             className={cn('text-2xl font-bold text-white tracking-tight', className)}

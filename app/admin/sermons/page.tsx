@@ -176,7 +176,7 @@ export default function AdminSermonsPage() {
                                             <Mic className="w-8 h-8" />
                                         </div>
                                     )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-between p-4">
+                                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-between p-4">
                                         <span className="text-white text-xs font-bold bg-black/50 backdrop-blur-md px-2 py-1 rounded-lg border border-white/20">
                                             {formatDate(sermon.date, 'short')}
                                         </span>

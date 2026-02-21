@@ -16,9 +16,11 @@ import { ZodError } from "zod";
 import { generateRandomString } from "@/src/lib/utils";
 import { sendRegistrationEmail } from "@/src/lib/email/send";
 
-// Helper to safely convert Firestore Timestamp or string to Date
-const toDate = (d: any) =>
-  d && typeof d.toDate === "function" ? d.toDate() : new Date(d);
+type FirestoreDate = Date | string | number | { toDate: () => Date };
+const toDate = (d: FirestoreDate) =>
+  d && typeof (d as { toDate: () => Date }).toDate === "function"
+    ? (d as { toDate: () => Date }).toDate()
+    : new Date(d as string | number | Date);
 
 /**
  * POST /api/events/[eventId]/register

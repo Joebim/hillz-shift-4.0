@@ -15,8 +15,7 @@ import { useToast } from '@/src/contexts/ToastContext';
 import { toJsDate, cn } from '@/src/lib/utils';
 import { z } from 'zod';
 import {
-    Mic, Video, Music, Calendar,
-    Type, AlignLeft, Image as ImageIcon,
+    Video, Type, Image as ImageIcon,
     Settings, Sparkles, ChevronLeft, Save
 } from 'lucide-react';
 

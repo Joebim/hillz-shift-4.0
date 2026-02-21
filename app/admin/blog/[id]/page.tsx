@@ -1,6 +1,7 @@
 'use client';
 
 import { BlogPostForm } from '@/src/components/admin/blog/BlogPostForm';
+import { BlogPost } from '@/src/types/blog';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useParams } from 'next/navigation';
 import { useToast } from '@/src/contexts/ToastContext';
@@ -18,13 +19,13 @@ export default function EditBlogPostPage() {
             const res = await fetch(`/api/blog/${id}`);
             if (!res.ok) throw new Error('Failed to fetch post');
             const json = await res.json();
-            return json.data;
+            return json.data as BlogPost;
         },
         enabled: !!id,
     });
 
     const updateMutation = useMutation({
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: Record<string, unknown>) => {
             const res = await fetch(`/api/blog/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },

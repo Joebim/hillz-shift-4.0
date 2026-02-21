@@ -17,6 +17,7 @@ export const createMinistrySchema = z.object({
     .min(1, "Slug is required")
     .regex(/^[a-z0-9-]+$/, "Invalid slug format"),
   description: z.string().min(1, "Description is required"),
+  category: z.string().optional(),
 
   // Visual
   icon: z.string().min(1, "Icon is required"),

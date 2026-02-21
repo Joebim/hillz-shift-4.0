@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import cloudinary from "@/src/lib/cloudinary";
 import { getSession } from "@/src/lib/auth/session";
 
+export interface CloudinaryResource {
+  asset_id: string;
+  public_id: string;
+  url: string;
+  secure_url: string;
+  format: string;
+  resource_type: string;
+  width: number;
+  height: number;
+  created_at: string;
+  folder?: string;
+}
+
 // Helper to check Authorization
 async function checkAuth() {
   const session = await getSession();
@@ -43,7 +56,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Map to generic format
-    const data = result.resources.map((res: any) => ({
+    const data = result.resources.map((res: CloudinaryResource) => ({
       _id: res.asset_id,
       public_id: res.public_id,
       url: res.url,
@@ -62,10 +75,14 @@ export async function GET(request: NextRequest) {
       data: data,
       next_cursor: result.next_cursor,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Cloudinary listing error:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to list uploads" },
+      {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Failed to list uploads",
+      },
       { status: 500 },
     );
   }
@@ -100,20 +117,24 @@ export async function POST(request: NextRequest) {
     const type = file.type.startsWith("video/") ? "video" : "image";
 
     // Upload to Cloudinary using stream
-    const uploadResult: any = await new Promise((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream(
-          {
-            folder: folder,
-            resource_type: type,
-          },
-          (error, result) => {
-            if (error) return reject(error);
-            resolve(result);
-          },
-        )
-        .end(buffer);
-    });
+    const uploadResult: CloudinaryResource = await new Promise(
+      (resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder: folder,
+              resource_type: type,
+            },
+            (error, result) => {
+              if (error) return reject(error);
+              if (!result)
+                return reject(new Error("Cloudinary upload failed: no result"));
+              resolve(result as unknown as CloudinaryResource);
+            },
+          )
+          .end(buffer);
+      },
+    );
 
     const responseData = {
       _id: uploadResult.asset_id,
@@ -132,10 +153,13 @@ export async function POST(request: NextRequest) {
       { success: true, data: responseData },
       { status: 201 },
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Upload failed" },
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Upload failed",
+      },
       { status: 500 },
     );
   }

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getFirestore } from "firebase-admin/firestore";
 import { getSession } from "@/src/lib/auth/session";
+import { Event } from "@/src/types/event";
+import { Registration } from "@/src/types/registration";
+import { Invitation } from "@/src/types/invitation";
 
 // Init Firestore (assuming global stored or re-init safely)
 // Note: In Next.js, it's better to have a singleton for admin, but for now we follow pattern
@@ -56,7 +59,7 @@ export async function GET(request: NextRequest) {
       .get();
 
     const events = eventsSnapshot.docs
-      .map((doc) => ({ id: doc.id, ...doc.data() }) as any)
+      .map((doc) => ({ id: doc.id, ...doc.data() }) as unknown as Event)
       .filter(
         (e) =>
           e.title?.toLowerCase().includes(lowerQuery) ||
@@ -72,7 +75,7 @@ export async function GET(request: NextRequest) {
       .get();
 
     const registrations = registrationsSnapshot.docs
-      .map((doc) => ({ id: doc.id, ...doc.data() }) as any)
+      .map((doc) => ({ id: doc.id, ...doc.data() }) as unknown as Registration)
       .filter(
         (r) =>
           r.name?.toLowerCase().includes(lowerQuery) ||
@@ -88,7 +91,7 @@ export async function GET(request: NextRequest) {
       .get();
 
     const invitations = invitationsSnapshot.docs
-      .map((doc) => ({ id: doc.id, ...doc.data() }) as any)
+      .map((doc) => ({ id: doc.id, ...doc.data() }) as unknown as Invitation)
       .filter((i) => i.inviteeName?.toLowerCase().includes(lowerQuery))
       .slice(0, 5);
 

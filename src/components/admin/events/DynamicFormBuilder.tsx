@@ -1,8 +1,9 @@
 import React from 'react';
-import { useFieldArray, Control, UseFormRegister, FieldErrors } from 'react-hook-form';
+import { useFieldArray, Control, UseFormRegister, FieldErrors, FieldValues, UseFormWatch, UseFormSetValue, ArrayPath, FieldArrayPath } from 'react-hook-form';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
-import { EventFormField } from '@/src/types/event';
+// EventFormField was removed since it is unused
+
 
 // Simple inputs matching the style of EventForm
 function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
@@ -71,22 +72,29 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: 
     );
 }
 
-interface DynamicFormBuilderProps {
-    control: Control<any>;
-    register: UseFormRegister<any>;
-    errors: FieldErrors<any>;
-    path: string;
-    watch: any;
-    setValue: any;
+interface DynamicFormBuilderProps<TFieldValues extends FieldValues = FieldValues> {
+    control: Control<TFieldValues>;
+    register: UseFormRegister<TFieldValues>;
+    errors: FieldErrors<TFieldValues>;
+    path: ArrayPath<TFieldValues>;
+    watch: UseFormWatch<TFieldValues>;
+    setValue: UseFormSetValue<TFieldValues>;
 }
 
-export function DynamicFormBuilder({ control, register, errors, path, watch, setValue }: DynamicFormBuilderProps) {
+export function DynamicFormBuilder<TFieldValues extends FieldValues = FieldValues>({ control, register, errors, path, watch, setValue }: DynamicFormBuilderProps<TFieldValues>) {
     const { fields, append, remove, move } = useFieldArray({
         control,
-        name: path,
+        name: path as FieldArrayPath<TFieldValues>,
     });
 
     const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const watchField = (name: string) => watch(name as any) as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const registerField = (name: string, options?: any) => register(name as any, options);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const setValueField = (name: string, value: any) => setValue(name as any, value);
 
     const addField = () => {
         append({
@@ -95,18 +103,24 @@ export function DynamicFormBuilder({ control, register, errors, path, watch, set
             type: 'text',
             required: false,
             options: [],
-        });
+        } as unknown as Parameters<typeof append>[0]);
     };
 
     return (
         <div className="space-y-4">
             {fields.map((field, index) => {
-                const fieldError = (errors as any)?.[path.split('.')[0]]?.[path.split('.')[1]]?.fields?.[index];
+                const pathParts = path.split('.');
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                let fieldError: any = errors;
+                for (const part of pathParts) {
+                    fieldError = fieldError?.[part];
+                }
+                fieldError = fieldError?.[index];
                 const fieldPath = `${path}.${index}`;
-                const currentType = watch(`${fieldPath}.type`);
+                const currentType = watchField(`${fieldPath}.type`);
                 const isOptionsType = ['select', 'radio', 'checkbox'].includes(currentType);
-                const hasSearch = watch(`${fieldPath}.searchEnabled`);
-                const currentOptionsStr = (watch(`${fieldPath}.options`) || []).join(', ');
+                const hasSearch = watchField(`${fieldPath}.searchEnabled`);
+                const currentOptionsStr = (watchField(`${fieldPath}.options`) || []).join(', ');
 
                 return (
                     <div
@@ -155,13 +169,13 @@ export function DynamicFormBuilder({ control, register, errors, path, watch, set
                                     required
                                     placeholder="e.g. T-Shirt Size"
                                     error={fieldError?.label?.message}
-                                    {...register(`${fieldPath}.label`)}
+                                    {...registerField(`${fieldPath}.label`)}
                                 />
                                 <Select
                                     label="Field Type"
                                     required
                                     error={fieldError?.type?.message}
-                                    {...register(`${fieldPath}.type`)}
+                                    {...registerField(`${fieldPath}.type`)}
                                 >
                                     <option value="text">Short Text</option>
                                     <option value="textarea">Long Text</option>
@@ -178,21 +192,21 @@ export function DynamicFormBuilder({ control, register, errors, path, watch, set
                                     label="Placeholder Text"
                                     placeholder="e.g. Please enter your answer"
                                     error={fieldError?.placeholder?.message}
-                                    {...register(`${fieldPath}.placeholder`)}
+                                    {...registerField(`${fieldPath}.placeholder`)}
                                 />
                             )}
 
                             <div className="flex items-center gap-4">
                                 <Toggle
-                                    checked={watch(`${fieldPath}.required`)}
-                                    onChange={(v) => setValue(`${fieldPath}.required`, v)}
+                                    checked={watchField(`${fieldPath}.required`)}
+                                    onChange={(v) => setValueField(`${fieldPath}.required`, v)}
                                     label="Required Field"
                                 />
 
                                 {currentType === 'select' && (
                                     <Toggle
-                                        checked={watch(`${fieldPath}.searchEnabled`)}
-                                        onChange={(v) => setValue(`${fieldPath}.searchEnabled`, v)}
+                                        checked={watchField(`${fieldPath}.searchEnabled`)}
+                                        onChange={(v) => setValueField(`${fieldPath}.searchEnabled`, v)}
                                         label="Enable Search"
                                     />
                                 )}
@@ -205,7 +219,7 @@ export function DynamicFormBuilder({ control, register, errors, path, watch, set
                                     defaultValue={currentOptionsStr}
                                     onChange={(e) => {
                                         const values = e.target.value.split(',').map(v => v.trim()).filter(Boolean);
-                                        setValue(`${fieldPath}.options`, values);
+                                        setValueField(`${fieldPath}.options`, values);
                                     }}
                                 />
                             )}
@@ -213,7 +227,7 @@ export function DynamicFormBuilder({ control, register, errors, path, watch, set
                             {isOptionsType && hasSearch && (
                                 <Select
                                     label="Search Database Source"
-                                    {...register(`${fieldPath}.searchDbSource`)}
+                                    {...registerField(`${fieldPath}.searchDbSource`)}
                                 >
                                     <option value="">Select source...</option>
                                     <option value="registrations">Registrations List</option>

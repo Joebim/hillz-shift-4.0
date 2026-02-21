@@ -1,9 +1,14 @@
+import {
+  CollectionReference,
+  Query,
+  QueryDocumentSnapshot,
+} from "firebase-admin/firestore";
 import { adminDb } from "./admin";
 
 /**
  * Create a new document in a collection
  */
-export async function createDocument<T extends Record<string, any>>(
+export async function createDocument<T extends Record<string, unknown>>(
   collectionName: string,
   data: T,
 ): Promise<string> {
@@ -33,7 +38,7 @@ export async function getDocument<T>(
 /**
  * Update a document by ID
  */
-export async function updateDocument<T extends Record<string, any>>(
+export async function updateDocument<T extends Record<string, unknown>>(
   collectionName: string,
   id: string,
   data: Partial<T>,
@@ -61,11 +66,11 @@ export async function deleteDocument(
  */
 export async function queryDocuments<T>(
   collectionName: string,
-  filters: Record<string, any> = {},
+  filters: Record<string, unknown> = {},
   orderByField?: string,
   limitCount?: number,
 ): Promise<T[]> {
-  let queryRef: any = adminDb.collection(collectionName);
+  let queryRef: Query = adminDb.collection(collectionName);
 
   // Apply filters
   Object.entries(filters).forEach(([field, value]) => {
@@ -85,7 +90,9 @@ export async function queryDocuments<T>(
   }
 
   const snapshot = await queryRef.get();
-  return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }) as T);
+  return snapshot.docs.map(
+    (doc: QueryDocumentSnapshot) => ({ id: doc.id, ...doc.data() }) as T,
+  );
 }
 
 /**
@@ -93,12 +100,14 @@ export async function queryDocuments<T>(
  */
 export async function queryDocumentsAdvanced<T>(
   collectionName: string,
-  queryBuilder: (ref: any) => any,
+  queryBuilder: (ref: CollectionReference) => Query,
 ): Promise<T[]> {
   const collectionRef = adminDb.collection(collectionName);
   const queryRef = queryBuilder(collectionRef);
   const snapshot = await queryRef.get();
-  return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }) as T);
+  return snapshot.docs.map(
+    (doc: QueryDocumentSnapshot) => ({ id: doc.id, ...doc.data() }) as T,
+  );
 }
 
 /**
@@ -106,9 +115,10 @@ export async function queryDocumentsAdvanced<T>(
  */
 export async function countDocuments(
   collectionName: string,
-  filters: Record<string, any> = {},
+  filters: Record<string, unknown> = {},
 ): Promise<number> {
-  let queryRef: any = adminDb.collection(collectionName);
+  let queryRef: Query | CollectionReference =
+    adminDb.collection(collectionName);
 
   Object.entries(filters).forEach(([field, value]) => {
     if (value !== undefined && value !== null) {
@@ -135,7 +145,7 @@ export async function documentExists(
 /**
  * Batch create documents
  */
-export async function batchCreateDocuments<T extends Record<string, any>>(
+export async function batchCreateDocuments<T extends Record<string, unknown>>(
   collectionName: string,
   documents: T[],
 ): Promise<string[]> {
@@ -161,7 +171,7 @@ export async function batchCreateDocuments<T extends Record<string, any>>(
  */
 export async function batchUpdateDocuments(
   collectionName: string,
-  updates: Array<{ id: string; data: Record<string, any> }>,
+  updates: Array<{ id: string; data: Record<string, unknown> }>,
 ): Promise<void> {
   const batch = adminDb.batch();
 

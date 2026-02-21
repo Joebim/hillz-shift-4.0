@@ -10,7 +10,7 @@ export default function CreateMinistryPage() {
     const { toast } = useToast();
 
     const createMutation = useMutation({
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: Record<string, unknown>) => {
             const res = await fetch('/api/ministries', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       session && ["super_admin", "admin", "editor"].includes(session.role);
 
     // Build filters
-    const filters: Record<string, any> = {};
+    const filters: Record<string, unknown> = {};
 
     // If not admin, only show published posts
     if (!isAdmin) {

@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     const validated = registrationQuerySchema.parse(queryParams);
 
     // Build filters
-    const filters: Record<string, any> = {};
+    const filters: Record<string, unknown> = {};
 
     if (validated.eventId) {
       filters.eventId = validated.eventId;

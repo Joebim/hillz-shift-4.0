@@ -27,7 +27,7 @@ export function AddRegistrationModal({ eventId, isOpen, onClose }: { eventId: st
     const [formData, setFormData] = useState({ name: '', email: '', type: 'Attendee' });
 
     const mutation = useMutation({
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: { name: string; email: string; type: string }) => {
             const res = await fetch(`/api/events/${eventId}/registrations`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -83,7 +83,7 @@ export function AddInvitationModal({ eventId, isOpen, onClose }: { eventId: stri
     const [formData, setFormData] = useState({ name: '', email: '' });
 
     const mutation = useMutation({
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: { name: string; email: string }) => {
             // Mock API call or real one if exists. 
             // Ideally: /api/events/${eventId}/invitations
             // For now we simulate or use a real endpoint if we create one. 

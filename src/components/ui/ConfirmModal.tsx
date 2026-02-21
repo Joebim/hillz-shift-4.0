@@ -2,7 +2,7 @@
 
 import { useConfirmModal } from '@/src/hooks/useConfirmModal';
 import { Button } from '@/src/components/ui/Button';
-import { AlertTriangle, Info, X } from 'lucide-react';
+import { AlertTriangle, Info } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -12,7 +12,10 @@ export function ConfirmModal() {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(true);
+        const timer = setTimeout(() => {
+            setMounted(true);
+        }, 0);
+        return () => clearTimeout(timer);
     }, []);
 
     if (!mounted || !isOpen) return null;

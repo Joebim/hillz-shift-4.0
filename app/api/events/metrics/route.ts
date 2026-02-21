@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/src/lib/firebase/admin";
 import { getSession } from "@/src/lib/auth/session";
+import { QueryDocumentSnapshot, DocumentData } from "firebase-admin/firestore";
 
 /**
  * GET /api/events/metrics
@@ -27,9 +28,10 @@ export async function GET() {
       .where("status", "==", "published")
       .get();
 
-    let ongoingEventDoc: any = null;
-    let mostRecentPastEventDoc: any = null;
-    let nextUpcomingEventDoc: any = null;
+    let ongoingEventDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+    let mostRecentPastEventDoc: QueryDocumentSnapshot<DocumentData> | null =
+      null;
+    let nextUpcomingEventDoc: QueryDocumentSnapshot<DocumentData> | null = null;
 
     publishedEventsQuery.docs.forEach((doc) => {
       const data = doc.data();
@@ -67,8 +69,9 @@ export async function GET() {
       }
     });
 
-    const activeEventDoc =
-      ongoingEventDoc || nextUpcomingEventDoc || mostRecentPastEventDoc;
+    const activeEventDoc = (ongoingEventDoc ||
+      nextUpcomingEventDoc ||
+      mostRecentPastEventDoc) as QueryDocumentSnapshot<DocumentData> | null;
     const activeEventId = activeEventDoc?.id;
     const activeEventData = activeEventDoc?.data();
     const activeEventTitle = activeEventData?.title || "No Event Found";
@@ -83,14 +86,18 @@ export async function GET() {
               .where("eventId", "==", activeEventId)
               .count()
               .get()
-          : ({ data: () => ({ count: 0 }) } as any),
+          : ({ data: () => ({ count: 0 }) } as unknown as {
+              data: () => { count: number };
+            }),
         activeEventId
           ? adminDb
               .collection("registrations")
               .where("eventId", "==", activeEventId)
               .count()
               .get()
-          : ({ data: () => ({ count: 0 }) } as any),
+          : ({ data: () => ({ count: 0 }) } as unknown as {
+              data: () => { count: number };
+            }),
       ]);
 
     const metrics = {

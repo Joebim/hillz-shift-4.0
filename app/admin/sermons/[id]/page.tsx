@@ -1,6 +1,7 @@
 'use client';
 
 import { SermonForm } from '@/src/components/admin/sermons/SermonForm';
+import { Sermon } from '@/src/types/sermon';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useParams } from 'next/navigation';
 import { useToast } from '@/src/contexts/ToastContext';
@@ -18,13 +19,13 @@ export default function EditSermonPage() {
             const res = await fetch(`/api/sermons/${id}`);
             if (!res.ok) throw new Error('Failed to fetch sermon');
             const json = await res.json();
-            return json.data;
+            return json.data as Sermon;
         },
         enabled: !!id,
     });
 
     const updateMutation = useMutation({
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: Record<string, unknown>) => {
             const res = await fetch(`/api/sermons/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },

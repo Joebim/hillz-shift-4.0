@@ -23,7 +23,7 @@ export const Section = ({
                 'py-16 md:py-24 relative overflow-hidden',
                 bg === 'white' && 'bg-white',
                 bg === 'gray' && 'bg-slate-50',
-                bg === 'purple' && 'bg-gradient-to-br from-violet-600 to-violet-400 text-white',
+                bg === 'purple' && 'bg-linear-to-br from-violet-600 to-violet-400 text-white',
                 className
             )}
         >

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import {
   getDocument,
   updateDocument,
@@ -8,6 +8,7 @@ import { getSession } from "@/src/lib/auth/session";
 import { Ministry } from "@/src/types/ministry";
 import { updateMinistrySchema } from "@/src/schemas/ministry.schema";
 import { successResponse, errorResponse } from "@/src/lib/api/response";
+import { ZodError } from "zod";
 
 export async function GET(
   request: NextRequest,
@@ -33,7 +34,7 @@ export async function GET(
     return errorResponse(
       "INTERNAL_ERROR",
       "Failed to fetch ministry",
-      error,
+      (error as Error).message,
       500,
     );
   }
@@ -67,15 +68,15 @@ export async function PATCH(
     );
 
     return successResponse(updatedMinistry, "Ministry updated successfully");
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating ministry:", error);
-    if (error.name === "ZodError") {
+    if (error instanceof ZodError) {
       return errorResponse("VALIDATION_ERROR", "Invalid data", error.errors);
     }
     return errorResponse(
       "INTERNAL_ERROR",
       "Failed to update ministry",
-      error,
+      (error as Error).message,
       500,
     );
   }
@@ -101,7 +102,7 @@ export async function DELETE(
     return errorResponse(
       "INTERNAL_ERROR",
       "Failed to delete ministry",
-      error,
+      (error as Error).message,
       500,
     );
   }

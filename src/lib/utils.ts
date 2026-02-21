@@ -36,30 +36,45 @@ export function generateSlug(text: string): string {
 /**
  * Format a date to a readable string
  */
+interface FirestoreTimestamp {
+  seconds?: number;
+  nanoseconds?: number;
+  _seconds?: number;
+  _nanoseconds?: number;
+  toDate?: () => Date;
+}
+
+type DateInput = Date | string | number | FirestoreTimestamp | null | undefined;
+
 /**
  * Helper to convert various date formats to JS Date
  */
-export function toJsDate(date: Date | string | any): Date {
+export function toJsDate(date: DateInput): Date {
   if (!date) return new Date();
-  if (typeof date === "string") return new Date(date);
-  if (typeof date.toDate === "function") return date.toDate();
+  if (typeof date === "string" || typeof date === "number")
+    return new Date(date);
   if (date instanceof Date) return date;
 
+  if (typeof (date as FirestoreTimestamp).toDate === "function") {
+    return (date as FirestoreTimestamp).toDate!();
+  }
+
   // Handle Firestore Timestamp object (serialized)
-  if (typeof date === "object" && (date._seconds || date.seconds)) {
-    const seconds = date._seconds || date.seconds;
-    const nanoseconds = date._nanoseconds || date.nanoseconds || 0;
+  const ts = date as FirestoreTimestamp;
+  if (ts._seconds || ts.seconds) {
+    const seconds = ts._seconds || ts.seconds || 0;
+    const nanoseconds = ts._nanoseconds || ts.nanoseconds || 0;
     return new Date(seconds * 1000 + nanoseconds / 1000000);
   }
 
-  return new Date(date);
+  return new Date(date as string | number | Date);
 }
 
 /**
  * Format a date to a readable string
  */
 export function formatDate(
-  date: Date | string | any,
+  date: DateInput,
   format: "short" | "long" | "full" = "long",
 ): string {
   const d = toJsDate(date);
@@ -91,7 +106,7 @@ export function formatDate(
 /**
  * Format a time to a readable string
  */
-export function formatTime(date: Date | string | any): string {
+export function formatTime(date: DateInput): string {
   const d = toJsDate(date);
   return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
 }
@@ -99,7 +114,7 @@ export function formatTime(date: Date | string | any): string {
 /**
  * Calculate days until a date
  */
-export function daysUntil(date: Date | string | any): number {
+export function daysUntil(date: DateInput): number {
   const d = toJsDate(date);
   const now = new Date();
   const diff = d.getTime() - now.getTime();
@@ -109,7 +124,7 @@ export function daysUntil(date: Date | string | any): number {
 /**
  * Check if a date is in the past
  */
-export function isPast(date: Date | string | any): boolean {
+export function isPast(date: DateInput): boolean {
   const d = toJsDate(date);
   return d.getTime() < Date.now();
 }
@@ -117,7 +132,7 @@ export function isPast(date: Date | string | any): boolean {
 /**
  * Check if a date is in the future
  */
-export function isFuture(date: Date | string | any): boolean {
+export function isFuture(date: DateInput): boolean {
   const d = toJsDate(date);
   return d.getTime() > Date.now();
 }
@@ -125,7 +140,7 @@ export function isFuture(date: Date | string | any): boolean {
 /**
  * Check if a date is today
  */
-export function isToday(date: Date | string | any): boolean {
+export function isToday(date: DateInput): boolean {
   const d = toJsDate(date);
   const today = new Date();
   return d.toDateString() === today.toDateString();
@@ -204,7 +219,7 @@ export function sleep(ms: number): Promise<void> {
 /**
  * Debounce function
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: any[]) => void>(
   func: T,
   wait: number,
 ): (...args: Parameters<T>) => void {

@@ -43,6 +43,11 @@ export interface AuthSession {
   expiresAt: number;
 }
 
+export interface SessionUser extends AuthSession {
+  displayName: string;
+  photoUrl: string | null;
+}
+
 export interface AuthResponse {
   success: boolean;
   user?: User;

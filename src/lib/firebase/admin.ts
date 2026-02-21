@@ -48,11 +48,13 @@ export const adminAuth = getAuth();
 export const adminStorage = getStorage();
 
 // Helper function to convert Firestore timestamp to Date
-export const timestampToDate = (timestamp: any): Date => {
+export const timestampToDate = (timestamp: unknown): Date => {
   if (!timestamp) return new Date();
-  if (timestamp.toDate) return timestamp.toDate();
+  if (typeof (timestamp as any).toDate === "function") {
+    return (timestamp as any).toDate();
+  }
   if (timestamp instanceof Date) return timestamp;
-  return new Date(timestamp);
+  return new Date(timestamp as string | number);
 };
 
 // Helper function to create server timestamp

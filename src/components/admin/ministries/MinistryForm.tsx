@@ -12,12 +12,11 @@ import { ImageUpload } from '@/src/components/admin/ImageUpload';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useToast } from '@/src/contexts/ToastContext';
-import { cn } from '@/src/lib/utils';
 import { z } from 'zod';
 import {
-    Users, Image as ImageIcon, Sparkles,
+    Users, Image as ImageIcon,
     Settings, ChevronLeft, Save, Info,
-    Clock, MapPin, Mail, Smile
+    Clock, MapPin, Smile
 } from 'lucide-react';
 
 type MinistryFormData = z.infer<typeof createMinistrySchema>;
@@ -46,7 +45,6 @@ export const MinistryForm = ({ initialData, onSubmit, isLoading }: MinistryFormP
         }) as unknown as MinistryFormData,
     });
 
-    const active = watch('active');
     const image = watch('image');
 
     const submitHandler = async (data: MinistryFormData) => {
@@ -168,7 +166,7 @@ export const MinistryForm = ({ initialData, onSubmit, isLoading }: MinistryFormP
                                     </div>
                                     <Input
                                         placeholder="Main Sanctuary"
-                                        {...register('location' as any)}
+                                        {...register('location')}
                                     />
                                 </div>
                             </div>

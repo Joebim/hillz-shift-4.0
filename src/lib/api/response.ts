@@ -21,7 +21,7 @@ export function successResponse<T>(
 export function errorResponse(
   code: string,
   message: string,
-  details?: any,
+  details?: unknown,
   status: number = 400,
 ): NextResponse<ApiResponse> {
   const error: ApiError = { code, message, details };
@@ -65,7 +65,7 @@ export function notFoundResponse(
  * Create a validation error response (400)
  */
 export function validationErrorResponse(
-  details: any,
+  details: unknown,
 ): NextResponse<ApiResponse> {
   return errorResponse("VALIDATION_ERROR", "Validation failed", details, 400);
 }

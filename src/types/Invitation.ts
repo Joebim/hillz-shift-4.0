@@ -14,8 +14,14 @@ export interface Invitation {
   // Recipient Info
   recipientEmail: string;
   recipientName?: string;
+  inviteeName?: string;
+  inviteeEmail?: string;
+  inviterName?: string;
+  inviterEmail?: string;
+  name?: string;
+  email?: string;
   personalMessage?: string;
-  customFields?: Record<string, any>;
+  customFields?: Record<string, unknown>;
 
   // Status
   status: InvitationStatus;

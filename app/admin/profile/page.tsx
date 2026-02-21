@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { SessionUser } from '@/src/types/user';
 import {
     User,
     Mail,
@@ -34,7 +35,7 @@ export default function ProfilePage() {
             const res = await fetch('/api/auth/session');
             if (!res.ok) throw new Error('Failed to fetch session');
             const json = await res.json();
-            return json.data;
+            return json.data as SessionUser;
         }
     });
 
@@ -51,6 +52,7 @@ export default function ProfilePage() {
 
     const updateProfileMutation = useMutation({
         mutationFn: async (data: { displayName: string, photoUrl: string }) => {
+            if (!session) throw new Error('No session found');
             const res = await fetch(`/api/admin/users/${session.userId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },

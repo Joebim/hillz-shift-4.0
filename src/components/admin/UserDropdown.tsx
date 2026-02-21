@@ -15,8 +15,10 @@ import {
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
+import { SessionUser } from '@/src/types/user';
+
 interface UserDropdownProps {
-    session: any;
+    session: SessionUser | null;
 }
 
 export function UserDropdown({ session }: UserDropdownProps) {

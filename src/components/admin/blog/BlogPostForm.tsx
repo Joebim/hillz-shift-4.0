@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { BlogPost } from '@/src/types/blog';
+import { BlogPost, BlogStatus } from '@/src/types/blog';
 import { createBlogPostSchema } from '@/src/schemas/blog.schema';
 import { Button } from '@/src/components/ui/Button';
 import { Input } from '@/src/components/ui/Input';
@@ -15,8 +15,7 @@ import { toJsDate, cn } from '@/src/lib/utils';
 import { useToast } from '@/src/contexts/ToastContext';
 import { z } from 'zod';
 import {
-    FileText, Image as ImageIcon, Tag,
-    Calendar, User, Settings, Sparkles,
+    FileText, Image as ImageIcon,
     ChevronLeft, Save, Globe, Info
 } from 'lucide-react';
 
@@ -213,7 +212,7 @@ export const BlogPostForm = ({ initialData, onSubmit, isLoading }: BlogPostFormP
                                         <button
                                             key={s}
                                             type="button"
-                                            onClick={() => setValue('status', s as any)}
+                                            onClick={() => setValue('status', s as BlogStatus)}
                                             className={cn(
                                                 "px-3 py-2 rounded-xl text-xs font-bold border-2 transition-all",
                                                 status === s
@@ -249,7 +248,7 @@ export const BlogPostForm = ({ initialData, onSubmit, isLoading }: BlogPostFormP
                                     <span className="text-[10px] font-bold uppercase tracking-widest">Visibility Tip</span>
                                 </div>
                                 <p className="text-[10px] text-blue-900/70 leading-relaxed font-medium">
-                                    Set status to "Published" to make this post visible to all visitors on the public blog.
+                                    Set status to &quot;Published&quot; to make this post visible to all visitors on the public blog.
                                 </p>
                             </div>
                         </div>

@@ -10,7 +10,7 @@ export default function CreateSermonPage() {
   const { toast } = useToast();
 
   const createMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: Record<string, unknown>) => {
       const res = await fetch('/api/sermons', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

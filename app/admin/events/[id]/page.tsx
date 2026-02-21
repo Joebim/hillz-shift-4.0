@@ -3,6 +3,8 @@
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Event } from '@/src/types/event';
+import { Registration } from '@/src/types/registration';
+import { Invitation } from '@/src/types/invitation';
 import { format } from 'date-fns';
 import { toJsDate, cn } from '@/src/lib/utils';
 import Link from 'next/link';
@@ -14,6 +16,8 @@ import {
     DollarSign, Hash, Building2, Layers, Search,
 } from 'lucide-react';
 import { AddRegistrationModal, AddInvitationModal } from './modals';
+import { StatusBadge, SectionLabel, Divider, InfoCard } from '@/src/components/admin/AdminSharedUI';
+import { SkeletonDetail } from '@/src/components/skeletons/SkeletonDetail';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -43,23 +47,21 @@ const mockInvitations = [
 
 // ─── Date helper ──────────────────────────────────────────────────────────────
 
-function toDate(value: any): Date {
+function toDate(value: unknown): Date {
     if (!value) return new Date();
-    if (typeof value === 'object' && '_seconds' in value) return new Date(value._seconds * 1000);
-    try { return toJsDate(value); } catch { return new Date(); }
+    if (typeof value === 'object' && value !== null && '_seconds' in value) return new Date((value as { _seconds: number })._seconds * 1000);
+    try { return toJsDate(value as string | number | Date | null | undefined); } catch { return new Date(); }
 }
 
-import { SkeletonDetail } from '@/src/components/skeletons/SkeletonDetail';
-import { StatusBadge, SectionLabel, Divider, InfoCard } from '@/src/components/admin/AdminSharedUI';
 // ─── Main Details Panel ───────────────────────────────────────────────────────
 
 function DetailsPanel({ event }: { event: Event }) {
     const startDate = toDate(event.startDate);
     const endDate = toDate(event.endDate);
-    const regConfig = event.registrationConfig as any;
-    const regOpen = toDate(regConfig?.startDate);
-    const regClose = toDate(regConfig?.endDate);
-    const priceDisplay = regConfig?.price > 0
+    const regConfig = event.registrationConfig;
+    const regOpen = toDate(event.registrationOpenDate);
+    const regClose = toDate(event.registrationCloseDate);
+    const priceDisplay = (regConfig?.price || 0) > 0
         ? `${regConfig.currency ? regConfig.currency + ' ' : ''}${regConfig.price}`
         : 'Free';
 
@@ -76,7 +78,7 @@ function DetailsPanel({ event }: { event: Event }) {
                     />
                 )}
                 {/* Gradient overlay for readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
                 {/* Brand colour swatch */}
                 {event.branding?.primaryColor && (
                     <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-black/30 backdrop-blur-sm rounded-full px-2.5 py-1">
@@ -130,7 +132,7 @@ function DetailsPanel({ event }: { event: Event }) {
                         {event.theme && (
                             <div>
                                 <SectionLabel>Theme</SectionLabel>
-                                <p className="text-base font-bold text-violet-900 italic">"{event.theme}"</p>
+                                <p className="text-base font-bold text-violet-900 italic">&quot;{event.theme}&quot;</p>
                                 {event.themeBibleVerse && (
                                     <p className="text-xs text-violet-500 mt-1 flex items-center gap-1">
                                         <BookOpen className="w-3 h-3 shrink-0" />{event.themeBibleVerse}
@@ -141,7 +143,7 @@ function DetailsPanel({ event }: { event: Event }) {
                         {event.eventBibleVerse && (
                             <div className={event.theme ? 'border-t border-violet-100 pt-3' : ''}>
                                 <SectionLabel>Bible Verse</SectionLabel>
-                                <p className="text-sm text-violet-800 italic">"{event.eventBibleVerse}"</p>
+                                <p className="text-sm text-violet-800 italic">&quot;{event.eventBibleVerse}&quot;</p>
                             </div>
                         )}
                     </div>
@@ -272,11 +274,11 @@ function DetailsPanel({ event }: { event: Event }) {
                 )}
 
                 {/* Contacts */}
-                {(event as any).contacts?.length > 0 && (
+                {event.contacts && event.contacts.length > 0 && (
                     <div>
                         <SectionLabel>Contacts</SectionLabel>
                         <div className="space-y-1 mt-1">
-                            {(event as any).contacts?.map((c: string, i: number) => (
+                            {event.contacts.map((c: string, i: number) => (
                                 <p key={i} className="text-sm text-gray-700 flex items-center gap-1.5">
                                     <Phone className="w-3 h-3 text-gray-400 shrink-0" />{c}
                                 </p>
@@ -286,11 +288,11 @@ function DetailsPanel({ event }: { event: Event }) {
                 )}
 
                 {/* External links */}
-                {(event as any).links?.length > 0 && (
+                {event.links && event.links.length > 0 && (
                     <div>
                         <SectionLabel>Links</SectionLabel>
                         <div className="space-y-1 mt-1">
-                            {(event as any).links.map((l: string, i: number) => (
+                            {event.links.map((l: string, i: number) => (
                                 <a key={i} href={l} target="_blank" rel="noopener noreferrer"
                                     className="text-sm text-violet-600 hover:text-violet-800 flex items-center gap-1.5 truncate">
                                     <ExternalLink className="w-3 h-3 shrink-0" />{l}
@@ -357,14 +359,14 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
     });
 
     const startDate = toDate(event.startDate);
-    const regConfig = event.registrationConfig as any;
+    const regConfig = event.registrationConfig;
 
     // Counts
     const regCount = registrations?.length || 0;
-    const acceptedCount = invitations?.filter((i: any) => i.status === 'accepted').length || 0;
+    const acceptedCount = invitations?.filter((i: Invitation) => i.status === 'accepted').length || 0;
 
     // Filter Logic
-    const filteredRegistrations = registrations?.filter((r: any) => {
+    const filteredRegistrations = registrations?.filter((r: Registration) => {
         if (!searchTerm) return true;
         const term = searchTerm.toLowerCase();
         return (
@@ -376,7 +378,7 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
         );
     });
 
-    const filteredInvitations = invitations?.filter((i: any) => {
+    const filteredInvitations = invitations?.filter((i: Invitation) => {
         if (!searchTerm) return true;
         const term = searchTerm.toLowerCase();
         return (
@@ -498,7 +500,7 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
                                     <p className="text-white text-sm italic">{searchTerm ? 'No matches found.' : 'No registrations yet.'}</p>
                                 </div>
                             )}
-                            {filteredRegistrations?.map((a: any, i: number) => (
+                            {filteredRegistrations?.map((a: Registration, i: number) => (
                                 <div key={a.id || i} className="flex items-center gap-3 group">
                                     <div className="w-9 h-9 rounded-full bg-violet-400/50 flex items-center justify-center text-white text-xs font-bold shrink-0 ring-2 ring-white/10 group-hover:ring-white/30 transition-all">
                                         {(a.name || a.attendee?.firstName || a.email || a.attendee?.email || '?').charAt(0).toUpperCase()}
@@ -511,7 +513,7 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
                                             {a.email || a.attendee?.email}
                                         </span>
                                     </div>
-                                    {a.status === 'checked-in' && (
+                                    {a.checkedIn && (
                                         <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]" title="Checked In" />
                                     )}
                                 </div>
@@ -526,7 +528,7 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
                                     <p className="text-white text-sm italic">{searchTerm ? 'No matches found.' : 'No invitations sent yet.'}</p>
                                 </div>
                             )}
-                            {filteredInvitations?.map((inv: any, i: number) => (
+                            {filteredInvitations?.map((inv: Invitation, i: number) => (
                                 <div key={inv.id || i} className="flex items-center gap-3 group">
                                     <div className="w-9 h-9 rounded-full bg-violet-400/50 flex items-center justify-center text-white text-xs font-bold shrink-0 ring-2 ring-white/10 group-hover:ring-white/30 transition-all">
                                         {(inv.recipientName || inv.inviteeName || inv.recipientEmail || inv.email || '?').charAt(0).toUpperCase()}

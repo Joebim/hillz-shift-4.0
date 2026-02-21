@@ -23,6 +23,8 @@ import {
 import { cn, toJsDate } from '@/src/lib/utils';
 import { useRef, useEffect, useState } from 'react';
 import type { ApexOptions } from 'apexcharts';
+import { Registration } from '@/src/types/registration';
+import { Invitation, InvitationWithEvent } from '@/src/types/invitation';
 
 import { SkeletonDashboard } from '@/src/components/skeletons/SkeletonDashboard';
 import { UserDropdown } from '@/src/components/admin/UserDropdown';
@@ -30,6 +32,22 @@ import { AdminTable } from '@/src/components/admin/AdminTable';
 import { StatusBadge } from '@/src/components/admin/AdminSharedUI';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
+
+// ─── Interfaces ───────────────────────────────────────────────────────────────
+
+interface EventMetrics {
+    totalRegistrations: number;
+    totalInvitations: number;
+    activeEventObj?: Event;
+}
+
+interface EventSearchResults {
+    data: {
+        events: Event[];
+        registrations: Registration[];
+        invitations: Invitation[];
+    };
+}
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -59,7 +77,7 @@ function NotificationsDropdown() {
     });
 
     // Mock unread count based on available notifications (or add a 'read' field logic later)
-    const unreadCount = notifications ? notifications.filter((n: any) => !n.read).length : 0;
+    const unreadCount = notifications ? notifications.filter((n: { read: boolean }) => !n.read).length : 0;
 
     return (
         <div className="relative">
@@ -97,7 +115,18 @@ function NotificationsDropdown() {
                                 </div>
                             ) : notifications && notifications.length > 0 ? (
                                 <div className="py-2">
-                                    {notifications.map((notif: any) => (
+                                    {notifications.map((notif: {
+                                        id: string;
+                                        read: boolean;
+                                        type: string;
+                                        actorName?: string;
+                                        action: string;
+                                        highlightColor?: string;
+                                        highlight: string;
+                                        eventTitle?: string;
+                                        suffix?: string;
+                                        time: string;
+                                    }) => (
                                         <div key={notif.id} className="flex gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-none relative group">
                                             {!notif.read && (
                                                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 bg-violet-500 rounded-r" />
@@ -256,12 +285,13 @@ function AnalyticsCharts() {
     );
 }
 
-function SidebarContent({ metrics, setView, router }: { metrics: any, setView: (v: 'dashboard' | 'all') => void, router: any }) {
+function SidebarContent({ metrics, setView, router }: { metrics: EventMetrics, setView: (v: 'dashboard' | 'all') => void, router: ReturnType<typeof useRouter> }) {
+    const activeEvent = metrics?.activeEventObj;
     return (
         <div className="space-y-6">
-            {metrics?.activeEventObj && (
+            {activeEvent && (
                 <div
-                    onClick={() => router.push(`/admin/events/${metrics.activeEventObj.id}`)}
+                    onClick={() => router.push(`/admin/events/${activeEvent.id}`)}
                     className="bg-violet-50 rounded-2xl p-4 md:p-5 border border-violet-100 hover:shadow-md hover:border-violet-200 transition-all cursor-pointer group flex flex-col relative overflow-hidden"
                 >
                     <div className="absolute top-0 right-0 w-24 h-24 bg-violet-200/50 rounded-full blur-2xl -mr-10 -mt-10" />
@@ -271,14 +301,14 @@ function SidebarContent({ metrics, setView, router }: { metrics: any, setView: (
                     </div>
 
                     <h3 className="font-bold text-gray-900 group-hover:text-violet-700 transition-colors mb-1">
-                        {metrics.activeEventObj.title}
+                        {activeEvent.title}
                     </h3>
 
                     <div className="text-xs text-violet-800 font-medium mt-1 mb-4 flex-1">
                         {(() => {
                             const now = new Date();
-                            const start = metrics.activeEventObj.startDate ? new Date(metrics.activeEventObj.startDate) : now;
-                            const end = metrics.activeEventObj.endDate ? new Date(metrics.activeEventObj.endDate) : now;
+                            const start = activeEvent.startDate ? toJsDate(activeEvent.startDate) : now;
+                            const end = activeEvent.endDate ? toJsDate(activeEvent.endDate) : now;
 
                             if (start > now) {
                                 return <span>Registration ongoing, event starts on {format(start, 'MMM d, yyyy')}.</span>;
@@ -381,7 +411,7 @@ export default function EventsDashboardPage() {
             if (!debouncedQuery || debouncedQuery.length < 2) return null;
             const res = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`);
             if (!res.ok) throw new Error('Search failed');
-            return await res.json();
+            return await res.json() as EventSearchResults;
         },
         enabled: debouncedQuery.length >= 2,
     });
@@ -418,7 +448,7 @@ export default function EventsDashboardPage() {
                 activeEvents: number;
                 activeEventTitle: string;
                 activeEventId?: string;
-                activeEventObj?: any;
+                activeEventObj?: Event;
                 totalInvitations: number;
                 totalRegistrations: number;
             };
@@ -485,7 +515,7 @@ export default function EventsDashboardPage() {
                                     {searchResults.data.events?.length > 0 && (
                                         <div className="p-2">
                                             <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-1">Events</h4>
-                                            {searchResults.data.events.map((e: any) => (
+                                            {searchResults.data.events.map((e: Event) => (
                                                 <Link key={e.id} href={`/admin/events/${e.id}`} className="block px-2 py-2 hover:bg-gray-50 rounded-lg group">
                                                     <p className="text-sm font-medium text-gray-900 group-hover:text-violet-600">{e.title}</p>
                                                     <p className="text-xs text-gray-500 truncate">{e.shortDescription || e.description}</p>
@@ -498,7 +528,7 @@ export default function EventsDashboardPage() {
                                     {searchResults.data.registrations?.length > 0 && (
                                         <div className="p-2 border-t border-gray-50">
                                             <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-1">Registrations</h4>
-                                            {searchResults.data.registrations.map((r: any) => (
+                                            {searchResults.data.registrations.map((r: Registration) => (
                                                 <div key={r.id} className="px-2 py-2 hover:bg-gray-50 rounded-lg cursor-default">
                                                     <p className="text-sm font-medium text-gray-900">{r.name}</p>
                                                     <p className="text-xs text-gray-500">{r.email}</p>
@@ -511,7 +541,7 @@ export default function EventsDashboardPage() {
                                     {searchResults.data.invitations?.length > 0 && (
                                         <div className="p-2 border-t border-gray-50">
                                             <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-1">Invitations</h4>
-                                            {searchResults.data.invitations.map((inv: any) => (
+                                            {searchResults.data.invitations.map((inv: Invitation) => (
                                                 <Link
                                                     key={inv.id}
                                                     href={`/admin/events/${inv.eventId}`}
@@ -522,9 +552,9 @@ export default function EventsDashboardPage() {
                                                             <p className="text-sm font-medium text-gray-900 group-hover:text-violet-600">Invitee: {inv.inviteeName}</p>
                                                             <p className="text-xs text-gray-500">By: {inv.inviterName}</p>
                                                         </div>
-                                                        {inv.eventTitle && (
+                                                        {(inv as InvitationWithEvent).eventTitle && (
                                                             <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap">
-                                                                {inv.eventTitle}
+                                                                {(inv as InvitationWithEvent).eventTitle}
                                                             </span>
                                                         )}
                                                     </div>
@@ -781,7 +811,7 @@ export default function EventsDashboardPage() {
 
                 {/* ── Inline sidebar – desktop ─────────────────────────────── */}
                 <aside className="hidden lg:block w-80 shrink-0 bg-white border-l border-gray-100 sticky top-[65px] self-start max-h-[calc(100vh-65px)] overflow-y-auto p-5 space-y-6">
-                    <SidebarContent metrics={metrics} setView={setView} router={router} />
+                    {metrics && <SidebarContent metrics={metrics} setView={setView} router={router} />}
                 </aside>
             </div>
 
@@ -803,7 +833,7 @@ export default function EventsDashboardPage() {
                     </button>
                 </div>
                 <div className="flex-1 overflow-y-auto p-5 space-y-6">
-                    <SidebarContent metrics={metrics} setView={setView} router={router} />
+                    {metrics && <SidebarContent metrics={metrics} setView={setView} router={router} />}
                 </div>
             </aside>
         </div>

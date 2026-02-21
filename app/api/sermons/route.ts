@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     const validated = sermonQuerySchema.parse(queryParams);
 
     // Build filters
-    const filters: Record<string, any> = {};
+    const filters: Record<string, unknown> = {};
 
     if (validated.category) {
       filters.category = validated.category;

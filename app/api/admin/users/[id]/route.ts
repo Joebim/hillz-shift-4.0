@@ -25,7 +25,7 @@ export async function PATCH(
     const body = await request.json();
 
     // Fields to update
-    const updates: any = { updatedAt: new Date() };
+    const updates: Record<string, unknown> = { updatedAt: new Date() };
     if (body.role) updates.role = body.role as UserRole;
     if (body.managedEventId) updates.managedEventId = body.managedEventId;
     if (body.active !== undefined) updates.active = body.active;

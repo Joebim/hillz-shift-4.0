@@ -34,7 +34,7 @@ function UserModal({
 }: {
     user?: Partial<User> | null,
     onClose: () => void,
-    onSave: (data: any) => void,
+    onSave: (data: { displayName: string; email: string; role: UserRole; managedEventId?: string }) => void,
     events?: Event[],
     isProcessing?: boolean
 }) {
@@ -114,7 +114,7 @@ function UserModal({
                             {roles.map(role => (
                                 <button
                                     key={role.value}
-                                    onClick={() => setFormData({ ...formData, role: role.value as any })}
+                                    onClick={() => setFormData({ ...formData, role: role.value })}
                                     className={cn(
                                         "relative flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 text-left hover:border-violet-200 hover:bg-violet-50/50",
                                         formData.role === role.value
@@ -274,7 +274,7 @@ export default function SettingsPage() {
 
     // Invite User Mutation
     const inviteUserMutation = useMutation({
-        mutationFn: async (newUser: any) => {
+        mutationFn: async (newUser: { displayName: string; email: string; role: UserRole; managedEventId?: string }) => {
             const res = await fetch('/api/admin/users/invite', { // Use new Invite endpoint
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -303,7 +303,7 @@ export default function SettingsPage() {
 
     // Update User Mutation
     const updateUserMutation = useMutation({
-        mutationFn: async (data: { id: string, updates: any }) => {
+        mutationFn: async (data: { id: string, updates: Partial<User> }) => {
             const res = await fetch(`/api/admin/users/${data.id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
@@ -333,11 +333,11 @@ export default function SettingsPage() {
     });
 
     // Handlers
-    const handleInviteUser = (formData: any) => {
+    const handleInviteUser = (formData: { displayName: string; email: string; role: UserRole; managedEventId?: string }) => {
         inviteUserMutation.mutate(formData);
     };
 
-    const handleEditUser = (formData: any) => {
+    const handleEditUser = (formData: { displayName: string; email: string; role: UserRole; managedEventId?: string }) => {
         if (!editingUser) return;
         updateUserMutation.mutate({
             id: editingUser.id,

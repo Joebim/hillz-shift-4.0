@@ -1,6 +1,7 @@
 'use client';
 
 import { MinistryForm } from '@/src/components/admin/ministries/MinistryForm';
+import { Ministry } from '@/src/types/ministry';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useParams } from 'next/navigation';
 import { useToast } from '@/src/contexts/ToastContext';
@@ -18,13 +19,13 @@ export default function EditMinistryPage() {
             const res = await fetch(`/api/ministries/${id}`);
             if (!res.ok) throw new Error('Failed to fetch ministry');
             const json = await res.json();
-            return json.data;
+            return json.data as Ministry;
         },
         enabled: !!id,
     });
 
     const updateMutation = useMutation({
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: Record<string, unknown>) => {
             const res = await fetch(`/api/ministries/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },

@@ -19,9 +19,11 @@ import { sendRegistrationEmail } from "@/src/lib/email/send";
 import { Registration } from "@/src/types/registration"; // Helper type
 
 // Helper to safely convert Firestore Timestamp or string to Date
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const toDate = (d: any) =>
-  d && typeof d.toDate === "function" ? d.toDate() : new Date(d);
+type FirestoreDate = Date | string | number | { toDate: () => Date };
+const toDate = (d: FirestoreDate) =>
+  d && typeof (d as { toDate: () => Date }).toDate === "function"
+    ? (d as { toDate: () => Date }).toDate()
+    : new Date(d as string | number | Date);
 
 /**
  * GET /api/events/[eventId]/registrations
