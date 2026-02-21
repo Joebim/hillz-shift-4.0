@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getFirestore } from "firebase-admin/firestore";
+import { adminDb } from "@/src/lib/firebase/admin";
 import { getSession } from "@/src/lib/auth/session";
 import { UserRole } from "@/src/types/user";
 
-const db = getFirestore();
+const db = adminDb;
 
 // PATCH: Update user role / fields
 export async function PATCH(

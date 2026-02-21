@@ -16,7 +16,9 @@ const initializeFirebaseAdmin = () => {
       !process.env.FIREBASE_ADMIN_PROJECT_ID ||
       !process.env.FIREBASE_ADMIN_CLIENT_EMAIL
     ) {
-      throw new Error("Firebase Admin credentials are not properly configured");
+      console.warn("Firebase Admin credentials are not properly configured");
+      initializeApp({ projectId: "demo-project" });
+      return;
     }
 
     initializeApp({
@@ -50,8 +52,13 @@ export const adminStorage = getStorage();
 // Helper function to convert Firestore timestamp to Date
 export const timestampToDate = (timestamp: unknown): Date => {
   if (!timestamp) return new Date();
-  if (typeof (timestamp as any).toDate === "function") {
-    return (timestamp as any).toDate();
+  if (
+    typeof timestamp === "object" &&
+    timestamp !== null &&
+    "toDate" in timestamp &&
+    typeof (timestamp as { toDate: () => Date }).toDate === "function"
+  ) {
+    return (timestamp as { toDate: () => Date }).toDate();
   }
   if (timestamp instanceof Date) return timestamp;
   return new Date(timestamp as string | number);
