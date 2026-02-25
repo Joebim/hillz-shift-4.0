@@ -10,6 +10,10 @@ export default async function InvitePage({ params }: { params: Promise<{ eventId
     if (!events.length) return notFound();
     const event = serializeFirestoreData(events[0]);
 
+    // ── DEBUG: log form config coming from Firestore ──────────────────────────
+    console.log('[InvitePage] event.invitationConfig:', JSON.stringify(event.invitationConfig, null, 2));
+    console.log('[InvitePage] event.invitationConfig.fields:', JSON.stringify(event.invitationConfig?.fields, null, 2));
+
     return (
         <div className="min-h-screen bg-white">
             <main className="container mx-auto container-px py-8 md:py-12">

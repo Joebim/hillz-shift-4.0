@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         (inv) =>
           inv.senderName.toLowerCase().includes(searchLower) ||
           inv.senderEmail.toLowerCase().includes(searchLower) ||
-          inv.recipientEmail.toLowerCase().includes(searchLower) ||
+          (inv.recipientEmail?.toLowerCase().includes(searchLower) ?? false) ||
           (inv.recipientName &&
             inv.recipientName.toLowerCase().includes(searchLower)),
       );

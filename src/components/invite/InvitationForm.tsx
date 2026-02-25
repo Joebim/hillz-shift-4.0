@@ -22,20 +22,19 @@ export const InvitationForm = ({ eventId, config }: Props) => {
     const toast = useToast();
     const [errors, setErrors] = React.useState<Record<string, string>>({});
 
-    // Validation function
+    // ── Validation ───────────────────────────────────────────────────────
     const validateForm = (): boolean => {
         const newErrors: Record<string, string> = {};
 
-        if (!form.inviterName?.trim()) {
-            newErrors.inviterName = 'Your name is required';
-        }
+        // Default required: your name
+        if (!form.inviterName?.trim()) newErrors.inviterName = 'Your name is required';
 
-        if (!form.inviteeName?.trim()) {
-            newErrors.inviteeName = 'Invitee name is required';
-        }
+        // Default required: invitee name
+        if (!form.inviteeName?.trim()) newErrors.inviteeName = "Guest's name is required";
 
+        // Default required: invitee phone
         if (!form.inviteePhone?.trim()) {
-            newErrors.inviteePhone = 'WhatsApp number is required';
+            newErrors.inviteePhone = 'Phone / WhatsApp number is required';
         } else {
             const phoneRegex = /^\+?[\d\s-]{10,}$/;
             if (!phoneRegex.test(form.inviteePhone.trim())) {
@@ -43,6 +42,7 @@ export const InvitationForm = ({ eventId, config }: Props) => {
             }
         }
 
+        // Optional email — validate format only if provided
         if (form.inviteeEmail?.trim()) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(form.inviteeEmail.trim())) {
@@ -50,15 +50,10 @@ export const InvitationForm = ({ eventId, config }: Props) => {
             }
         }
 
-        if (!form.location?.trim()) {
-            newErrors.location = 'Location is required';
-        }
+        // Invitation message (always required)
+        if (!form.customMessage?.trim()) newErrors.customMessage = 'Invitation message is required';
 
-        if (!form.customMessage?.trim()) {
-            newErrors.customMessage = 'Invitation message is required';
-        }
-
-        // Validate dynamic fields
+        // Dynamic custom fields
         if (config?.fields) {
             config.fields.forEach(field => {
                 if (field.required) {
@@ -74,6 +69,7 @@ export const InvitationForm = ({ eventId, config }: Props) => {
         return Object.keys(newErrors).length === 0;
     };
 
+    // ── Submit ───────────────────────────────────────────────────────────
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -92,9 +88,8 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                 recipientEmail: form.inviteeEmail || '',
                 personalMessage: form.customMessage,
                 customFields: {
-                    location: form.location,
                     recipientPhone: form.inviteePhone,
-                    ...form.customFields
+                    ...form.customFields,
                 },
             };
 
@@ -107,7 +102,8 @@ export const InvitationForm = ({ eventId, config }: Props) => {
 
             const result = await response.json();
             if (result.success) {
-                const registrationLink = result.registrationLink || `${window.location.origin}/register?ref=${result.id}`;
+                const registrationLink =
+                    result.registrationLink || `${window.location.origin}/register?ref=${result.id}`;
                 const waLink = generateWhatsAppInvite(
                     form.inviteeName,
                     form.inviterName,
@@ -143,11 +139,17 @@ export const InvitationForm = ({ eventId, config }: Props) => {
 
     return (
         <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-10">
-            {/* Step 1: Inviter Info */}
+
+            {/* ── Step 1: Your Info (default) ─────────────────────────────── */}
             <div className="space-y-6 rounded-3xl border border-primary/10 bg-primary/5 p-8 shadow-sm">
                 <h3 className="text-lg font-bold text-primary flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-sm text-white font-black">1</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-sm text-white font-black">
+                        1
+                    </span>
                     Your Information
+                    <span className="text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full uppercase tracking-widest ml-auto">
+                        Default
+                    </span>
                 </h3>
                 <ParticipantsSearchSelect
                     label="Your Full Name"
@@ -156,17 +158,27 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                     value={form.inviterName}
                     onChange={(val) => setField('inviterName', val)}
                 />
+                {errors.inviterName && (
+                    <p className="text-xs text-red-500 -mt-4">{errors.inviterName}</p>
+                )}
             </div>
 
-            {/* Step 2: Invitee Info */}
+            {/* ── Step 2: Guest Info — default fields ─────────────────────── */}
             <div className="space-y-6 rounded-3xl border border-accent/10 bg-accent/5 p-8 shadow-sm">
                 <h3 className="text-lg font-bold text-accent flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent text-sm text-white font-black">2</span>
-                    The Guest You Are Inviting
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent text-sm text-white font-black">
+                        2
+                    </span>
+                    Guest Information
+                    <span className="text-[10px] font-bold bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded-full uppercase tracking-widest ml-auto">
+                        Default
+                    </span>
                 </h3>
+
+                {/* Default: Name + Phone */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <Input
-                        label="Invitee Name"
+                        label="Guest Full Name"
                         placeholder="e.g. John Doe"
                         required
                         value={form.inviteeName}
@@ -174,7 +186,7 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                         error={errors.inviteeName}
                     />
                     <Input
-                        label="WhatsApp Number"
+                        label="Phone / WhatsApp Number"
                         type="tel"
                         placeholder="e.g. +234..."
                         required
@@ -182,25 +194,19 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                         onChange={(e) => setField('inviteePhone', e.target.value)}
                         error={errors.inviteePhone}
                     />
-                    <Input
-                        label="Email Address (Optional)"
-                        type="email"
-                        placeholder="john@example.com"
-                        className="md:col-span-2"
-                        value={form.inviteeEmail}
-                        onChange={(e) => setField('inviteeEmail', e.target.value)}
-                        error={errors.inviteeEmail}
-                    />
-                    <Input
-                        label="Guest Location"
-                        placeholder="e.g. Ikoyi, Lagos"
-                        required
-                        className="md:col-span-2"
-                        value={form.location}
-                        onChange={(e) => setField('location', e.target.value)}
-                        error={errors.location}
-                    />
                 </div>
+
+                {/* Default: Email (optional) */}
+                <Input
+                    label="Email Address (Optional)"
+                    type="email"
+                    placeholder="john@example.com"
+                    value={form.inviteeEmail}
+                    onChange={(e) => setField('inviteeEmail', e.target.value)}
+                    error={errors.inviteeEmail}
+                />
+
+                {/* Always-present: personal invitation message */}
                 <Textarea
                     label="Personal Invitation Note"
                     placeholder="Write a message to your guest..."
@@ -212,13 +218,19 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                 />
             </div>
 
-            {/* Dynamic Questions */}
+            {/* ── Step 3: Event Custom Fields ─────────────────────────────── */}
             {config?.fields && config.fields.length > 0 && (
                 <div className="space-y-6 rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
-                    <h3 className="text-lg font-bold text-gray-900 border-l-4 border-primary pl-4">Additional Questions</h3>
+                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-3">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gray-100 text-sm text-gray-600 font-black">
+                            3
+                        </span>
+                        Additional Questions
+                    </h3>
                     <DynamicFieldRenderer
                         fields={config.fields}
                         values={form.customFields}
+                        eventId={eventId}
                         onChange={(label, value) => {
                             setCustomField(label, value);
                             if (errors[label]) {
@@ -234,7 +246,11 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                 </div>
             )}
 
-            <Button type="submit" className="w-full h-16 text-lg gap-3 btn-primary rounded-2xl shadow-xl shadow-primary/20" isLoading={isSubmitting}>
+            <Button
+                type="submit"
+                className="w-full h-16 text-lg gap-3 btn-primary rounded-2xl shadow-xl shadow-primary/20"
+                isLoading={isSubmitting}
+            >
                 <Share2 size={24} />
                 Send Invitation Now
             </Button>

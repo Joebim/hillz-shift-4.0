@@ -1,8 +1,40 @@
 import React from 'react';
 import { useFieldArray, Control, UseFormRegister, FieldErrors, FieldValues, UseFormWatch, UseFormSetValue, ArrayPath, FieldArrayPath } from 'react-hook-form';
-import { Plus, Trash2, GripVertical } from 'lucide-react';
+import { Plus, Trash2, GripVertical, Lock, User, Mail, Phone } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
-// EventFormField was removed since it is unused
+
+// ─── Default Fields (always present, cannot be removed) ───────────────────────
+export const DEFAULT_FORM_FIELDS = [
+    { id: '_name', label: 'Full Name', type: 'text', icon: User, placeholder: 'e.g. John Doe' },
+    { id: '_email', label: 'Email Address', type: 'email', icon: Mail, placeholder: 'e.g. john@example.com' },
+    { id: '_phone', label: 'Phone Number', type: 'phone', icon: Phone, placeholder: 'e.g. +234...' },
+] as const;
+
+// ─── Locked preview row for default fields ────────────────────────────────────
+function DefaultFieldsPreview() {
+    return (
+        <div className="space-y-2 mb-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Default Fields (always included)</p>
+            {DEFAULT_FORM_FIELDS.map(({ id, label, type, icon: Icon }) => (
+                <div
+                    key={id}
+                    className="bg-gray-50 rounded-xl border border-gray-200 p-3 flex items-center gap-3 opacity-70"
+                >
+                    <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center shrink-0">
+                        <Icon className="w-4 h-4 text-violet-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-700 truncate">{label}</p>
+                        <p className="text-[10px] text-gray-400 capitalize">{type} · Required</p>
+                    </div>
+                    <span className="inline-flex items-center gap-1 bg-violet-50 text-violet-500 text-[10px] font-bold px-2 py-0.5 rounded-full border border-violet-100">
+                        <Lock className="w-2.5 h-2.5" /> Default
+                    </span>
+                </div>
+            ))}
+        </div>
+    );
+}
 
 
 // Simple inputs matching the style of EventForm
@@ -108,6 +140,14 @@ export function DynamicFormBuilder<TFieldValues extends FieldValues = FieldValue
 
     return (
         <div className="space-y-4">
+            {/* Always-present default fields */}
+            <DefaultFieldsPreview />
+
+            {/* Divider */}
+            {fields.length > 0 && (
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pt-2">Custom Fields</p>
+            )}
+
             {fields.map((field, index) => {
                 const pathParts = path.split('.');
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any

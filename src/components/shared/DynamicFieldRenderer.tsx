@@ -4,15 +4,18 @@ import React from 'react';
 import { EventFormField } from '@/src/types/event';
 import { Input } from '@/src/components/ui/Input';
 import { Textarea } from '@/src/components/ui/Textarea';
+import { DbSearchSelect, DbSource } from '@/src/components/shared/DbSearchSelect';
 
 interface DynamicFieldRendererProps {
     fields: EventFormField[];
     values: Record<string, unknown>;
     onChange: (label: string, value: unknown) => void;
     errors?: Record<string, string>;
+    /** Pass the current eventId so search-enabled fields can scope their query */
+    eventId?: string;
 }
 
-export function DynamicFieldRenderer({ fields, values, onChange, errors }: DynamicFieldRendererProps) {
+export function DynamicFieldRenderer({ fields, values, onChange, errors, eventId }: DynamicFieldRendererProps) {
     if (!fields || fields.length === 0) return null;
 
     return (
@@ -20,6 +23,23 @@ export function DynamicFieldRenderer({ fields, values, onChange, errors }: Dynam
             {fields.map((field) => {
                 const value = values[field.label];
                 const error = errors?.[field.label];
+
+                // ── search-enabled select → DbSearchSelect ────────────────
+                if (field.type === 'select' && field.searchEnabled && field.searchDbSource) {
+                    return (
+                        <DbSearchSelect
+                            key={field.id}
+                            source={field.searchDbSource as DbSource}
+                            eventId={eventId}
+                            label={field.label}
+                            placeholder={field.placeholder || 'Type to search...'}
+                            required={field.required}
+                            value={(value as string) || ''}
+                            onChange={(v) => onChange(field.label, v)}
+                            error={error}
+                        />
+                    );
+                }
 
                 switch (field.type) {
                     case 'textarea':

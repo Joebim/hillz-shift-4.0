@@ -7,19 +7,22 @@ export interface Invitation {
   id: string;
   eventId: string;
 
-  // Sender Info
-  senderName: string;
-  senderEmail: string;
+  // ── Default fields — always collected ─────────────────────────────────
+  senderName: string; // inviter's full name
+  senderEmail: string; // inviter's email (may be synthetic for WhatsApp flows)
+  recipientName: string; // guest full name
+  recipientPhone: string; // guest phone / WhatsApp
 
-  // Recipient Info
-  recipientEmail: string;
-  recipientName?: string;
+  // Optional defaults
+  recipientEmail?: string;
+
+  // Legacy aliases (kept for backward compatibility)
   inviteeName?: string;
   inviteeEmail?: string;
   inviterName?: string;
   inviterEmail?: string;
-  name?: string;
-  email?: string;
+
+  // Custom event-specific data
   personalMessage?: string;
   customFields?: Record<string, unknown>;
 

@@ -4,10 +4,9 @@ import React from 'react';
 import { useRegistrationStore } from '@/src/store/useRegistrationStore';
 import { Input } from '@/src/components/ui/Input';
 import { Button } from '@/src/components/ui/Button';
-import { ParticipantsSearchSelect } from '@/src/components/invite/ParticipantsSearchSelect';
+import { DbSearchSelect } from '@/src/components/shared/DbSearchSelect';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/src/constants/routes';
-import { Info } from 'lucide-react';
 import { useToast } from '@/src/contexts/ToastContext';
 import { DynamicFieldRenderer } from '@/src/components/shared/DynamicFieldRenderer';
 import { EventRegistrationConfig } from '@/src/types/event';
@@ -23,13 +22,10 @@ export const RegistrationForm = ({ eventId, config }: Props) => {
     const toast = useToast();
     const [errors, setErrors] = React.useState<Record<string, string>>({});
 
-    // Validation function
     const validateForm = (): boolean => {
         const newErrors: Record<string, string> = {};
 
-        if (!form.name?.trim()) {
-            newErrors.name = 'Full name is required';
-        }
+        if (!form.name?.trim()) newErrors.name = 'Full name is required';
 
         if (!form.email?.trim()) {
             newErrors.email = 'Email address is required';
@@ -40,11 +36,12 @@ export const RegistrationForm = ({ eventId, config }: Props) => {
             }
         }
 
-        if (!form.phone?.trim()) {
-            newErrors.phone = 'Phone number is required';
-        }
+        if (!form.phone?.trim()) newErrors.phone = 'Phone number is required';
 
-        // Validate dynamic fields
+        // "Who Invited You" is always required
+        if (!form.whoInvited?.trim()) newErrors.whoInvited = 'Please tell us who invited you';
+
+        // Validate dynamic custom fields
         if (config?.fields) {
             config.fields.forEach(field => {
                 if (field.required) {
@@ -82,12 +79,7 @@ export const RegistrationForm = ({ eventId, config }: Props) => {
                     lastName,
                     email: form.email,
                     phone: form.phone,
-                    customFields: {
-                        address: form.address,
-                        joiningMethod: form.joiningMethod,
-                        heardFrom: form.heardFrom,
-                        ...form.customFields
-                    }
+                    customFields: form.customFields,
                 },
                 invitedBy: form.whoInvited || undefined,
             };
@@ -119,16 +111,27 @@ export const RegistrationForm = ({ eventId, config }: Props) => {
 
     return (
         <form onSubmit={handleSubmit} className="mx-auto max-w-lg space-y-8">
+
+            {/* ── Default Fields — always required ─────────────────────── */}
             <div className="space-y-6">
-                <h3 className="text-lg font-bold text-gray-900 border-l-4 border-primary pl-4">Personal Information</h3>
+                <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-gray-900 border-l-4 border-primary pl-4">
+                        Your Information
+                    </h3>
+                    <span className="text-[10px] font-bold bg-violet-50 text-violet-500 border border-violet-100 px-2 py-0.5 rounded-full uppercase tracking-widest">
+                        Required
+                    </span>
+                </div>
+
                 <Input
                     label="Full Name"
-                    placeholder="Enter your name"
+                    placeholder="Enter your full name"
                     required
                     value={form.name}
                     onChange={(e) => setField('name', e.target.value)}
                     error={errors.name}
                 />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Input
                         label="Email Address"
@@ -149,72 +152,33 @@ export const RegistrationForm = ({ eventId, config }: Props) => {
                         error={errors.phone}
                     />
                 </div>
-            </div>
 
-            <div className="space-y-6 pt-6 border-t border-gray-100">
-                <h3 className="text-lg font-bold text-gray-900 border-l-4 border-primary pl-4">Additional Details</h3>
-
-                <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        Address
-                        <Info size={14} className="text-gray-400" />
-                    </label>
-                    <input
-                        type="text"
-                        placeholder="e.g., Gbagada, Lagos"
-                        value={form.address}
-                        onChange={(e) => setField('address', e.target.value)}
-                        className="flex h-11 w-full rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm transition-all focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary"
-                    />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-sm font-medium text-gray-700">Attendance Type</label>
-                        <select
-                            value={form.joiningMethod}
-                            onChange={(e) => setField('joiningMethod', e.target.value)}
-                            className="flex h-11 w-full rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary"
-                        >
-                            <option value="">Select an option</option>
-                            <option value="in-person">In Person</option>
-                            <option value="online">Online</option>
-                        </select>
-                    </div>
-
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-sm font-medium text-gray-700">How did you hear about us?</label>
-                        <select
-                            value={form.heardFrom}
-                            onChange={(e) => setField('heardFrom', e.target.value)}
-                            className="flex h-11 w-full rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary"
-                        >
-                            <option value="">Select an option</option>
-                            <option value="social-media">Social Media</option>
-                            <option value="friend">Friend / Referral</option>
-                            <option value="church">Church Announcement</option>
-                            <option value="qr-code">QR Code</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                </div>
-
-                <ParticipantsSearchSelect
-                    label="Who invited you?"
-                    placeholder="Search inviter name..."
+                {/* Who Invited You — required default field */}
+                <DbSearchSelect
+                    source="registrations"
+                    eventId={eventId}
+                    label="Who Invited You?"
+                    placeholder="Search by inviter name..."
+                    required
                     value={form.whoInvited}
-                    onChange={(value) => setField('whoInvited', value)}
-                    onSelect={(p) => p && setField('whoInvited', p.name)}
-                    showRegisterPrompt={false}
+                    onChange={(value) => {
+                        setField('whoInvited', value);
+                        if (errors.whoInvited) setErrors(prev => { const n = { ...prev }; delete n.whoInvited; return n; });
+                    }}
+                    error={errors.whoInvited}
                 />
             </div>
 
+            {/* ── Event Custom Fields (from registrationConfig.fields) ──── */}
             {config?.fields && config.fields.length > 0 && (
                 <div className="space-y-6 pt-6 border-t border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-900 border-l-4 border-primary pl-4">Event Questions</h3>
+                    <h3 className="text-lg font-bold text-gray-900 border-l-4 border-primary pl-4">
+                        Event Questions
+                    </h3>
                     <DynamicFieldRenderer
                         fields={config.fields}
                         values={form.customFields}
+                        eventId={eventId}
                         onChange={(label, value) => {
                             setCustomField(label, value);
                             if (errors[label]) {
@@ -230,7 +194,11 @@ export const RegistrationForm = ({ eventId, config }: Props) => {
                 </div>
             )}
 
-            <Button type="submit" className="w-full h-14 text-lg btn-primary rounded-2xl shadow-xl shadow-primary/20" isLoading={isSubmitting}>
+            <Button
+                type="submit"
+                className="w-full h-14 text-lg btn-primary rounded-2xl shadow-xl shadow-primary/20"
+                isLoading={isSubmitting}
+            >
                 Complete Registration
             </Button>
         </form>

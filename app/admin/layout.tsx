@@ -30,7 +30,7 @@ export default function AdminLayout({
             <ToastProvider>
                 <div className="flex h-screen bg-slate-50 overflow-hidden">
                     <AdminSidebar />
-                    <main className="flex-1 overflow-y-auto">
+                    <main className="flex-1 overflow-y-auto pl-14 lg:pl-0">
                         {children}
                     </main>
                 </div>

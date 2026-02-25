@@ -1,49 +1,33 @@
 'use client';
 
-import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { useParams, useRouter } from 'next/navigation';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Event } from '@/src/types/event';
 import { Registration } from '@/src/types/registration';
 import { Invitation } from '@/src/types/invitation';
-import { format } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { toJsDate, cn } from '@/src/lib/utils';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import type { ApexOptions } from 'apexcharts';
 import {
     ArrowLeft, Star, Link2, Paperclip, X, MapPin,
     Users, Mail, Globe, Phone, BookOpen,
-    Edit, Share2, ExternalLink, Calendar, Tag,
-    DollarSign, Hash, Building2, Layers, Search,
+    Edit, Share2, ExternalLink, Calendar,
+    DollarSign, Hash, Building2, Search,
+    BarChart3, TrendingUp, CheckCircle2,
 } from 'lucide-react';
 import { AddRegistrationModal, AddInvitationModal } from './modals';
 import { StatusBadge, SectionLabel, Divider, InfoCard } from '@/src/components/admin/AdminSharedUI';
 import { SkeletonDetail } from '@/src/components/skeletons/SkeletonDetail';
 
+const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type RightTab = 'registrations' | 'invitations';
 type MobilePanel = 'details' | 'people';
-
-// ─── Mock people data ─────────────────────────────────────────────────────────
-
-const mockAttendees = [
-    { name: 'Wendy Williams', confirmed: true },
-    { name: 'Jenny Ferris', confirmed: true },
-    { name: 'John McIntyre', confirmed: false },
-    { name: 'Susie McIntyre', confirmed: true },
-    { name: 'Cindy Johnston', confirmed: true },
-    { name: 'Lou Walters', confirmed: false },
-    { name: 'Sam Walters', confirmed: true },
-    { name: 'Ben Smith', confirmed: false },
-];
-
-const mockInvitations = [
-    { name: 'Alex Thompson', email: 'alex@example.com', sent: '2 days ago', status: 'accepted' },
-    { name: 'Maria Garcia', email: 'maria@example.com', sent: '3 days ago', status: 'pending' },
-    { name: 'David Park', email: 'david@example.com', sent: '5 days ago', status: 'declined' },
-    { name: 'Rachel Kim', email: 'rachel@example.com', sent: '1 week ago', status: 'pending' },
-    { name: 'Tom Wilson', email: 'tom@example.com', sent: '1 week ago', status: 'accepted' },
-];
 
 // ─── Date helper ──────────────────────────────────────────────────────────────
 
@@ -53,9 +37,198 @@ function toDate(value: unknown): Date {
     try { return toJsDate(value as string | number | Date | null | undefined); } catch { return new Date(); }
 }
 
+// ─── Analytics Drawer ─────────────────────────────────────────────────────────
+
+function AnalyticsDrawer({
+    open, onClose, eventId, event,
+    registrations, invitations,
+}: {
+    open: boolean;
+    onClose: () => void;
+    eventId: string;
+    event: Event;
+    registrations: Registration[];
+    invitations: Invitation[];
+}) {
+    // Bucket by date over past 30 days
+    const days = 30;
+    const now = new Date();
+    const labels = Array.from({ length: days }, (_, i) => {
+        const d = subDays(now, days - 1 - i);
+        return format(d, 'yyyy-MM-dd');
+    });
+
+    function bucketByDate(items: { createdAt?: unknown }[]) {
+        const map: Record<string, number> = {};
+        labels.forEach(l => { map[l] = 0; });
+        items.forEach(item => {
+            try {
+                const d = format(toDate(item.createdAt), 'yyyy-MM-dd');
+                if (d in map) map[d]++;
+            } catch { /* skip */ }
+        });
+        return labels.map(l => [new Date(l).getTime(), map[l]]);
+    }
+
+    const regSeries = bucketByDate(registrations as { createdAt?: unknown }[]);
+    const invSeries = bucketByDate(invitations as { createdAt?: unknown }[]);
+
+    const baseOptions: ApexOptions = {
+        chart: {
+            type: 'area',
+            height: 180,
+            toolbar: { show: false },
+            fontFamily: 'inherit',
+            animations: { enabled: true, speed: 400 },
+            sparkline: { enabled: false },
+        },
+        stroke: { curve: 'smooth', width: 2 },
+        fill: {
+            type: 'gradient',
+            gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.02, stops: [0, 100] },
+        },
+        dataLabels: { enabled: false },
+        xaxis: {
+            type: 'datetime',
+            labels: { format: 'MMM d', style: { fontSize: '10px', colors: '#9ca3af' } },
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+        },
+        yaxis: {
+            labels: { style: { fontSize: '10px', colors: '#9ca3af' } },
+            min: 0,
+        },
+        grid: { borderColor: '#f3f4f6', strokeDashArray: 4, xaxis: { lines: { show: false } } },
+        tooltip: {
+            theme: 'light',
+            x: { show: true, format: 'MMM d, yyyy' },
+            y: { title: { formatter: () => '' } },
+        },
+    };
+
+    const regOptions: ApexOptions = { ...baseOptions, colors: ['#8b5cf6'] };
+    const invOptions: ApexOptions = { ...baseOptions, colors: ['#3b82f6'] };
+
+    const totalReg = registrations.length;
+    const totalInv = invitations.length;
+    const acceptedInv = invitations.filter(i => i.status === 'accepted').length;
+    const convRate = totalInv > 0 ? Math.round((acceptedInv / totalInv) * 100) : 0;
+
+    return (
+        <>
+            {/* Backdrop */}
+            <div
+                className={cn(
+                    'fixed inset-0 bg-black/30 backdrop-blur-sm z-50 transition-opacity duration-300',
+                    open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                )}
+                onClick={onClose}
+            />
+            {/* Drawer */}
+            <div className={cn(
+                'fixed top-0 right-0 h-full w-full max-w-lg bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ease-out',
+                open ? 'translate-x-0' : 'translate-x-full'
+            )}>
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
+                    <div>
+                        <h2 className="font-bold text-gray-900 text-base">Event Analytics</h2>
+                        <p className="text-xs text-gray-400 mt-0.5 truncate max-w-xs">{event.title}</p>
+                    </div>
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 text-gray-400 transition-colors">
+                        <X className="w-4 h-4" />
+                    </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                    {/* KPI cards */}
+                    <div className="grid grid-cols-3 gap-3">
+                        {[
+                            { label: 'Registrations', value: totalReg, icon: Users, color: 'bg-violet-50 text-violet-600' },
+                            { label: 'Invitations', value: totalInv, icon: Mail, color: 'bg-blue-50 text-blue-600' },
+                            { label: 'Accept Rate', value: `${convRate}%`, icon: TrendingUp, color: 'bg-emerald-50 text-emerald-600' },
+                        ].map(({ label, value, icon: Icon, color }) => (
+                            <div key={label} className="bg-gray-50 rounded-2xl p-4 flex flex-col gap-2">
+                                <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center', color)}>
+                                    <Icon className="w-4 h-4" />
+                                </div>
+                                <p className="text-xl font-bold text-gray-900">{value}</p>
+                                <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">{label}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Registrations Chart */}
+                    <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
+                            <div>
+                                <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">Registrations</p>
+                                <p className="font-bold text-gray-800 text-sm">Last 30 days</p>
+                            </div>
+                            <span className="text-2xl font-black text-violet-600">{totalReg}</span>
+                        </div>
+                        <ReactApexChart
+                            options={regOptions}
+                            series={[{ name: 'Registrations', data: regSeries }]}
+                            type="area"
+                            height={160}
+                        />
+                    </div>
+
+                    {/* Invitations Chart */}
+                    <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
+                            <div>
+                                <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">Invitations</p>
+                                <p className="font-bold text-gray-800 text-sm">Last 30 days</p>
+                            </div>
+                            <span className="text-2xl font-black text-blue-600">{totalInv}</span>
+                        </div>
+                        <ReactApexChart
+                            options={invOptions}
+                            series={[{ name: 'Invitations', data: invSeries }]}
+                            type="area"
+                            height={160}
+                        />
+                    </div>
+
+                    {/* Status breakdown */}
+                    {totalInv > 0 && (
+                        <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+                            <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-3">Invitation Status Breakdown</p>
+                            {(['accepted', 'pending', 'declined', 'sent'] as const).map(status => {
+                                const count = invitations.filter(i => i.status === status).length;
+                                const pct = totalInv > 0 ? Math.round((count / totalInv) * 100) : 0;
+                                const colors: Record<string, string> = {
+                                    accepted: 'bg-emerald-500',
+                                    pending: 'bg-amber-400',
+                                    declined: 'bg-red-400',
+                                    sent: 'bg-blue-400',
+                                };
+                                return (
+                                    <div key={status} className="flex items-center gap-3 py-1.5">
+                                        <span className="capitalize text-xs font-medium text-gray-700 w-16">{status}</span>
+                                        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                            <div
+                                                className={cn('h-full rounded-full transition-all duration-700', colors[status])}
+                                                style={{ width: `${pct}%` }}
+                                            />
+                                        </div>
+                                        <span className="text-xs font-bold text-gray-500 w-8 text-right">{count}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </>
+    );
+}
+
 // ─── Main Details Panel ───────────────────────────────────────────────────────
 
-function DetailsPanel({ event }: { event: Event }) {
+function DetailsPanel({ event, attachmentsRef }: { event: Event; attachmentsRef?: React.RefObject<HTMLDivElement | null> }) {
     const startDate = toDate(event.startDate);
     const endDate = toDate(event.endDate);
     const regConfig = event.registrationConfig;
@@ -77,9 +250,7 @@ function DetailsPanel({ event }: { event: Event }) {
                         className="w-full h-full object-cover"
                     />
                 )}
-                {/* Gradient overlay for readability */}
                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
-                {/* Brand colour swatch */}
                 {event.branding?.primaryColor && (
                     <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-black/30 backdrop-blur-sm rounded-full px-2.5 py-1">
                         <span className="w-3 h-3 rounded-full border border-white/40 shrink-0"
@@ -87,7 +258,6 @@ function DetailsPanel({ event }: { event: Event }) {
                         <span className="text-[10px] text-white/80 font-mono">{event.branding.primaryColor}</span>
                     </div>
                 )}
-                {/* Status + category overlay bottom-left */}
                 <div className="absolute bottom-4 left-4 md:left-6 flex items-center gap-2 flex-wrap">
                     <StatusBadge status={event.status} />
                     <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 text-white backdrop-blur-sm border border-white/20 capitalize">
@@ -104,7 +274,6 @@ function DetailsPanel({ event }: { event: Event }) {
             {/* ── Content area ── */}
             <div className="px-4 md:px-6 py-6 space-y-6">
 
-                {/* Title + short description */}
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{event.title}</h1>
                     {event.shortDescription && (
@@ -112,7 +281,6 @@ function DetailsPanel({ event }: { event: Event }) {
                     )}
                 </div>
 
-                {/* At-a-glance info grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <InfoCard icon={Calendar} label="Start" value={format(startDate, 'MMM d, yyyy • h:mm a')} accent />
                     <InfoCard icon={Calendar} label="End" value={format(endDate, 'MMM d, yyyy • h:mm a')} />
@@ -120,13 +288,11 @@ function DetailsPanel({ event }: { event: Event }) {
                     {regConfig?.capacity && <InfoCard icon={Users} label="Capacity" value={`${regConfig.capacity} attendees`} />}
                 </div>
 
-                {/* Description */}
                 <div>
                     <SectionLabel>About this event</SectionLabel>
                     <p className="text-sm text-gray-600 leading-relaxed">{event.description}</p>
                 </div>
 
-                {/* Theme & Bible verse */}
                 {(event.theme || event.eventBibleVerse) && (
                     <div className="bg-violet-50 rounded-2xl p-5 border border-violet-100 space-y-3">
                         {event.theme && (
@@ -149,7 +315,6 @@ function DetailsPanel({ event }: { event: Event }) {
                     </div>
                 )}
 
-                {/* Tags */}
                 {event.tags?.length > 0 && (
                     <div>
                         <SectionLabel>Tags</SectionLabel>
@@ -158,7 +323,6 @@ function DetailsPanel({ event }: { event: Event }) {
                                 <span key={tag}
                                     className="inline-flex items-center gap-1 bg-violet-50 text-violet-700 text-xs font-medium px-3 py-1 rounded-full border border-violet-100">
                                     <Hash className="w-2.5 h-2.5" />{tag}
-                                    <X className="w-3 h-3 cursor-pointer hover:text-violet-900" />
                                 </span>
                             ))}
                         </div>
@@ -167,7 +331,6 @@ function DetailsPanel({ event }: { event: Event }) {
 
                 <Divider />
 
-                {/* Registration dates */}
                 <div>
                     <SectionLabel>Registration Window</SectionLabel>
                     <div className="grid grid-cols-2 gap-3 mt-1">
@@ -183,8 +346,8 @@ function DetailsPanel({ event }: { event: Event }) {
                         ))}
                     </div>
                     {regConfig?.enabled && (
-                        <span className="inline-block mt-2 text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
-                            Registration Open
+                        <span className="inline-flex items-center gap-1 mt-2 text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
+                            <CheckCircle2 className="w-2.5 h-2.5" />Registration Open
                         </span>
                     )}
                     {regConfig?.requiresApproval && (
@@ -196,9 +359,8 @@ function DetailsPanel({ event }: { event: Event }) {
 
                 <Divider />
 
-                {/* Venue */}
                 <div>
-                    <SectionLabel>Venue & Location</SectionLabel>
+                    <SectionLabel>Venue &amp; Location</SectionLabel>
                     <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
                         <div className="flex items-start gap-3">
                             <div className="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center shrink-0">
@@ -219,7 +381,6 @@ function DetailsPanel({ event }: { event: Event }) {
                     </div>
                 </div>
 
-                {/* Ministers */}
                 {(event.ministers?.length ?? 0) > 0 && (
                     <div>
                         <SectionLabel>Ministers</SectionLabel>
@@ -245,7 +406,6 @@ function DetailsPanel({ event }: { event: Event }) {
                     </div>
                 )}
 
-                {/* Channels */}
                 {(event.channels?.length ?? 0) > 0 && (
                     <div>
                         <SectionLabel>Channels</SectionLabel>
@@ -273,7 +433,6 @@ function DetailsPanel({ event }: { event: Event }) {
                     </div>
                 )}
 
-                {/* Contacts */}
                 {event.contacts && event.contacts.length > 0 && (
                     <div>
                         <SectionLabel>Contacts</SectionLabel>
@@ -287,7 +446,6 @@ function DetailsPanel({ event }: { event: Event }) {
                     </div>
                 )}
 
-                {/* External links */}
                 {event.links && event.links.length > 0 && (
                     <div>
                         <SectionLabel>Links</SectionLabel>
@@ -304,15 +462,14 @@ function DetailsPanel({ event }: { event: Event }) {
 
                 <Divider />
 
-                {/* Attachments */}
-                <div>
+                {/* Attachments section — anchor for Paperclip button */}
+                <div ref={attachmentsRef}>
                     <SectionLabel>Attachments</SectionLabel>
                     <button className="w-full text-xs text-gray-400 border border-dashed border-gray-200 rounded-xl py-5 hover:border-violet-300 hover:text-violet-500 transition-colors flex items-center justify-center gap-2">
                         <Paperclip className="w-3.5 h-3.5" />Add attachments
                     </button>
                 </div>
 
-                {/* Bottom padding */}
                 <div className="h-4" />
             </div>
         </div>
@@ -329,14 +486,11 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
     const [isInvModalOpen, setIsInvModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Reset search when tab changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleTabChange = (tab: RightTab) => {
         setRightTab(tab);
         setSearchTerm('');
     };
 
-    // Fetch Registrations
     const { data: registrations, isLoading: isRegLoading } = useQuery({
         queryKey: ['registrations', eventId],
         queryFn: async () => {
@@ -347,7 +501,6 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
         }
     });
 
-    // Fetch Invitations
     const { data: invitations, isLoading: isInvLoading } = useQuery({
         queryKey: ['invitations', eventId],
         queryFn: async () => {
@@ -361,11 +514,9 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
     const startDate = toDate(event.startDate);
     const regConfig = event.registrationConfig;
 
-    // Counts
     const regCount = registrations?.length || 0;
     const acceptedCount = invitations?.filter((i: Invitation) => i.status === 'accepted').length || 0;
 
-    // Filter Logic
     const filteredRegistrations = registrations?.filter((r: Registration) => {
         if (!searchTerm) return true;
         const term = searchTerm.toLowerCase();
@@ -384,8 +535,7 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
         return (
             (i.recipientName?.toLowerCase()?.includes(term) ?? false) ||
             (i.recipientEmail?.toLowerCase()?.includes(term) ?? false) ||
-            (i.name?.toLowerCase()?.includes(term) ?? false) || // fallback
-            (i.email?.toLowerCase()?.includes(term) ?? false) ||
+            (i.senderName?.toLowerCase()?.includes(term) ?? false) ||
             (i.inviteeName?.toLowerCase()?.includes(term) ?? false) ||
             (i.inviteeEmail?.toLowerCase()?.includes(term) ?? false)
         );
@@ -395,11 +545,10 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
 
     return (
         <div className="flex flex-col h-full overflow-hidden">
-            {/* Modals */}
             <AddRegistrationModal eventId={eventId} isOpen={isRegModalOpen} onClose={() => setIsRegModalOpen(false)} />
             <AddInvitationModal eventId={eventId} isOpen={isInvModalOpen} onClose={() => setIsInvModalOpen(false)} />
 
-            {/* ── Tab switcher row (above purple pane) ── */}
+            {/* Tab switcher */}
             <div className="bg-white border-b border-gray-100 px-4 py-3 flex gap-2 shrink-0">
                 <button
                     onClick={() => handleTabChange('registrations')}
@@ -435,10 +584,9 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
                 </button>
             </div>
 
-            {/* ── Purple pane ── */}
+            {/* Purple pane */}
             <div className="flex-1 flex flex-col overflow-hidden transition-colors duration-300" style={{ backgroundColor: '#6c63d5' }}>
 
-                {/* Header block */}
                 <div className="px-5 md:px-6 pt-5 pb-4 shrink-0">
                     <p className="text-[10px] font-bold text-white/60 uppercase tracking-widest mb-1">
                         {rightTab === 'registrations' ? 'Attendees' : 'Invitations'}
@@ -453,7 +601,6 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
                         }
                     </p>
 
-                    {/* Actions Row */}
                     <div className="mt-5 flex gap-2">
                         <div className="relative flex-1 group">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/50 group-focus-within:text-white transition-colors" />
@@ -476,10 +623,8 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
 
                 <div className="h-px bg-white/10 mx-5 md:mx-6 shrink-0" />
 
-                {/* List */}
                 <div className="flex-1 overflow-y-auto py-4 px-5 md:px-6 space-y-4 custom-scrollbar">
 
-                    {/* Loading State */}
                     {isLoading && (
                         Array.from({ length: 5 }).map((_, i) => (
                             <div key={i} className="flex items-center gap-3 animate-pulse">
@@ -492,7 +637,6 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
                         ))
                     )}
 
-                    {/* Content */}
                     {!isLoading && rightTab === 'registrations' && (
                         <>
                             {filteredRegistrations?.length === 0 && (
@@ -531,7 +675,7 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
                             {filteredInvitations?.map((inv: Invitation, i: number) => (
                                 <div key={inv.id || i} className="flex items-center gap-3 group">
                                     <div className="w-9 h-9 rounded-full bg-violet-400/50 flex items-center justify-center text-white text-xs font-bold shrink-0 ring-2 ring-white/10 group-hover:ring-white/30 transition-all">
-                                        {(inv.recipientName || inv.inviteeName || inv.recipientEmail || inv.email || '?').charAt(0).toUpperCase()}
+                                        {(inv.recipientName || inv.inviteeName || inv.recipientEmail || inv.senderName || '?').charAt(0).toUpperCase()}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm text-white font-medium truncate group-hover:text-violet-100 transition-colors">{inv.recipientName || inv.inviteeName || 'Unknown'}</p>
@@ -560,9 +704,15 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
 
 export default function EventDetailsPage() {
     const params = useParams();
+    const router = useRouter();
     const eventId = params?.id as string;
+    const queryClient = useQueryClient();
+
     const [rightTab, setRightTab] = useState<RightTab>('registrations');
     const [mobilePanel, setMobilePanel] = useState<MobilePanel>('details');
+    const [analyticsOpen, setAnalyticsOpen] = useState(false);
+    const [copySuccess, setCopySuccess] = useState(false);
+    const attachmentsRef = useRef<HTMLDivElement>(null);
 
     const { data: event, isLoading, isError } = useQuery({
         queryKey: ['event', eventId],
@@ -574,6 +724,86 @@ export default function EventDetailsPage() {
         },
         enabled: !!eventId,
     });
+
+    // Pre-fetch registrations + invitations for analytics
+    const { data: registrations = [] } = useQuery<Registration[]>({
+        queryKey: ['registrations', eventId],
+        queryFn: async () => {
+            const res = await fetch(`/api/events/${eventId}/registrations`);
+            if (!res.ok) return [];
+            return (await res.json()).data || [];
+        },
+        enabled: !!eventId,
+    });
+
+    const { data: invitations = [] } = useQuery<Invitation[]>({
+        queryKey: ['invitations', eventId],
+        queryFn: async () => {
+            const res = await fetch(`/api/events/${eventId}/invitations`);
+            if (!res.ok) return [];
+            return (await res.json()).data || [];
+        },
+        enabled: !!eventId,
+    });
+
+    // ── Toggle featured ───────────────────────────────────────────────────────
+    const featuredMutation = useMutation({
+        mutationFn: async (featured: boolean) => {
+            const res = await fetch(`/api/events/${eventId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ featured }),
+            });
+            if (!res.ok) throw new Error('Failed to update');
+            return res.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['event', eventId] });
+            queryClient.invalidateQueries({ queryKey: ['events'] });
+        },
+    });
+
+    // ── Copy public event link ────────────────────────────────────────────────
+    const copyEventLink = async () => {
+        const url = `${window.location.origin}/e/${eventId}`;
+        try {
+            await navigator.clipboard.writeText(url);
+            setCopySuccess(true);
+            setTimeout(() => setCopySuccess(false), 2000);
+        } catch {
+            // fallback
+            const ta = document.createElement('textarea');
+            ta.value = url;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            setCopySuccess(true);
+            setTimeout(() => setCopySuccess(false), 2000);
+        }
+    };
+
+    // ── Share via Web Share API ───────────────────────────────────────────────
+    const shareEvent = async () => {
+        const url = `${window.location.origin}/e/${eventId}`;
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: event?.title || 'Event',
+                    text: event?.shortDescription || event?.description || '',
+                    url,
+                });
+            } catch { /* cancelled */ }
+        } else {
+            // fallback to copy
+            copyEventLink();
+        }
+    };
+
+    // ── Scroll to attachments ─────────────────────────────────────────────────
+    const scrollToAttachments = () => {
+        attachmentsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
 
     if (isLoading) return <SkeletonDetail />;
 
@@ -589,8 +819,73 @@ export default function EventDetailsPage() {
         </div>
     );
 
+    // ── Shared action buttons ─────────────────────────────────────────────────
+    const ActionButtons = ({ size = 'md' }: { size?: 'sm' | 'md' }) => {
+        const s = size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4';
+        return (
+            <div className="flex items-center gap-2 text-gray-400">
+                {/* Star / Featured */}
+                <button
+                    onClick={() => featuredMutation.mutate(!event.featured)}
+                    disabled={featuredMutation.isPending}
+                    title={event.featured ? 'Remove from featured' : 'Mark as featured'}
+                    className={cn('hover:text-amber-500 transition-colors disabled:opacity-50', event.featured && 'text-amber-400')}
+                >
+                    <Star className={s} fill={event.featured ? 'currentColor' : 'none'} />
+                </button>
+
+                {/* Copy public link */}
+                <button
+                    onClick={copyEventLink}
+                    title={copySuccess ? 'Copied!' : 'Copy public event link'}
+                    className={cn('transition-colors', copySuccess ? 'text-emerald-500' : 'hover:text-violet-500')}
+                >
+                    <Link2 className={s} />
+                </button>
+
+                {/* Scroll to attachments */}
+                <button
+                    onClick={scrollToAttachments}
+                    title="Attachments"
+                    className="hover:text-violet-500 transition-colors"
+                >
+                    <Paperclip className={s} />
+                </button>
+
+                {/* Analytics */}
+                <button
+                    onClick={() => setAnalyticsOpen(true)}
+                    title="View Analytics"
+                    className="hover:text-violet-500 transition-colors"
+                >
+                    <BarChart3 className={s} />
+                </button>
+
+                {/* Edit */}
+                <Link href={`/admin/events/${event.id}/edit`} title="Edit event" className="hover:text-violet-600 transition-colors">
+                    <Edit className={s} />
+                </Link>
+
+                {/* Share */}
+                <button onClick={shareEvent} title="Share event" className="hover:text-violet-500 transition-colors">
+                    <Share2 className={s} />
+                </button>
+            </div>
+        );
+    };
+
     return (
         <div className="flex flex-col lg:flex-row h-screen bg-gray-50 overflow-hidden font-sans">
+
+            {/* Analytics Drawer */}
+            <AnalyticsDrawer
+                open={analyticsOpen}
+                onClose={() => setAnalyticsOpen(false)}
+                eventId={eventId}
+                event={event}
+                registrations={registrations}
+                invitations={invitations}
+            />
 
             {/* ── Mobile top bar ───────────────────────────────────────────── */}
             <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shrink-0">
@@ -598,15 +893,7 @@ export default function EventDetailsPage() {
                     className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-violet-600 transition-colors uppercase tracking-wider">
                     <ArrowLeft className="w-3.5 h-3.5" />Events
                 </Link>
-                <div className="flex items-center gap-3 text-gray-400">
-                    <button className={cn('hover:text-amber-500 transition-colors', event.featured && 'text-amber-400')}>
-                        <Star className="w-4 h-4" fill={event.featured ? 'currentColor' : 'none'} />
-                    </button>
-                    <Link href={`/admin/events/${event.id}/edit`} className="hover:text-violet-600 transition-colors">
-                        <Edit className="w-4 h-4" />
-                    </Link>
-                    <button className="hover:text-violet-500 transition-colors"><Share2 className="w-4 h-4" /></button>
-                </div>
+                <ActionButtons size="sm" />
             </div>
 
             {/* ── Mobile panel tab bar ─────────────────────────────────────── */}
@@ -627,7 +914,7 @@ export default function EventDetailsPage() {
 
             {/* ── Mobile panels ────────────────────────────────────────────── */}
             <div className={cn('lg:hidden flex-1 flex flex-col overflow-hidden bg-white', mobilePanel === 'details' ? 'flex' : 'hidden')}>
-                <DetailsPanel event={event} />
+                <DetailsPanel event={event} attachmentsRef={attachmentsRef} />
             </div>
             <div className={cn('lg:hidden flex-1 flex flex-col overflow-hidden', mobilePanel === 'people' ? 'flex' : 'hidden')}>
                 <PeoplePanel event={event} rightTab={rightTab} setRightTab={setRightTab} />
@@ -637,25 +924,14 @@ export default function EventDetailsPage() {
 
             {/* Left panel — event details */}
             <div className="hidden lg:flex flex-1 bg-white flex-col overflow-hidden border-r border-gray-200 min-w-0">
-                {/* Sticky header bar */}
                 <div className="shrink-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
                     <Link href="/admin/events"
                         className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-violet-600 transition-colors uppercase tracking-wider">
                         <ArrowLeft className="w-3.5 h-3.5" />Events
                     </Link>
-                    <div className="flex items-center gap-3 text-gray-400">
-                        <button className={cn('hover:text-amber-500 transition-colors', event.featured && 'text-amber-400')}>
-                            <Star className="w-4 h-4" fill={event.featured ? 'currentColor' : 'none'} />
-                        </button>
-                        <button className="hover:text-violet-500 transition-colors"><Link2 className="w-4 h-4" /></button>
-                        <button className="hover:text-violet-500 transition-colors"><Paperclip className="w-4 h-4" /></button>
-                        <Link href={`/admin/events/${event.id}/edit`} className="hover:text-violet-600 transition-colors">
-                            <Edit className="w-4 h-4" />
-                        </Link>
-                        <button className="hover:text-violet-500 transition-colors"><Share2 className="w-4 h-4" /></button>
-                    </div>
+                    <ActionButtons />
                 </div>
-                <DetailsPanel event={event} />
+                <DetailsPanel event={event} attachmentsRef={attachmentsRef} />
             </div>
 
             {/* Right panel — tab switcher + purple pane */}

@@ -10,6 +10,10 @@ export default async function RegisterPage({ params }: { params: Promise<{ event
     if (!events.length) return notFound();
     const event = serializeFirestoreData(events[0]);
 
+    // ── DEBUG: log form config coming from Firestore ──────────────────────────
+    console.log('[RegisterPage] event.registrationConfig:', JSON.stringify(event.registrationConfig, null, 2));
+    console.log('[RegisterPage] event.registrationConfig.fields:', JSON.stringify(event.registrationConfig?.fields, null, 2));
+
     return (
         <div className="min-h-screen bg-white">
             <main className="container mx-auto container-px py-8 md:py-12">

@@ -924,7 +924,19 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                     />
                                 </div>
                                 <div className="mt-6">
-                                    <h4 className="text-sm font-bold text-gray-900 mb-4">Registration Form Settings</h4>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <h4 className="text-sm font-bold text-gray-900">Custom Form Fields</h4>
+                                    </div>
+                                    {/* Default fields notice */}
+                                    <div className="bg-violet-50 border border-violet-100 rounded-xl px-4 py-3 mb-4 flex items-start gap-3">
+                                        <div className="w-5 h-5 rounded-full bg-violet-200 flex items-center justify-center shrink-0 mt-0.5">
+                                            <Check className="w-3 h-3 text-violet-700" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-violet-800">Default fields are always collected</p>
+                                            <p className="text-xs text-violet-600 mt-0.5">Name, Email, and Phone are automatically required on every registration form. Add custom fields below for event-specific questions.</p>
+                                        </div>
+                                    </div>
                                     <DynamicFormBuilder
                                         control={control}
                                         register={register}
@@ -956,7 +968,19 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
 
                         {invitationEnabled && (
                             <div className="space-y-4 pt-4 border-t border-gray-100">
-                                <h4 className="text-sm font-bold text-gray-900 mb-2">Invitation Form Settings</h4>
+                                <div className="flex items-center justify-between mb-2">
+                                    <h4 className="text-sm font-bold text-gray-900">Custom Form Fields</h4>
+                                </div>
+                                {/* Default fields notice */}
+                                <div className="bg-violet-50 border border-violet-100 rounded-xl px-4 py-3 flex items-start gap-3">
+                                    <div className="w-5 h-5 rounded-full bg-violet-200 flex items-center justify-center shrink-0 mt-0.5">
+                                        <Check className="w-3 h-3 text-violet-700" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-violet-800">Default fields are always collected</p>
+                                        <p className="text-xs text-violet-600 mt-0.5">Inviter name, Guest name, Phone, and Email are automatically included. Add custom fields below for event-specific questions.</p>
+                                    </div>
+                                </div>
                                 <DynamicFormBuilder
                                     control={control}
                                     register={register}

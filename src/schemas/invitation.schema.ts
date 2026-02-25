@@ -1,20 +1,44 @@
 import { z } from "zod";
 
+/**
+ * ── DEFAULT FIELDS ────────────────────────────────────────────────────────────
+ * Every invitation always collects:
+ *   - senderName   (inviter's name)
+ *   - recipientName (guest's name)
+ *   - recipientPhone (guest's phone / WhatsApp)
+ *   - recipientEmail (guest's email — optional)
+ *   - personalMessage (invitation note)
+ * These are non-negotiable defaults.
+ * Event-specific questions are stored in customFields.
+ */
+
 // Create Invitation Schema
 export const createInvitationSchema = z.object({
   eventId: z.string().min(1, "Event ID is required"),
 
-  // Sender Info
+  // Default: Sender (inviter)
   senderName: z.string().min(1, "Sender name is required").max(100),
   senderEmail: z.string().email("Invalid sender email"),
 
+  // Default: Recipient (guest) — name + phone required
+  recipientName: z.string().min(1, "Guest name is required").max(100),
+  recipientPhone: z
+    .string()
+    .min(10, "Invalid phone number")
+    .optional()
+    .or(z.literal("")),
+
+  // Default: recipient email (optional)
   recipientEmail: z
     .string()
     .email("Invalid recipient email")
     .optional()
     .or(z.literal("")),
-  recipientName: z.string().max(100).optional(),
-  personalMessage: z.string().max(500).optional(),
+
+  // Default: personal message
+  personalMessage: z.string().max(1000).optional(),
+
+  // Custom event-specific answers — keyed by field label
   customFields: z.record(z.any()).optional(),
 });
 

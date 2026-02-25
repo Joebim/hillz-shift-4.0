@@ -30,7 +30,7 @@ export default function CreateEventPage() {
     });
 
     return (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto p-5 lg:p-10">
             <AdminPageHeader
                 title="Create New Event"
                 description="Add a new event to your calendar"
