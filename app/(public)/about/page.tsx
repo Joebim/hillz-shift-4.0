@@ -7,8 +7,8 @@ import { CheckCircle2, Heart, Shield, Star, Users, ArrowRight, Sparkles } from '
 import Link from 'next/link';
 
 export const metadata = {
-    title: 'About Us | Hillz Shift 4.0',
-    description: 'Learn about our vision, mission, and the history of Hillz Shift 4.0.',
+    title: 'About Us | The Hillz',
+    description: 'Learn about our vision, mission, and the history of The Hillz.',
 };
 
 export default function AboutPage() {
@@ -21,10 +21,11 @@ export default function AboutPage() {
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
                     <Image
-                        src="https://images.unsplash.com/photo-1544427928-c49cdfebf194?q=80&w=2070&auto=format&fit=crop"
+                        src="/about_hero.png"
                         alt="About Us"
                         fill
                         className="object-cover opacity-60"
+                        unoptimized
                     />
                 </div>
                 <div className="container mx-auto px-6 relative z-10 text-center">
@@ -59,10 +60,10 @@ export default function AboutPage() {
                     <div className="max-w-xl">
                         <div className="w-12 h-1.5 bg-purple-600 rounded-full mb-8" />
                         <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-8 tracking-tighter">
-                            Shifted to Impact
+                            Called to Impact
                         </h2>
                         <p className="text-xl text-slate-500 mb-10 leading-relaxed font-medium">
-                            Hillz Shift 4.0 began as a divine whisper to transform how we experience faith in the modern world. We aren&apos;t just a church; we are a catalyst for spiritual breakthrough.
+                            The Hillz began as a divine whisper to transform how we experience faith in the modern world. We aren&apos;t just a church; we are a catalyst for spiritual breakthrough.
                         </p>
 
                         <div className="space-y-8">

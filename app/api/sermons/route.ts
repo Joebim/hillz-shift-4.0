@@ -99,13 +99,13 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
+    // Generate slug if not provided
+    if (!body.slug && body.title) {
+      body.slug = generateSlug(body.title);
+    }
+
     // Validate request body
     const validated = createSermonSchema.parse(body);
-
-    // Generate slug if not provided
-    if (!validated.slug) {
-      validated.slug = generateSlug(validated.title);
-    }
 
     // Create sermon
     const sermonId = await createDocument("sermons", {

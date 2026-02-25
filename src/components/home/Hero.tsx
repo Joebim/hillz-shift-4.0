@@ -1,57 +1,93 @@
+'use client';
+
 import Link from 'next/link';
-import { Button } from '@/src/components/ui/Button';
 import { Play } from 'lucide-react';
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Hero — Variant 2
+   Reference: River Valley Church
+   Style: Full-bleed worship photo, minimal overlay, church name bottom-left,
+          two pill CTAs, sparse nav top-right, logo mark top-left.
+   No mosaic — the image IS the hero. UI sits on top with light touch.
+───────────────────────────────────────────────────────────────────────────── */
+
+// Today's verse — swap out each week
+const TODAYS_VERSE = {
+    label: "TODAY'S VERSE",
+    ref: 'John 15:13',
+};
 
 export const Hero = () => {
     return (
-        <section className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
-            {/* Background Image with Gradient Overlay */}
+        <section className="relative w-full h-screen min-h-[580px] overflow-hidden bg-black font-sans">
+
+            {/* ── Full-bleed background photo ────────────────────────────── */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/20 to-black/90 z-10" />
-                <div
-                    className="w-full h-full bg-[url('https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=2073&auto=format&fit=crop')] bg-cover bg-center scale-100 animate-slow-zoom"
+                <img
+                    src="/landing_hero.png"
+                    alt="Preaching at The Hillz"
+                    className="w-full h-full object-cover object-center"
                 />
+                {/* Very subtle gradient — only bottom and slight left, keeps image vivid */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/30" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
             </div>
 
-            <div className="container mx-auto px-6 relative z-20">
-                <div className="max-w-5xl mx-auto text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-[10px] font-black uppercase tracking-[0.3em] mb-8 animate-fade-in-up shadow-2xl">
-                        <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-                        Welcome to the Future of Faith
-                    </div>
 
-                    <h1 className="text-5xl md:text-8xl font-black text-white mb-8 leading-[0.9] tracking-tighter animate-fade-in-up">
-                        SHIFT INTO <br />
-                        <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 via-pink-300 to-indigo-400 bg-300% animate-gradient">NEW DIMENSIONS</span>
-                    </h1>
 
-                    <p className="text-lg md:text-2xl text-white/70 mb-12 leading-relaxed max-w-3xl mx-auto font-medium animate-fade-in-up delay-100">
-                        Join us for Hillz Shift 4.0. Experience transformative worship, <br className="hidden md:block" />
-                        powerful teaching, and a community dedicated to walking in purpose.
-                    </p>
+            {/* ── Bottom-left content block ───────────────────────────────── */}
+            <div className="absolute bottom-0 left-0 z-20 px-6 sm:px-10 pb-10 sm:pb-14 space-y-5">
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up delay-200">
-                        <Link href="/events">
-                            <Button size="lg" className="w-full sm:w-auto h-16 px-12 rounded-2xl bg-white text-black hover:bg-gray-100 font-black text-lg transition-all shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]">
-                                JOIN THE SHIFT
-                            </Button>
-                        </Link>
-                        <Link href="/sermons">
-                            <Button size="lg" variant="outline" className="w-full sm:w-auto h-16 px-10 rounded-2xl border-white/20 text-white hover:bg-white/10 font-bold text-lg backdrop-blur-md transition-all">
-                                <Play className="w-5 h-5 mr-3 fill-current" />
-                                WATCH LATEST
-                            </Button>
-                        </Link>
-                    </div>
+                {/* Church name — compact, bold, white, uppercase, tight tracking */}
+                <h1
+                    className="text-white font-black uppercase tracking-[0.06em] text-2xl sm:text-3xl md:text-4xl leading-tight opacity-0 animate-[fadeUp_0.6s_0.2s_ease_forwards]"
+                >
+                    The Hillz Church
+                </h1>
+
+                {/* Two pill CTAs side by side */}
+                <div className="flex items-center gap-3 opacity-0 animate-[fadeUp_0.6s_0.4s_ease_forwards]">
+
+                    {/* Primary CTA — purple, matches site aesthetics */}
+                    <Link
+                        href="/sermons"
+                        className="
+                            inline-flex items-center gap-2 px-6 py-3.5 rounded-full
+                            bg-purple-600 hover:bg-purple-500
+                            text-white text-xs font-black uppercase tracking-[0.14em]
+                            transition-colors duration-200 shadow-lg shadow-purple-600/30
+                        "
+                    >
+                        <Play className="w-3.5 h-3.5 fill-white" />
+                        Watch Latest Sermon
+                    </Link>
+
+                    {/* Secondary CTA — dark pill with label + verse, matches reference */}
+                    <Link
+                        href="/devotional"
+                        className="
+                            inline-flex flex-col items-start px-5 py-2.5 rounded-full
+                            bg-black/60 hover:bg-black/80 border border-white/20
+                            backdrop-blur-sm transition-all duration-200
+                        "
+                    >
+                        <span className="text-white/60 text-[9px] font-bold uppercase tracking-[0.18em] leading-none mb-0.5">
+                            {TODAYS_VERSE.label}
+                        </span>
+                        <span className="text-white text-sm font-bold leading-none">
+                            {TODAYS_VERSE.ref}
+                        </span>
+                    </Link>
                 </div>
             </div>
 
-            {/* Scroll Indicator */}
-            <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce z-20 text-white/40">
-                <div className="w-6 h-10 rounded-full border-2 border-current flex items-start justify-center p-1.5">
-                    <div className="w-1 h-2 bg-current rounded-full animate-scroll-down" />
-                </div>
-            </div>
+            {/* ── Keyframe animations ─────────────────────────────────────── */}
+            <style>{`
+                @keyframes fadeUp {
+                    from { opacity: 0; transform: translateY(18px); }
+                    to   { opacity: 1; transform: translateY(0); }
+                }
+            `}</style>
         </section>
     );
 };

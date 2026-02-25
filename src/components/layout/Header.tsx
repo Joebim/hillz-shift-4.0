@@ -31,7 +31,6 @@ const navigation = [
     { name: 'Sermons', href: '/sermons' },
     { name: 'Ministries', href: '/ministries' },
     { name: 'Blog', href: '/blog' },
-    { name: 'Give', href: '/give' },
     { name: 'Contact', href: '/contact' },
 ];
 
@@ -73,13 +72,13 @@ export const Header = () => {
                                     isScrolled ? 'text-gray-900' : 'text-white'
                                 )}
                             >
-                                SHIFT
+                                THE HILLZ
                             </span>
                             <span className={cn(
                                 'text-[10px] font-black tracking-[0.2em] transition-colors duration-300',
                                 isScrolled ? 'text-purple-600' : 'text-purple-300'
                             )}>
-                                4.0 PLATFORM
+                                CHURCH
                             </span>
                         </div>
                     </Link>
@@ -157,18 +156,6 @@ export const Header = () => {
                                 Prayer
                             </Button>
                         </Link>
-                        <Link href="/give">
-                            <Button
-                                variant="primary"
-                                size="sm"
-                                className={cn(
-                                    'shadow-xl transition-all duration-300 rounded-full font-black px-6 border-none',
-                                    isScrolled ? 'bg-purple-600 hover:bg-purple-700 shadow-purple-100' : 'bg-[#D4AF37] hover:bg-[#B8941E] text-slate-900 shadow-yellow-900/20'
-                                )}
-                            >
-                                GIVE
-                            </Button>
-                        </Link>
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -232,11 +219,6 @@ export const Header = () => {
                             <Link href="/prayer" onClick={() => setMobileMenuOpen(false)}>
                                 <Button variant="outline" size="md" className="w-full">
                                     Prayer Request
-                                </Button>
-                            </Link>
-                            <Link href="/give" onClick={() => setMobileMenuOpen(false)}>
-                                <Button variant="primary" size="md" className="w-full">
-                                    Give
                                 </Button>
                             </Link>
                         </div>

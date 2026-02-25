@@ -264,13 +264,13 @@ export default async function EventDetailPage({
                                                 )}
                                             </div>
 
-                                            <Link href={`/events/${event.slug}/register`}>
+                                            <Link href={`/e/${event.slug}`}>
                                                 <Button className="w-full h-18 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-purple-900/40 transition-all">
-                                                    REGISTER NOW
+                                                    ENTER EVENT
                                                 </Button>
                                             </Link>
                                             <p className="mt-6 text-center text-[10px] font-black text-white/40 uppercase tracking-widest italic">
-                                                * Confirmation sent via email immediately
+                                                * Dive into the experience
                                             </p>
                                         </>
                                     ) : (

@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import {
   Calendar, Settings, LogOut, Building,
   Mic, FileText, Sparkles, Menu, X,
-  PanelLeftClose, PanelLeftOpen, Image, User
+  PanelLeftClose, PanelLeftOpen, Image, User, MessageSquare, Heart
 } from 'lucide-react';
 
 const navigation = [
@@ -16,6 +16,8 @@ const navigation = [
   { name: 'Blog Posts', href: '/admin/blog', icon: FileText },
   { name: 'Ministries', href: '/admin/ministries', icon: Building },
   { name: 'Media', href: '/admin/media', icon: Image },
+  { name: 'Contact Reqs', href: '/admin/requests/contact', icon: MessageSquare },
+  { name: 'Prayer Reqs', href: '/admin/requests/prayer', icon: Heart },
   { name: 'Profile', href: '/admin/profile', icon: User },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];

@@ -247,3 +247,39 @@ export function formatFileSize(bytes: number): string {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
 }
+/**
+ * Deeply serialize Firestore data for Next.js Server-Client boundary
+ */
+export function serializeFirestoreData<T>(data: T): T {
+  if (data === null || data === undefined) return data;
+
+  if (Array.isArray(data)) {
+    return data.map((item) => serializeFirestoreData(item)) as unknown as T;
+  }
+
+  if (typeof data === "object") {
+    // Check if it's a Firestore Timestamp without using 'any' if possible
+    // or at least cast to a more specific interface
+    const obj = data as Record<string, unknown>;
+
+    if (typeof obj.toDate === "function") {
+      return (obj.toDate as () => Date)().toISOString() as unknown as T;
+    }
+
+    // Handle standard Date
+    if (data instanceof Date) {
+      return data.toISOString() as unknown as T;
+    }
+
+    // Recursively handle objects
+    const result: Record<string, unknown> = {};
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        result[key] = serializeFirestoreData(obj[key]);
+      }
+    }
+    return result as T;
+  }
+
+  return data;
+}

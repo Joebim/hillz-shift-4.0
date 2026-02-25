@@ -24,8 +24,8 @@ export const createBlogPostSchema = z.object({
   featuredImage: z.string().url("Invalid featured image URL"),
 
   // Categorization
-  category: z.string().min(1, "Category is required"),
-  tags: z.array(z.string()),
+  category: z.string().optional().default("general"),
+  tags: z.array(z.string()).optional().default([]),
 
   // Publishing
   status: z.enum(["draft", "published", "archived"]),

@@ -135,15 +135,17 @@ export async function POST(
     // Send invitation email
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
 
-    // Send email in background
-    sendInvitationEmail(
-      validated.recipientEmail,
-      validated.recipientName,
-      validated.senderName,
-      event.title,
-      invitationCode,
-      `${baseUrl}/events/${eventId}`,
-    ).catch((err) => console.error("Failed to send invitation email:", err));
+    // Send email in background if email is provided
+    if (validated.recipientEmail) {
+      sendInvitationEmail(
+        validated.recipientEmail,
+        validated.recipientName,
+        validated.senderName,
+        event.title,
+        invitationCode,
+        `${baseUrl}/events/${eventId}`,
+      ).catch((err) => console.error("Failed to send invitation email:", err));
+    }
 
     return successResponse(
       {

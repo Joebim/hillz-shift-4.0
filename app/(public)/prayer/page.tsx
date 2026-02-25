@@ -1,15 +1,14 @@
 import Image from 'next/image';
 import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
-import { Button } from '@/src/components/ui/Button';
-import { Input } from '@/src/components/ui/Input';
-import { Textarea } from '@/src/components/ui/Textarea';
+
 import { Section } from '@/src/components/shared/Section';
+import { PrayerForm } from '@/src/components/prayer/PrayerForm';
 import { Card } from '@/src/components/ui/Card';
-import { Heart, ShieldCheck, Sparkles, Send, Lock } from 'lucide-react';
+import { Heart, Sparkles } from 'lucide-react';
 
 export const metadata = {
-    title: 'Prayer Request | Hillz Shift 4.0',
+    title: 'Prayer Request | The Hillz',
     description: 'Submit your prayer requests. We are here to pray with you.',
 };
 
@@ -23,10 +22,11 @@ export default function PrayerPage() {
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
                     <Image
-                        src="https://images.unsplash.com/photo-1445445290250-18a3a8300ad0?q=80&w=2070&auto=format&fit=crop"
+                        src="/prayer_hero.png"
                         alt="Prayer"
                         fill
                         className="object-cover opacity-60 animate-slow-zoom"
+                        unoptimized
                     />
                 </div>
                 <div className="container mx-auto px-6 relative z-10 text-center">
@@ -61,64 +61,7 @@ export default function PrayerPage() {
                                 <p className="text-slate-500 font-bold mt-4">Our prayer team is dedicated to interceding for your needs with faith and compassion.</p>
                             </div>
 
-                            <form className="space-y-8">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Your Name (Optional)</label>
-                                        <Input placeholder="Anonymous" className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all font-bold" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Email (Optional)</label>
-                                        <Input type="email" placeholder="For follow up" className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all font-bold" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Phone (Optional)</label>
-                                        <Input type="tel" placeholder="For follow up" className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all font-bold" />
-                                    </div>
-                                    <div className="flex flex-col justify-end pb-1">
-                                        <label className="group flex items-center gap-3 cursor-pointer p-4 border border-slate-100 rounded-2xl hover:bg-indigo-50 transition-all bg-slate-50/30">
-                                            <div className="relative flex items-center justify-center">
-                                                <input type="checkbox" className="peer appearance-none w-6 h-6 border-2 border-slate-200 rounded-lg checked:bg-indigo-600 checked:border-indigo-600 transition-all cursor-pointer" />
-                                                <ShieldCheck className="absolute w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
-                                            </div>
-                                            <span className="text-xs font-black text-slate-600 uppercase tracking-widest">Keep this request private</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Category</label>
-                                    <div className="flex flex-wrap gap-3">
-                                        {['Healings', 'Guidance', 'Provision', 'Family', 'Salvation', 'Other'].map(cat => (
-                                            <button 
-                                                type="button" 
-                                                key={cat} 
-                                                className="px-6 py-2.5 rounded-full border border-slate-100 text-xs font-black uppercase tracking-widest text-slate-500 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-sm"
-                                            >
-                                                {cat}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Your Prayer Request</label>
-                                    <Textarea rows={6} placeholder="Share your burdens with us..." required className="rounded-[24px] border-slate-100 bg-slate-50/50 focus:bg-white transition-all font-bold p-6" />
-                                </div>
-
-                                <div className="glass bg-blue-50/50 border-blue-100 p-6 rounded-[24px] flex items-start gap-4">
-                                    <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0 text-blue-600">
-                                        <Lock className="w-5 h-5" />
-                                    </div>
-                                    <p className="text-sm font-bold text-blue-800 leading-relaxed italic">
-                                        Your privacy is important to us. All requests are handled with divine confidentiality and care by our dedicated spiritual warriors.
-                                    </p>
-                                </div>
-
-                                <Button className="w-full h-18 rounded-[24px] bg-slate-900 hover:bg-indigo-600 text-white font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-indigo-900/10 transition-all flex items-center justify-center gap-3">
-                                    Submit Prayer Request <Send className="w-4 h-4" />
-                                </Button>
-                            </form>
+                            <PrayerForm />
                         </div>
                     </Card>
                 </div>

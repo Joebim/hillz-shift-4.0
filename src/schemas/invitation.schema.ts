@@ -8,7 +8,11 @@ export const createInvitationSchema = z.object({
   senderName: z.string().min(1, "Sender name is required").max(100),
   senderEmail: z.string().email("Invalid sender email"),
 
-  recipientEmail: z.string().email("Invalid recipient email"),
+  recipientEmail: z
+    .string()
+    .email("Invalid recipient email")
+    .optional()
+    .or(z.literal("")),
   recipientName: z.string().max(100).optional(),
   personalMessage: z.string().max(500).optional(),
   customFields: z.record(z.any()).optional(),

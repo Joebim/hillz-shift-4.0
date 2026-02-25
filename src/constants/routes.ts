@@ -20,7 +20,6 @@ export const ROUTES = {
     SERMONS: "/sermons",
     BLOG: "/blog",
     MINISTRIES: "/ministries",
-    GIVE: "/give",
     PRAYER: "/prayer",
     CONTACT: "/contact",
   },

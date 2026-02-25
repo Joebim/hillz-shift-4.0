@@ -64,13 +64,13 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
+    // Generate slug if not provided
+    if (!body.slug && body.name) {
+      body.slug = generateSlug(body.name);
+    }
+
     // Validate request body
     const validated = createMinistrySchema.parse(body);
-
-    // Generate slug if not provided
-    if (!validated.slug) {
-      validated.slug = generateSlug(validated.name);
-    }
 
     // Create ministry
     const ministryId = await createDocument("ministries", validated);

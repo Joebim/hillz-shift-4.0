@@ -165,10 +165,10 @@ export interface Event {
 
   // Dates & Status
   status: EventStatus;
-  startDate: Timestamp | Date;
-  endDate: Timestamp | Date;
-  registrationOpenDate: Timestamp | Date;
-  registrationCloseDate: Timestamp | Date;
+  startDate: Timestamp | Date | string;
+  endDate: Timestamp | Date | string;
+  registrationOpenDate: Timestamp | Date | string;
+  registrationCloseDate: Timestamp | Date | string;
 
   // Location
   venue: EventVenue;
@@ -197,8 +197,8 @@ export interface Event {
   featured: boolean;
   registrationCount: number;
   invitationCount: number;
-  createdAt: Timestamp | Date;
-  updatedAt: Timestamp | Date;
+  createdAt: Timestamp | Date | string;
+  updatedAt: Timestamp | Date | string;
   createdBy: string;
 }
 

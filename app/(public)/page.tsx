@@ -4,7 +4,6 @@ import { queryDocuments } from '@/src/lib/firebase/firestore';
 import { toJsDate } from '@/src/lib/utils';
 import { Event } from '@/src/types/event';
 import { Sermon } from '@/src/types/sermon';
-import { BlogPost } from '@/src/types/blog';
 import { Ministry } from '@/src/types/ministry';
 import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
@@ -15,21 +14,20 @@ import { EventCard } from '@/src/components/events/EventCard';
 import { SermonCard } from '@/src/components/sermons/SermonCard';
 import { MinistryCard } from '@/src/components/ministries/MinistryCard';
 import { Button } from '@/src/components/ui/Button';
-import { ArrowRight, Quote, Clock, MapPin, CheckCircle2, Sparkles, Users } from 'lucide-react';
+import { ArrowRight, Quote, Clock, CheckCircle2, Sparkles, Users } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-    title: 'Hillz Shift 4.0 | Experience New Dimensions',
-    description: 'Welcome to the Hillz Shift 4.0 platform. Join us for transformative gatherings and spiritual experiences.',
+    title: 'The Hillz | Experience New Dimensions',
+    description: 'Welcome to The Hillz platform. Join us for transformative gatherings and spiritual experiences.',
 };
 
 export default async function HomePage() {
     // Fetch featured content
-    const [rawEvents, rawSermons, rawPosts, rawMinistries] = await Promise.all([
+    const [rawEvents, rawSermons, rawMinistries] = await Promise.all([
         queryDocuments<Event>('events', { status: 'published', featured: true }, 'startDate', 3),
         queryDocuments<Sermon>('sermons', {}, 'date', 3),
-        queryDocuments<BlogPost>('blog', { status: 'published' }, 'publishedDate', 3),
         queryDocuments<Ministry>('ministries', { active: true }, 'order', 4),
     ]);
 
@@ -76,7 +74,7 @@ export default async function HomePage() {
                             Join Us This Sunday
                         </h2>
                         <p className="text-xl text-slate-500 font-medium">
-                            Experience the shift in person. We have multiple service times <br className="hidden md:block" />
+                            Experience The Hillz in person. We have multiple service times <br className="hidden md:block" />
                             designed to fit your schedule and spiritual needs.
                         </p>
                     </div>
@@ -140,10 +138,10 @@ export default async function HomePage() {
                         <div className="w-12 h-1.5 bg-purple-600 rounded-full mb-8" />
                         <h2 className="text-5xl md:text-7xl font-black text-slate-900 mb-8 tracking-tighter leading-[0.9]">
                             WELCOME TO <br />
-                            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-indigo-600">THE SHIFT</span>
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-indigo-600">THE HILLZ</span>
                         </h2>
                         <p className="text-xl text-slate-500 font-medium leading-relaxed mb-10">
-                            We are more than just a church; we are a community focused on spiritual renewal, personal growth, and collective impact. Join a movement that is shifting the culture through founded faith.
+                            We are more than just a church; we are a community focused on spiritual renewal, personal growth, and collective impact. Join a movement that is transforming the culture through founded faith.
                         </p>
                         <div className="space-y-4 mb-10">
                             {[
@@ -152,7 +150,7 @@ export default async function HomePage() {
                                 'Thriving Community of Believers'
                             ].map((item) => (
                                 <div key={item} className="flex items-center gap-3">
-                                    <div className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center flex-shrink-0">
+                                    <div className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
                                         <CheckCircle2 className="w-4 h-4" />
                                     </div>
                                     <span className="text-slate-700 font-bold">{item}</span>
@@ -167,10 +165,11 @@ export default async function HomePage() {
                         <div className="absolute -inset-4 bg-linear-to-tr from-purple-100 to-indigo-100 rounded-[60px] blur-2xl opacity-50" />
                         <div className="relative rounded-[60px] overflow-hidden shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] h-[600px]">
                             <Image
-                                src="https://images.unsplash.com/photo-1544427928-c49cdfebf194?q=80&w=2070&auto=format&fit=crop"
-                                alt="Worship"
+                                src="/welcome_to_the_hillz_landing.png"
+                                alt="Welcome to The Hillz"
                                 fill
                                 className="object-cover transition-transform duration-700 hover:scale-105"
+                                unoptimized
                             />
                         </div>
                         <div className="absolute -bottom-10 -left-10 bg-white p-8 rounded-[32px] shadow-2xl border border-slate-50 max-w-xs hidden md:block animate-bounce-slow">
@@ -201,7 +200,7 @@ export default async function HomePage() {
                             Life Transformations
                         </div>
                         <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter leading-none">
-                            Stories of the Shift
+                            Stories of The Hillz
                         </h2>
                     </div>
 
@@ -210,7 +209,7 @@ export default async function HomePage() {
                             {
                                 name: 'Sarah Jemison',
                                 role: 'Worship Team',
-                                text: 'Joining Shift platform has been life-changing. The warmth and support helped me grow in my faith and find true belonging.',
+                                text: 'Joining The Hillz platform has been life-changing. The warmth and support helped me grow in my faith and find true belonging.',
                                 image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop'
                             },
                             {
@@ -222,7 +221,7 @@ export default async function HomePage() {
                             {
                                 name: 'Michael Chen',
                                 role: 'Ministry Partner',
-                                text: 'I found a community that challenged me to go deeper. The shift is real, and it starts from within.',
+                                text: 'I found a community that challenged me to go deeper. The transformation is real, and it starts from within.',
                                 image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop'
                             }
                         ].map((t, i) => (

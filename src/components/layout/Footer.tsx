@@ -9,16 +9,13 @@ const footerLinks = {
         { name: 'History', href: '/about/history' },
     ],
     resources: [
-        { name: 'Events', href: '/events' },
-        { name: 'Sermons', href: '/sermons' },
         { name: 'Blog', href: '/blog' },
-        { name: 'Media', href: '/media' },
+        { name: 'Contact', href: '/contact' },
     ],
     connect: [
         { name: 'Ministries', href: '/ministries' },
         { name: 'Contact Us', href: '/contact' },
         { name: 'Prayer Request', href: '/prayer' },
-        { name: 'Give', href: '/give' },
     ],
 };
 
@@ -44,12 +41,12 @@ export const Footer = () => {
                                 <span className="text-white font-black text-2xl">S</span>
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-xl font-black tracking-tighter">SHIFT 4.0</span>
-                                <span className="text-[10px] font-black tracking-[0.3em] text-purple-400">MINISTRY PLATFORM</span>
+                                <span className="text-xl font-black tracking-tighter">THE HILLZ</span>
+                                <span className="text-[10px] font-black tracking-[0.3em] text-purple-400">CHURCH</span>
                             </div>
                         </Link>
                         <p className="text-slate-400 mb-10 text-lg leading-relaxed max-w-sm font-medium">
-                            Transforming lives through the power of God&apos;s love and the shift into new dimensions of glory.
+                            Transforming lives through the power of God&apos;s love and stepping into new dimensions of glory.
                         </p>
 
                         {/* Social Links */}
@@ -131,7 +128,7 @@ export const Footer = () => {
                 <div className="pt-12 border-t border-white/5">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                         <p className="text-slate-500 text-xs font-bold tracking-widest uppercase">
-                            © {new Date().getFullYear()} Shift Platform • Built for the Glory
+                            © {new Date().getFullYear()} The Hillz Church • Built for the Glory
                         </p>
                         <div className="flex gap-10 text-[10px] font-black uppercase tracking-[0.2em]">
                             <Link href="/privacy" className="text-slate-500 hover:text-white transition-colors">

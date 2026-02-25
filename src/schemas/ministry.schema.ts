@@ -33,10 +33,10 @@ export const createMinistrySchema = z.object({
   contactEmail: z.string().email("Invalid email").optional(),
 
   // Content
-  activities: z.array(z.string()),
+  activities: z.array(z.string()).optional().default([]),
 
   // Metadata
-  order: z.number().int().min(0),
+  order: z.number().int().min(0).optional().default(0),
   active: z.boolean().default(true),
 });
 

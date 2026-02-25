@@ -23,14 +23,17 @@ export const sermonBaseSchema = z.object({
   duration: z.number().positive().optional(),
 
   // Metadata
-  tags: z.array(z.string()),
-  category: z.enum([
-    "sunday_service",
-    "bible_study",
-    "special_event",
-    "conference",
-    "other",
-  ]),
+  tags: z.array(z.string()).optional().default([]),
+  category: z
+    .enum([
+      "sunday_service",
+      "bible_study",
+      "special_event",
+      "conference",
+      "other",
+    ])
+    .optional()
+    .default("other"),
   featured: z.boolean().default(false),
 });
 

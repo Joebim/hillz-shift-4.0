@@ -1,14 +1,14 @@
 import Image from 'next/image';
 import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
+
 import { Button } from '@/src/components/ui/Button';
-import { Input } from '@/src/components/ui/Input';
-import { Textarea } from '@/src/components/ui/Textarea';
 import { Section } from '@/src/components/shared/Section';
+import { ContactForm } from '@/src/components/contact/ContactForm';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 export const metadata = {
-    title: 'Contact Us | Ministry Platform',
+    title: 'Contact Us | The Hillz',
     description: 'Get in touch with us. We would love to hear from you.',
 };
 
@@ -22,10 +22,11 @@ export default function ContactPage() {
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
                     <Image
-                        src="https://images.unsplash.com/photo-1516307361474-321127a69762?q=80&w=2070&auto=format&fit=crop"
+                        src="/contact_hero.png"
                         alt="Contact"
                         fill
                         className="object-cover opacity-50"
+                        unoptimized
                     />
                 </div>
                 <div className="container mx-auto px-6 relative z-10 text-center">
@@ -49,29 +50,7 @@ export default function ContactPage() {
                     <div className="lg:col-span-7">
                         <div className="bg-white rounded-[40px] p-12 shadow-2xl shadow-purple-900/5 border border-slate-100">
                             <h2 className="text-3xl font-black text-slate-900 mb-8 tracking-tight">Send us a Message</h2>
-                            <form className="space-y-8">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="space-y-3">
-                                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Full Name</label>
-                                        <Input placeholder="John Doe" className="h-14 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:ring-purple-600/20 text-slate-900 font-bold" required />
-                                    </div>
-                                    <div className="space-y-3">
-                                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Email Address</label>
-                                        <Input type="email" placeholder="john@example.com" className="h-14 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:ring-purple-600/20 text-slate-900 font-bold" required />
-                                    </div>
-                                </div>
-                                <div className="space-y-3">
-                                    <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Subject</label>
-                                    <Input placeholder="How can we help you?" className="h-14 rounded-2xl bg-slate-50 border-transparent focus:bg-white focus:ring-purple-600/20 text-slate-900 font-bold" required />
-                                </div>
-                                <div className="space-y-3">
-                                    <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Your Message</label>
-                                    <Textarea rows={6} placeholder="Tell us what's on your mind..." className="rounded-3xl bg-slate-50 border-transparent focus:bg-white focus:ring-purple-600/20 text-slate-900 font-bold p-6" required />
-                                </div>
-                                <Button className="w-full h-16 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black text-lg shadow-xl" size="lg">
-                                    SEND MESSAGE
-                                </Button>
-                            </form>
+                            <ContactForm />
                         </div>
                     </div>
 

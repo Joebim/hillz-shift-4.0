@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     Search, Loader2, Image as ImageIcon, Video,
@@ -410,10 +411,16 @@ function MetadataItem({ icon: Icon, label, value }: { icon: React.ElementType, l
 
 // Modal Wrapper for Usage in Forms
 export function UploadModal({ isOpen, onClose, onSelect }: UploadModalProps) {
-    if (!isOpen) return null;
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        const timer = setTimeout(() => setMounted(true), 0);
+        return () => clearTimeout(timer);
+    }, []);
 
-    return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose}>
+    if (!isOpen || !mounted) return null;
+
+    return createPortal(
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose}>
             <div className="bg-white rounded-3xl w-full max-w-6xl h-[85vh] flex flex-col shadow-2xl overflow-hidden scale-100 animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
                 <div className="flex justify-between items-center px-8 py-5 border-b border-gray-100 shrink-0">
                     <div className="flex items-center gap-4">
@@ -436,7 +443,8 @@ export function UploadModal({ isOpen, onClose, onSelect }: UploadModalProps) {
                     }} selectionMode={true} />
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
 
