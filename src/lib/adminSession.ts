@@ -1,4 +1,4 @@
-import "server-only";
+﻿import "server-only";
 
 import { cookies } from "next/headers";
 import {
@@ -17,7 +17,7 @@ function getAllowedAdminEmails(): string[] {
 
 function isAllowedAdminEmail(email?: string | null): boolean {
   const allowed = getAllowedAdminEmails();
-  if (allowed.length === 0) return true; // If not configured, allow any authenticated user.
+  if (allowed.length === 0) return true;
 
   const normalized = (email || "").toLowerCase();
   return !!normalized && allowed.includes(normalized);

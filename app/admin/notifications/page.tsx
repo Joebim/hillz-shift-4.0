@@ -1,11 +1,10 @@
-'use client';
+﻿'use client';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Loader2, Bell } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 
-// Interfaces
 interface Notification {
     id: string;
     actorName: string;
@@ -13,7 +12,7 @@ interface Notification {
     highlight: string;
     suffix: string;
     eventTitle?: string;
-    createdAt: string; // ISO string from API
+    createdAt: string;
     read: boolean;
     type: 'registration' | 'invitation' | 'system' | 'info';
     highlightColor?: string;
@@ -42,15 +41,6 @@ export default function NotificationsPage() {
         initialPageParam: undefined,
     });
 
-    // Auto-load on scroll to bottom? Or manual?
-    // Let's implement manual "Load More" for simplicity unless requested otherwise.
-    // Or we can use IntersectionObserver if user wants seamless scroll.
-    // Given user didn't specify, Load More is safer.
-
-    // Grouping by date (optional feature for better UX)
-    // Could group by "Today", "Yesterday", etc.
-    // For now, flat list is fine as per request.
-
     return (
         <div className="p-6 max-w-4xl mx-auto min-h-screen bg-gray-50/50">
             <div className="flex items-center justify-between mb-8">
@@ -61,8 +51,8 @@ export default function NotificationsPage() {
                     </h1>
                     <p className="text-gray-500 mt-1">Stay updated with all activities.</p>
                 </div>
-                {/* Optional: 'Mark all as read' button could go here */}
-                {/* <button className="text-sm font-medium text-violet-600 hover:text-violet-700">Mark all as read</button> */}
+                {}
+                {}
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -86,12 +76,12 @@ export default function NotificationsPage() {
                                         !notification.read && "bg-violet-50/30"
                                     )}
                                 >
-                                    {/* Unread Indicator */}
+                                    {}
                                     {!notification.read && (
                                         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-violet-500 rounded-r-lg" />
                                     )}
 
-                                    {/* Icon Avatar */}
+                                    {}
                                     <div className={cn(
                                         "w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white font-bold text-sm shadow-sm",
                                         notification.type === 'registration' ? "bg-linear-to-br from-violet-400 to-purple-600" :
@@ -101,7 +91,7 @@ export default function NotificationsPage() {
                                         {notification.actorName ? notification.actorName.charAt(0).toUpperCase() : 'S'}
                                     </div>
 
-                                    {/* Content */}
+                                    {}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-1">
                                             <p className="text-sm text-gray-900 leading-snug">
@@ -121,10 +111,8 @@ export default function NotificationsPage() {
                                         )}
                                     </div>
 
-                                    {/* Action/Read Status (future feature) */}
-                                    {/* <button className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-violet-600 transition-all" title="Mark as read">
-                                        <CheckCircle2 className="w-4 h-4" />
-                                    </button> */}
+                                    {}
+                                    {}
                                 </div>
                             ))
                         ))}
@@ -138,7 +126,7 @@ export default function NotificationsPage() {
                     </div>
                 )}
 
-                {/* Load More Trigger */}
+                {}
                 {hasNextPage && (
                     <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-center">
                         <button

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useForm, useFieldArray, FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,8 +27,6 @@ interface EventFormProps {
     isLoading?: boolean;
 }
 
-// ─── Section nav config ───────────────────────────────────────────────────────
-
 const NAV_SECTIONS = [
     { id: 'visuals', label: 'Visuals', icon: ImageIcon },
     { id: 'details', label: 'Details', icon: AlignLeft },
@@ -38,8 +36,6 @@ const NAV_SECTIONS = [
     { id: 'registration', label: 'Registration', icon: ClipboardList },
     { id: 'invitation', label: 'Invitation', icon: Mail },
 ];
-
-// ─── Shared form-section wrapper ──────────────────────────────────────────────
 
 function Section({ id, title, icon: Icon, children, action }: {
     id: string; title: string; icon: React.ElementType;
@@ -63,8 +59,6 @@ function Section({ id, title, icon: Icon, children, action }: {
     );
 }
 
-// ─── Form field label ─────────────────────────────────────────────────────────
-
 function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
     return (
         <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-1.5">
@@ -72,8 +66,6 @@ function FieldLabel({ children, required }: { children: React.ReactNode; require
         </label>
     );
 }
-
-// ─── Styled select ────────────────────────────────────────────────────────────
 
 function Select({ label, required, error, children, ...props }: React.SelectHTMLAttributes<HTMLSelectElement> & {
     label?: string; required?: boolean; error?: string;
@@ -95,8 +87,6 @@ function Select({ label, required, error, children, ...props }: React.SelectHTML
     );
 }
 
-// ─── Color picker row ─────────────────────────────────────────────────────────
-
 function ColorField({ label, value, onChange }: { label: string; value?: string; onChange: (v: string) => void }) {
     return (
         <div>
@@ -113,8 +103,6 @@ function ColorField({ label, value, onChange }: { label: string; value?: string;
         </div>
     );
 }
-
-// ─── Inline label + input ─────────────────────────────────────────────────────
 
 function FormInput({ label, required, error, ...props }: React.InputHTMLAttributes<HTMLInputElement> & {
     label?: string; required?: boolean; error?: string;
@@ -152,8 +140,6 @@ function FormTextarea({ label, required, error, ...props }: React.TextareaHTMLAt
     );
 }
 
-// ─── Toggle switch ────────────────────────────────────────────────────────────
-
 function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
     return (
         <label className="flex items-center gap-3 cursor-pointer select-none">
@@ -173,8 +159,6 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: 
         </label>
     );
 }
-
-// ─── Main EventForm ───────────────────────────────────────────────────────────
 
 export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) => {
     const router = useRouter();
@@ -198,8 +182,8 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
             title: '',
             shortDescription: '',
             description: '',
-            startDate: '', // Initialize as empty string
-            endDate: '',   // Initialize as empty string
+            startDate: '',
+            endDate: '',
             registrationConfig: { enabled: false },
             invitationConfig: { enabled: false, fields: [] },
             branding: { primaryColor: '#7C3AED' },
@@ -229,7 +213,6 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
         setValue(field, value.split(',').map(s => s.trim()).filter(Boolean));
     };
 
-    // Track active section via scroll spy
     useEffect(() => {
         const observer = new IntersectionObserver(
 
@@ -253,7 +236,6 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
     const invitationEnabled = watch('invitationConfig.enabled');
 
     const onError = (errors: FieldErrors<EventFormData>) => {
-        console.log('Validation failed for:', Object.keys(errors));
         const errorDetails = Object.entries(errors).map(([key, value]) => `${key}: ${(value as { message?: string })?.message || 'Invalid'}`).join(', ');
 
         toast({
@@ -262,7 +244,6 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
             type: 'error'
         });
 
-        // Find first section with error and scroll to it
         const firstErrorSection = NAV_SECTIONS.find(section => hasError(section.id));
         if (firstErrorSection) {
             scrollTo(firstErrorSection.id);
@@ -274,7 +255,6 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
         try {
             await onSubmit(data);
         } catch (error) {
-            console.error('Form submission error:', error);
             toast({ title: 'Error', description: 'Failed to save event.', type: 'error' });
         } finally {
             setIsSubmitting(false);
@@ -303,7 +283,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
     return (
         <div className="flex gap-0 min-h-screen">
 
-            {/* ── Sticky left nav ────────────────────────────────────────── */}
+            {}
             <aside className="hidden lg:flex w-52 shrink-0 flex-col sticky top-0 self-start h-screen pt-4 pr-4">
                 <nav className="flex-1 space-y-0.5">
                     {NAV_SECTIONS.map(({ id, label, icon: Icon }) => {
@@ -332,7 +312,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                     })}
                 </nav>
 
-                {/* Save / Cancel in sidebar */}
+                {}
                 <div className="pb-6 pt-4 space-y-2 border-t border-gray-100 mt-4">
                     <button
                         type="button"
@@ -354,17 +334,17 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                 </div>
             </aside>
 
-            {/* ── Scrollable form ────────────────────────────────────────── */}
+            {}
             <form
                 onSubmit={handleSubmit(submitHandler, onError)}
                 className="flex-1 min-w-0 space-y-6 pb-32 lg:pb-8"
             >
 
-                {/* ── 1. Visuals ────────────────────────────────────────── */}
+                {}
                 <div id="visuals" data-section="visuals" className="scroll-mt-4">
                     <Section id="visuals-inner" title="Event Visuals" icon={ImageIcon}>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                            {/* Banner */}
+                            {}
                             <div className="md:col-span-2">
                                 <FieldLabel>Banner Image</FieldLabel>
                                 <div className="rounded-xl overflow-hidden border border-gray-200 bg-gray-50 aspect-video">
@@ -378,7 +358,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                     <p className="text-xs text-red-500 mt-1">{errors.branding.bannerImage.message}</p>
                                 )}
                             </div>
-                            {/* Thumbnail */}
+                            {}
                             <div>
                                 <FieldLabel>Thumbnail</FieldLabel>
                                 <div className="rounded-xl overflow-hidden border border-gray-200 bg-gray-50 aspect-square max-w-[160px]">
@@ -394,7 +374,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                 )}
                             </div>
                         </div>
-                        {/* Colour pickers */}
+                        {}
                         <div>
                             <FieldLabel>Brand Colours</FieldLabel>
                             <div className="grid grid-cols-3 gap-3">
@@ -406,10 +386,10 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                     </Section>
                 </div>
 
-                {/* ── 2. Details ────────────────────────────────────────── */}
+                {}
                 <div id="details" data-section="details" className="scroll-mt-4">
                     <Section id="details-inner" title="Event Details" icon={AlignLeft}>
-                        {/* Title + status row */}
+                        {}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="md:col-span-2">
                                 <FormInput
@@ -440,7 +420,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                             </div>
                         </div>
 
-                        {/* Short description */}
+                        {}
                         <FormInput
                             label="Short Description"
                             placeholder="Brief summary shown on cards…"
@@ -449,7 +429,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                             {...register('shortDescription')}
                         />
 
-                        {/* Full description */}
+                        {}
                         <FormTextarea
                             label="Full Description"
                             required
@@ -459,7 +439,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                             {...register('description')}
                         />
 
-                        {/* Theme block */}
+                        {}
                         <div className="bg-violet-50 rounded-xl p-4 border border-violet-100 space-y-3">
                             <div className="flex items-center gap-2 mb-1">
                                 <BookOpen className="w-4 h-4 text-violet-500" />
@@ -474,7 +454,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                             </div>
                         </div>
 
-                        {/* Tags */}
+                        {}
                         <div>
                             <FieldLabel>Tags</FieldLabel>
                             <div className="flex flex-wrap gap-2 mb-2">
@@ -506,7 +486,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                             />
                         </div>
 
-                        {/* Featured */}
+                        {}
                         <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
                             <div>
                                 <p className="text-sm font-semibold text-gray-700">Featured Event</p>
@@ -519,7 +499,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                             />
                         </div>
 
-                        {/* Contacts & links */}
+                        {}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormTextarea
                                 label="Contacts (comma separated)"
@@ -539,7 +519,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                     </Section>
                 </div>
 
-                {/* ── 3. Schedule & Venue ───────────────────────────────── */}
+                {}
                 <div id="schedule" data-section="schedule" className="scroll-mt-4">
                     <Section id="schedule-inner" title="Schedule & Venue" icon={Calendar}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -559,7 +539,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                             />
                         </div>
 
-                        {/* Venue block */}
+                        {}
                         <div>
                             <div className="flex items-center gap-2 mb-3">
                                 <MapPin className="w-4 h-4 text-gray-400" />
@@ -621,7 +601,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                             </div>
                         </div>
 
-                        {/* Map Modal */}
+                        {}
                         {isMapOpen && (
                             <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
                                 <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200">
@@ -648,7 +628,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                     </Section>
                 </div>
 
-                {/* ── 4. Ministers ──────────────────────────────────────── */}
+                {}
                 <div id="ministers" data-section="ministers" className="scroll-mt-4">
                     <Section
                         id="ministers-inner"
@@ -758,7 +738,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                     </Section>
                 </div>
 
-                {/* ── 5. Channels ───────────────────────────────────────── */}
+                {}
                 <div id="channels" data-section="channels" className="scroll-mt-4">
                     <Section
                         id="channels-inner"
@@ -851,7 +831,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                     </Section>
                 </div>
 
-                {/* ── 6. Registration ───────────────────────────────────── */}
+                {}
                 <div id="registration" data-section="registration" className="scroll-mt-4">
                     <Section id="registration-inner" title="Registration" icon={ClipboardList}>
                         <div className="flex items-center justify-between">
@@ -927,7 +907,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                     <div className="flex items-center justify-between mb-3">
                                         <h4 className="text-sm font-bold text-gray-900">Custom Form Fields</h4>
                                     </div>
-                                    {/* Default fields notice */}
+                                    {}
                                     <div className="bg-violet-50 border border-violet-100 rounded-xl px-4 py-3 mb-4 flex items-start gap-3">
                                         <div className="w-5 h-5 rounded-full bg-violet-200 flex items-center justify-center shrink-0 mt-0.5">
                                             <Check className="w-3 h-3 text-violet-700" />
@@ -951,7 +931,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                     </Section>
                 </div>
 
-                {/* ── 7. Invitation ─────────────────────────────────────── */}
+                {}
                 <div id="invitation" data-section="invitation" className="scroll-mt-4">
                     <Section id="invitation-inner" title="Invitation Setup" icon={Mail}>
                         <div className="flex items-center justify-between">
@@ -971,7 +951,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                 <div className="flex items-center justify-between mb-2">
                                     <h4 className="text-sm font-bold text-gray-900">Custom Form Fields</h4>
                                 </div>
-                                {/* Default fields notice */}
+                                {}
                                 <div className="bg-violet-50 border border-violet-100 rounded-xl px-4 py-3 flex items-start gap-3">
                                     <div className="w-5 h-5 rounded-full bg-violet-200 flex items-center justify-center shrink-0 mt-0.5">
                                         <Check className="w-3 h-3 text-violet-700" />
@@ -994,7 +974,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                     </Section>
                 </div>
 
-                {/* ── Mobile sticky save bar ─────────────────────────────── */}
+                {}
                 <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 bg-white/90 backdrop-blur-xl border-t border-gray-100 px-4 py-3 flex gap-3">
                     <button
                         type="button"

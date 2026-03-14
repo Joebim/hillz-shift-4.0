@@ -1,4 +1,4 @@
-import { transporter, EMAIL_FROM } from "@/src/lib/email/transporter";
+﻿import { transporter, EMAIL_FROM } from "@/src/lib/email/transporter";
 import {
   getRegistrationEmail,
   getInvitationEmail,
@@ -20,12 +20,9 @@ export async function sendEmail({
       subject,
       html,
     });
-    console.log("Email sent: %s", info.messageId);
     return info;
   } catch (error) {
-    console.error("Error sending email:", error);
-    // Don't throw error to avoid crashing the request if email fails (optional strategy)
-    // But for critical emails like registration, maybe we should log it properly.
+    
     return null;
   }
 }

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -18,7 +18,6 @@ export default function AdminLoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Validation
     const isFormValid = email.includes('@') && password.length >= 6;
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -32,11 +31,9 @@ export default function AdminLoginPage() {
         setIsLoading(true);
 
         try {
-            // 1. Sign in with Firebase Client SDK
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const idToken = await userCredential.user.getIdToken();
 
-            // 2. Create session cookie via API
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -45,7 +42,6 @@ export default function AdminLoginPage() {
 
             if (response.ok) {
                 toast('Login successful! Redirecting...', 'success');
-                // Small delay to show toast before redirect
                 setTimeout(() => {
                     router.push('/admin');
                 }, 500);
@@ -54,7 +50,6 @@ export default function AdminLoginPage() {
                 toast(data.message || 'Login failed', 'error');
             }
         } catch (err: unknown) {
-            console.error('Login error:', err);
             const errorCode = (err as { code?: string }).code;
             if (errorCode === 'auth/invalid-credential') {
                 toast('Invalid email or password.', 'error');
@@ -71,7 +66,7 @@ export default function AdminLoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-100 via-gray-50 to-gray-50 overflow-hidden relative">
 
-            {/* Background Decorations */}
+            {}
             <div className="absolute top-0 left-0 w-full h-96 bg-linear-to-b from-white/0 via-violet-500/5 to-transparent pointer-events-none" />
             <div className="absolute -top-20 -right-20 w-64 h-64 bg-violet-400/20 rounded-full blur-3xl animate-pulse" />
             <div className="absolute top-40 -left-20 w-72 h-72 bg-indigo-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
@@ -132,7 +127,7 @@ export default function AdminLoginPage() {
                                 disabled={isLoading}
                             >
                                 {isLoading ? (
-                                    <>Sign In</> // Loader handles itself in Button component usually
+                                    <>Sign In</>
                                 ) : (
                                     <span className="flex items-center gap-2">
                                         Sign In <Lock className="w-4 h-4 opacity-50" />

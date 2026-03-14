@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import cloudinary from "@/src/lib/cloudinary";
 import { getSession } from "@/src/lib/auth/session";
 
@@ -15,10 +15,8 @@ export interface CloudinaryResource {
   folder?: string;
 }
 
-// Helper to check Authorization
 async function checkAuth() {
   const session = await getSession();
-  // Assuming any logged-in user (or specific roles) can upload. Or just admin.
   if (
     !session ||
     !["super_admin", "admin", "moderator", "editor"].includes(session.role)
@@ -28,7 +26,6 @@ async function checkAuth() {
   return true;
 }
 
-// GET /api/uploads - List all media
 export async function GET(request: NextRequest) {
   if (!(await checkAuth())) {
     return NextResponse.json(
@@ -44,18 +41,15 @@ export async function GET(request: NextRequest) {
     const next_cursor = searchParams.get("next_cursor") || undefined;
     const resource_type = searchParams.get("resource_type") || "image";
 
-    // Use Cloudinary Admin API or Search API
-    // Listing resources
     const result = await cloudinary.api.resources({
       type: "upload",
-      prefix: folder, // rudimentary folder filtering
+      prefix: folder,
       max_results: limit,
       next_cursor: next_cursor,
       resource_type: resource_type,
-      direction: "desc", // newest first
+      direction: "desc",
     });
 
-    // Map to generic format
     const data = result.resources.map((res: CloudinaryResource) => ({
       _id: res.asset_id,
       public_id: res.public_id,
@@ -76,7 +70,6 @@ export async function GET(request: NextRequest) {
       next_cursor: result.next_cursor,
     });
   } catch (error) {
-    console.error("Cloudinary listing error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -88,7 +81,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/uploads - Upload new media
 export async function POST(request: NextRequest) {
   if (!(await checkAuth())) {
     return NextResponse.json(
@@ -109,14 +101,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert file to buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Determine resource type
     const type = file.type.startsWith("video/") ? "video" : "image";
 
-    // Upload to Cloudinary using stream
     const uploadResult: CloudinaryResource = await new Promise(
       (resolve, reject) => {
         cloudinary.uploader
@@ -142,7 +131,7 @@ export async function POST(request: NextRequest) {
       url: uploadResult.url,
       secure_url: uploadResult.secure_url,
       format: uploadResult.format,
-      folder: folder, // Cloudinary result usually has folder info or we can assume it based on input
+      folder: folder,
       resource_type: uploadResult.resource_type,
       width: uploadResult.width,
       height: uploadResult.height,
@@ -154,7 +143,6 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Upload error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -164,7 +152,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-// DELETE /api/uploads - Delete media (using query param id for simplicity in single route file, or dynamic route)
-// Generic API desc says DELETE /api/uploads/:id, so I should probably create [id]/route.ts
-// But wait, user said "CRUD ENDPOINTS", so I will make [id]/route.ts separately.
+

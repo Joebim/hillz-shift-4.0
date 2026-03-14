@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/src/lib/firebase/admin";
+import { adminDb, adminAuth } from "@/src/lib/firebase/admin";
 import { getSession } from "@/src/lib/auth/session";
 import { UserRole } from "@/src/types/user";
 
 const db = adminDb;
 
-// PATCH: Update user role / fields
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -16,26 +15,43 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Only super_admin can modify admin+ roles? Or generally restrict
-    if (session.role !== "super_admin") {
-      // Maybe restrict changing to/from super_admin unless super_admin
+    const { id } = await params;
+
+    // Allow user to update their own profile (name, photo); admins can update anything
+    const isSelf = session.userId === id;
+    const isAdmin = session.role === "super_admin" || session.role === "admin";
+
+    if (!isSelf && !isAdmin) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { id } = await params;
     const body = await request.json();
 
-    // Fields to update
     const updates: Record<string, unknown> = { updatedAt: new Date() };
-    if (body.role) updates.role = body.role as UserRole;
-    if (body.managedEventId) updates.managedEventId = body.managedEventId;
-    if (body.active !== undefined) updates.active = body.active;
-    if (body.displayName) updates.displayName = body.displayName;
+
+    // Profile fields — any authenticated user can update their own
+    if (body.displayName !== undefined) updates.displayName = body.displayName;
+    if (body.photoUrl !== undefined) updates.photoUrl = body.photoUrl;
+
+    // Admin-only fields
+    if (isAdmin) {
+      if (body.role) updates.role = body.role as UserRole;
+      if (body.managedEventIds !== undefined)
+        updates.managedEventIds = body.managedEventIds;
+      if (body.managedEventId !== undefined)
+        updates.managedEventId = body.managedEventId;
+      if (body.active !== undefined) updates.active = body.active;
+    }
 
     await db.collection("users").doc(id).update(updates);
 
+    // Keep Firebase custom claims in sync when role changes
+    if (isAdmin && body.role) {
+      await adminAuth.setCustomUserClaims(id, { role: body.role });
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Update user error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
@@ -43,7 +59,6 @@ export async function PATCH(
   }
 }
 
-// DELETE: Remove user
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -60,7 +75,6 @@ export async function DELETE(
 
     const { id } = await params;
 
-    // Prevent self deletion?
     if (id === session.userId) {
       return NextResponse.json(
         { error: "Cannot delete self" },
@@ -70,11 +84,15 @@ export async function DELETE(
 
     await db.collection("users").doc(id).delete();
 
-    // Also remove from Firebase Auth if synced? Scope out for now.
+    // Also remove from Firebase Auth
+    try {
+      await adminAuth.deleteUser(id);
+    } catch {
+      // Auth user may not exist — ignore
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Delete user error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

@@ -1,32 +1,64 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { adminDb } from "@/src/lib/firebase/admin";
 import { getSession } from "@/src/lib/auth/session";
+import { getDocument } from "@/src/lib/firebase/firestore";
+import { User } from "@/src/types/user";
 import { QueryDocumentSnapshot, DocumentData } from "firebase-admin/firestore";
 
-/**
- * GET /api/events/metrics
- * Get global metrics for the events dashboard
- */
 export async function GET() {
   try {
-    // Check authentication
     const session = await getSession();
-    if (
-      !session ||
-      !["super_admin", "admin", "editor"].includes(session.role)
-    ) {
+    if (!session) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
         { status: 401 },
       );
     }
 
-    // 1. Find the target event for metrics (ongoing or most recently concluded)
     const now = new Date();
-    const publishedEventsQuery = await adminDb
-      .collection("events")
-      .where("status", "==", "published")
-      .get();
+    const isEventScoped =
+      session.role === "event_manager" || session.role === "moderator";
+
+    // Resolve managed event IDs for scoped roles
+    let scopedEventIds: string[] = [];
+    if (isEventScoped) {
+      const user = await getDocument<User>("users", session.userId);
+      scopedEventIds = user?.managedEventIds?.length
+        ? user.managedEventIds
+        : user?.managedEventId
+          ? [user.managedEventId]
+          : [];
+    }
+
+    let publishedEventsQuery: FirebaseFirestore.QuerySnapshot<DocumentData>;
+
+    if (isEventScoped && scopedEventIds.length > 0) {
+      // Firestore "in" supports up to 30 values
+      publishedEventsQuery = await adminDb
+        .collection("events")
+        .where("__name__", "in", scopedEventIds)
+        .get();
+    } else if (isEventScoped) {
+      // No assigned events — return zero metrics
+      return NextResponse.json({
+        success: true,
+        data: {
+          totalEvents: 0,
+          activeEvents: 0,
+          activeEventTitle: "No Events Assigned",
+          activeEventId: null,
+          activeEventObj: null,
+          totalInvitations: 0,
+          totalRegistrations: 0,
+          scopedEventIds: [],
+        },
+      });
+    } else {
+      publishedEventsQuery = await adminDb
+        .collection("events")
+        .where("status", "==", "published")
+        .get();
+    }
 
     let ongoingEventDoc: QueryDocumentSnapshot<DocumentData> | null = null;
     let mostRecentPastEventDoc: QueryDocumentSnapshot<DocumentData> | null =
@@ -76,32 +108,56 @@ export async function GET() {
     const activeEventData = activeEventDoc?.data();
     const activeEventTitle = activeEventData?.title || "No Event Found";
 
-    // 2. Run remaining counts
-    const [totalEventsSnapshot, invitationsSnapshot, registrationsSnapshot] =
-      await Promise.all([
-        adminDb.collection("events").count().get(),
-        activeEventId
-          ? adminDb
+    // For scoped roles: count across ALL assigned events; for admins: count for active event
+    let totalInvitations = 0;
+    let totalRegistrations = 0;
+
+    if (isEventScoped && scopedEventIds.length > 0) {
+      const [invSnaps, regSnaps] = await Promise.all([
+        Promise.all(
+          scopedEventIds.map((eid) =>
+            adminDb
               .collection("invitations")
-              .where("eventId", "==", activeEventId)
+              .where("eventId", "==", eid)
               .count()
-              .get()
-          : ({ data: () => ({ count: 0 }) } as unknown as {
-              data: () => { count: number };
-            }),
-        activeEventId
-          ? adminDb
+              .get(),
+          ),
+        ),
+        Promise.all(
+          scopedEventIds.map((eid) =>
+            adminDb
               .collection("registrations")
-              .where("eventId", "==", activeEventId)
+              .where("eventId", "==", eid)
               .count()
-              .get()
-          : ({ data: () => ({ count: 0 }) } as unknown as {
-              data: () => { count: number };
-            }),
+              .get(),
+          ),
+        ),
       ]);
+      totalInvitations = invSnaps.reduce((sum, s) => sum + s.data().count, 0);
+      totalRegistrations = regSnaps.reduce((sum, s) => sum + s.data().count, 0);
+    } else if (activeEventId) {
+      const [invSnap, regSnap] = await Promise.all([
+        adminDb
+          .collection("invitations")
+          .where("eventId", "==", activeEventId)
+          .count()
+          .get(),
+        adminDb
+          .collection("registrations")
+          .where("eventId", "==", activeEventId)
+          .count()
+          .get(),
+      ]);
+      totalInvitations = invSnap.data().count;
+      totalRegistrations = regSnap.data().count;
+    }
+
+    const totalEventsCount = isEventScoped
+      ? scopedEventIds.length
+      : (await adminDb.collection("events").count().get()).data().count;
 
     const metrics = {
-      totalEvents: totalEventsSnapshot.data().count,
+      totalEvents: totalEventsCount,
       activeEvents: publishedEventsQuery.size,
       activeEventTitle,
       activeEventId,
@@ -121,16 +177,17 @@ export async function GET() {
               : activeEventData.registrationOpenDate,
           }
         : null,
-      totalInvitations: invitationsSnapshot.data().count,
-      totalRegistrations: registrationsSnapshot.data().count,
+      totalInvitations,
+      totalRegistrations,
+      // Pass scoped IDs back to the client so it knows which events to show
+      scopedEventIds: isEventScoped ? scopedEventIds : null,
     };
 
     return NextResponse.json({
       success: true,
       data: metrics,
     });
-  } catch (error) {
-    console.error("Fetch metrics error:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch metrics" },
       { status: 500 },

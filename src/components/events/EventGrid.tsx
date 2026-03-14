@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { Event } from '@/src/types/event';
@@ -19,9 +19,7 @@ export const EventGrid = ({ events }: EventGridProps) => {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
 
-    // Filter events
     const filteredEvents = events.filter((event) => {
-        // Search filter
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
             const matchesSearch =
@@ -31,12 +29,10 @@ export const EventGrid = ({ events }: EventGridProps) => {
             if (!matchesSearch) return false;
         }
 
-        // Category filter
         if (selectedCategory !== 'all' && event.category !== selectedCategory) {
             return false;
         }
 
-        // Featured filter
         if (showFeaturedOnly && !event.featured) {
             return false;
         }
@@ -46,9 +42,9 @@ export const EventGrid = ({ events }: EventGridProps) => {
 
     return (
         <div>
-            {/* Filters */}
+            {}
             <div className="mb-8 space-y-4">
-                {/* Search */}
+                {}
                 <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9CA3AF]" />
                     <Input
@@ -60,7 +56,7 @@ export const EventGrid = ({ events }: EventGridProps) => {
                     />
                 </div>
 
-                {/* Category Filters */}
+                {}
                 <div className="flex flex-wrap gap-3">
                     {categories.map((category) => (
                         <button
@@ -76,7 +72,7 @@ export const EventGrid = ({ events }: EventGridProps) => {
                     ))}
                 </div>
 
-                {/* Featured Toggle */}
+                {}
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
@@ -95,7 +91,7 @@ export const EventGrid = ({ events }: EventGridProps) => {
                 </div>
             </div>
 
-            {/* Events Grid */}
+            {}
             {filteredEvents.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {filteredEvents.map((event) => (

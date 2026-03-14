@@ -15,7 +15,7 @@ export default function LeadershipPage() {
         <div className="min-h-screen bg-slate-50">
             <Header />
 
-            {/* Hero Section */}
+            {}
             <section className="relative pt-48 pb-32 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/70 via-slate-900/50 to-slate-900 z-10" />
@@ -60,8 +60,8 @@ export default function LeadershipPage() {
 
                             <div className="p-6 rounded-3xl bg-indigo-50 border border-indigo-100 max-w-2xl mx-auto">
                                 <p className="text-indigo-900 font-bold italic">
-                                    "Be shepherds of God's flock that is under your care, watching over them... not lording it over those entrusted to you, but being examples to the flock." <br /><br />
-                                    <span className="text-sm opacity-60 mt-2 block">— 1 Peter 5:2-3</span>
+                                    &quot;Be shepherds of God&apos;s flock that is under your care, watching over them... not lording it over those entrusted to you, but being examples to the flock.&quot; <br /><br />
+                                    <span className="text-sm opacity-60 mt-2 block">&mdash; 1 Peter 5:2-3</span>
                                 </p>
                             </div>
                         </div>

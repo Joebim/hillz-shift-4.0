@@ -1,6 +1,5 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 
-// Event Venue Schema
 export const eventVenueSchema = z.object({
   name: z.string().min(1, "Venue name is required"),
   address: z.string().min(1, "Address is required"),
@@ -16,7 +15,6 @@ export const eventVenueSchema = z.object({
     .optional(),
 });
 
-// Event Branding Schema
 export const eventBrandingSchema = z.object({
   primaryColor: z
     .string()
@@ -36,7 +34,6 @@ export const eventBrandingSchema = z.object({
   backgroundPattern: z.string().optional(),
 });
 
-// Event Speaker Schema
 export const eventSpeakerSchema = z.object({
   id: z.string(),
   name: z.string().min(1, "Speaker name is required"),
@@ -52,7 +49,6 @@ export const eventSpeakerSchema = z.object({
     .optional(),
 });
 
-// Event Schedule Item Schema
 export const eventScheduleItemSchema = z.object({
   id: z.string(),
   time: z.string().min(1, "Time is required"),
@@ -62,13 +58,11 @@ export const eventScheduleItemSchema = z.object({
   location: z.string().optional(),
 });
 
-// Event FAQ Schema
 export const eventFAQSchema = z.object({
   question: z.string().min(1, "Question is required"),
   answer: z.string().min(1, "Answer is required"),
 });
 
-// Event Form Field Schema
 export const eventFormFieldSchema = z.object({
   id: z.string(),
   label: z.string().min(1, "Field label is required"),
@@ -80,7 +74,6 @@ export const eventFormFieldSchema = z.object({
   searchDbSource: z.string().optional(),
 });
 
-// Event Ticket Type Schema
 export const eventTicketTypeSchema = z.object({
   id: z.string(),
   name: z.string().min(1, "Ticket name is required"),
@@ -89,7 +82,6 @@ export const eventTicketTypeSchema = z.object({
   capacity: z.number().positive().optional(),
 });
 
-// Event Registration Config Schema
 export const eventRegistrationConfigSchema = z.object({
   enabled: z.boolean().default(false),
   capacity: z.number().positive().optional(),
@@ -103,13 +95,11 @@ export const eventRegistrationConfigSchema = z.object({
   ticketTypes: z.array(eventTicketTypeSchema).optional(),
 });
 
-// Event Invitation Config Schema
 export const eventInvitationConfigSchema = z.object({
   enabled: z.boolean().default(false),
   fields: z.array(eventFormFieldSchema).default([]),
 });
 
-// Event Media Links Schema
 export const eventMediaLinksSchema = z.object({
   livestreamUrl: z.string().url().optional(),
   spotifyUrl: z.string().url().optional(),
@@ -117,7 +107,6 @@ export const eventMediaLinksSchema = z.object({
   resourcesUrl: z.string().url().optional(),
 });
 
-// Event Sponsor Schema
 export const eventSponsorSchema = z.object({
   name: z.string().min(1, "Sponsor name is required"),
   logo: z.string().url("Invalid logo URL"),
@@ -125,7 +114,6 @@ export const eventSponsorSchema = z.object({
   tier: z.enum(["platinum", "gold", "silver", "bronze"]),
 });
 
-// Event Minister Schema
 export const eventMinisterSchema = z.object({
   id: z.string(),
   name: z.string().min(1, "Minister name is required"),
@@ -142,7 +130,6 @@ export const eventMinisterSchema = z.object({
     .optional(),
 });
 
-// Base Event Schema
 export const eventBaseSchema = z.object({
   title: z
     .string()
@@ -158,7 +145,6 @@ export const eventBaseSchema = z.object({
     .min(1, "Short description is required")
     .max(300, "Short description too long"),
 
-  // New Fields
   eventBibleVerse: z.string().optional(),
   theme: z.string().optional(),
   themeBibleVerse: z.string().optional(),
@@ -180,7 +166,6 @@ export const eventBaseSchema = z.object({
     )
     .optional(),
 
-  // Dates & Status
   status: z.enum([
     "draft",
     "published",
@@ -194,13 +179,10 @@ export const eventBaseSchema = z.object({
   registrationOpenDate: z.coerce.date().optional(),
   registrationCloseDate: z.coerce.date().optional(),
 
-  // Location
   venue: eventVenueSchema,
 
-  // Branding & Media
   branding: eventBrandingSchema,
 
-  // Content
   category: z.enum([
     "conference",
     "workshop",
@@ -214,24 +196,19 @@ export const eventBaseSchema = z.object({
   schedule: z.array(eventScheduleItemSchema).default([]),
   faqs: z.array(eventFAQSchema).default([]),
 
-  // Registration & Invitation Setup
   registrationConfig: eventRegistrationConfigSchema,
   invitationConfig: eventInvitationConfigSchema.default({
     enabled: false,
     fields: [],
   }),
 
-  // Media & Links
   mediaLinks: eventMediaLinksSchema.optional(),
 
-  // Sponsors
   sponsors: z.array(eventSponsorSchema).optional(),
 
-  // Metadata
   featured: z.boolean(),
 });
 
-// Create Event Schema
 export const createEventSchema = eventBaseSchema
   .extend({ slug: z.string().optional() })
   .refine((data) => data.endDate >= data.startDate, {
@@ -250,10 +227,8 @@ export const createEventSchema = eventBaseSchema
     },
   );
 
-// Update Event Schema (all fields optional)
 export const updateEventSchema = eventBaseSchema.partial();
 
-// Event Query Params Schema
 export const eventQuerySchema = z.object({
   status: z
     .enum([
@@ -274,7 +249,6 @@ export const eventQuerySchema = z.object({
   limit: z.coerce.number().positive().max(100).optional(),
 });
 
-// Export types
 export type CreateEventInput = z.infer<typeof createEventSchema>;
 export type UpdateEventInput = z.infer<typeof updateEventSchema>;
 export type EventQueryParams = z.infer<typeof eventQuerySchema>;

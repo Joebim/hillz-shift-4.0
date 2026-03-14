@@ -20,12 +20,11 @@ function getEmailConfig() {
 }
 
 function createTransporter() {
-  // Gmail SMTP configuration
   return nodemailer.createTransport({
     service: "gmail",
     host: "smtp.gmail.com",
     port: 587,
-    secure: false, // true for 465, false for other ports
+    secure: false,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
@@ -48,7 +47,7 @@ export const sendEmail = async ({
   const requestId = context?.requestId;
 
   if (!user || !pass) {
-    console.error("[email] missing configuration", {
+    console.error("EMAIL_CONFIG_MISSING", {
       requestId,
       hasEmailUser: Boolean(user),
       hasEmailPass: Boolean(pass),
@@ -62,7 +61,7 @@ export const sendEmail = async ({
   const transporter = createTransporter();
 
   try {
-    console.log("[email] sending", {
+    console.log("SENDING_EMAIL", {
       requestId,
       from: maskEmail(user),
       to: maskEmail(to),
@@ -78,7 +77,7 @@ export const sendEmail = async ({
       html,
     });
 
-    console.log("[email] sent", {
+    console.log("EMAIL_SENT", {
       requestId,
       messageId: info.messageId,
       accepted: info.accepted?.length ?? 0,
@@ -88,7 +87,7 @@ export const sendEmail = async ({
     return { success: true, info };
   } catch (error) {
     const err = error as Record<string, unknown>;
-    console.error("[email] send failed", {
+    console.error("EMAIL_SEND_FAILED", {
       requestId,
       to: maskEmail(to),
       subject,
@@ -100,12 +99,11 @@ export const sendEmail = async ({
       responseCode: err?.responseCode,
       response: err?.response,
     });
-    // If using regular password fails, user may need to use Gmail App Password
     if (
       err?.message &&
       String(err.message).toLowerCase().includes("invalid login")
     ) {
-      console.error("[email] gmail auth hint", {
+      console.warn("EMAIL_LOGIN_HINT", {
         requestId,
         hint: "Use a Gmail App Password (2-step verification) instead of account password.",
       });

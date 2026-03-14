@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -52,20 +52,19 @@ export const Modal = ({
 
     return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-            {/* Backdrop */}
+            {}
             <div
                 className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
                 onClick={onClose}
             />
 
-            {/* Modal */}
+            {}
             <div
                 className={cn(
                     'relative bg-white rounded-2xl shadow-2xl',
                     'max-h-[90vh] overflow-y-auto',
                     'animate-in fade-in zoom-in duration-200',
 
-                    // Sizes
                     size === 'sm' && 'w-full max-w-md mx-4',
                     size === 'md' && 'w-full max-w-lg mx-4',
                     size === 'lg' && 'w-full max-w-2xl mx-4',
@@ -73,7 +72,7 @@ export const Modal = ({
                     size === 'full' && 'w-full h-full m-0 rounded-none',
                 )}
             >
-                {/* Header */}
+                {}
                 {(title || showCloseButton) && (
                     <div className="flex items-start justify-between p-6 border-b border-[#E5E7EB]">
                         <div>
@@ -95,7 +94,7 @@ export const Modal = ({
                     </div>
                 )}
 
-                {/* Content */}
+                {}
                 <div className="p-6">{children}</div>
             </div>
         </div>,

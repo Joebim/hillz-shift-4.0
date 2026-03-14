@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { EventFormField } from '@/src/types/event';
@@ -11,7 +11,7 @@ interface DynamicFieldRendererProps {
     values: Record<string, unknown>;
     onChange: (label: string, value: unknown) => void;
     errors?: Record<string, string>;
-    /** Pass the current eventId so search-enabled fields can scope their query */
+    
     eventId?: string;
 }
 
@@ -24,7 +24,6 @@ export function DynamicFieldRenderer({ fields, values, onChange, errors, eventId
                 const value = values[field.label];
                 const error = errors?.[field.label];
 
-                // ── search-enabled select → DbSearchSelect ────────────────
                 if (field.type === 'select' && field.searchEnabled && field.searchDbSource) {
                     return (
                         <DbSearchSelect

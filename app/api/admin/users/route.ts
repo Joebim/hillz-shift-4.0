@@ -1,10 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { getFirestore } from "firebase-admin/firestore";
 import { getSession } from "@/src/lib/auth/session";
 import { User, CreateUserInput } from "@/src/types/user";
 import admin from "firebase-admin";
 
-// Initialize Firebase Admin (Singleton check)
 if (admin.apps.length === 0) {
   if (process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
     admin.initializeApp({
@@ -22,7 +21,6 @@ if (admin.apps.length === 0) {
 
 const db = getFirestore();
 
-// Helper to check for super_admin
 async function isSuperAdmin(userId: string) {
   const userDoc = await db.collection("users").doc(userId).get();
   if (!userDoc.exists) return false;
@@ -30,7 +28,6 @@ async function isSuperAdmin(userId: string) {
   return userData.role === "super_admin";
 }
 
-// GET: List all users
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
@@ -38,7 +35,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Only super_admin or admin can list users
     if (session.role !== "super_admin" && session.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -54,7 +50,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ data: users });
   } catch (error) {
-    console.error("List users error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
@@ -62,8 +57,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST: Create a new user (Invite) - Simplified creation
-// For this MVP, we create a user document directly. User would sign in via Auth provider later? index by email
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
@@ -71,7 +64,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Only super_admin can create users/invites? Or admins too? Let's say Admin+
     if (session.role !== "super_admin" && session.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -83,7 +75,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    // Check uniqueness
     const existing = await db
       .collection("users")
       .where("email", "==", email)
@@ -108,16 +99,11 @@ export async function POST(request: NextRequest) {
       photoUrl: "",
     };
 
-    // Note: In a real system, we'd also create an auth record in Firebase Auth
-    // But the prompt just asks for CRUD endpoint logic to make functionality work.
-    // We will store in Firestore 'users' which is what our app reads.
-    // ID generation
     const newDocRef = db.collection("users").doc();
     await newDocRef.set({ id: newDocRef.id, ...newUser });
 
     return NextResponse.json({ data: { id: newDocRef.id, ...newUser } });
   } catch (error) {
-    console.error("Create user error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

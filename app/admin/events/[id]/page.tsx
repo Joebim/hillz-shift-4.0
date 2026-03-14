@@ -24,20 +24,14 @@ import { SkeletonDetail } from '@/src/components/skeletons/SkeletonDetail';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 type RightTab = 'registrations' | 'invitations';
 type MobilePanel = 'details' | 'people';
-
-// ─── Date helper ──────────────────────────────────────────────────────────────
 
 function toDate(value: unknown): Date {
     if (!value) return new Date();
     if (typeof value === 'object' && value !== null && '_seconds' in value) return new Date((value as { _seconds: number })._seconds * 1000);
     try { return toJsDate(value as string | number | Date | null | undefined); } catch { return new Date(); }
 }
-
-// ─── Analytics Drawer ─────────────────────────────────────────────────────────
 
 function AnalyticsDrawer({
     open, onClose, eventId, event,
@@ -50,7 +44,7 @@ function AnalyticsDrawer({
     registrations: Registration[];
     invitations: Invitation[];
 }) {
-    // Bucket by date over past 30 days
+    
     const days = 30;
     const now = new Date();
     const labels = Array.from({ length: days }, (_, i) => {
@@ -65,7 +59,7 @@ function AnalyticsDrawer({
             try {
                 const d = format(toDate(item.createdAt), 'yyyy-MM-dd');
                 if (d in map) map[d]++;
-            } catch { /* skip */ }
+            } catch {  }
         });
         return labels.map(l => [new Date(l).getTime(), map[l]]);
     }
@@ -116,7 +110,7 @@ function AnalyticsDrawer({
 
     return (
         <>
-            {/* Backdrop */}
+            {}
             <div
                 className={cn(
                     'fixed inset-0 bg-black/30 backdrop-blur-sm z-50 transition-opacity duration-300',
@@ -124,12 +118,12 @@ function AnalyticsDrawer({
                 )}
                 onClick={onClose}
             />
-            {/* Drawer */}
+            {}
             <div className={cn(
                 'fixed top-0 right-0 h-full w-full max-w-lg bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ease-out',
                 open ? 'translate-x-0' : 'translate-x-full'
             )}>
-                {/* Header */}
+                {}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
                     <div>
                         <h2 className="font-bold text-gray-900 text-base">Event Analytics</h2>
@@ -141,7 +135,7 @@ function AnalyticsDrawer({
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                    {/* KPI cards */}
+                    {}
                     <div className="grid grid-cols-3 gap-3">
                         {[
                             { label: 'Registrations', value: totalReg, icon: Users, color: 'bg-violet-50 text-violet-600' },
@@ -158,7 +152,7 @@ function AnalyticsDrawer({
                         ))}
                     </div>
 
-                    {/* Registrations Chart */}
+                    {}
                     <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
                         <div className="flex items-center justify-between mb-3">
                             <div>
@@ -175,7 +169,7 @@ function AnalyticsDrawer({
                         />
                     </div>
 
-                    {/* Invitations Chart */}
+                    {}
                     <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
                         <div className="flex items-center justify-between mb-3">
                             <div>
@@ -192,7 +186,7 @@ function AnalyticsDrawer({
                         />
                     </div>
 
-                    {/* Status breakdown */}
+                    {}
                     {totalInv > 0 && (
                         <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
                             <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-3">Invitation Status Breakdown</p>
@@ -226,8 +220,6 @@ function AnalyticsDrawer({
     );
 }
 
-// ─── Main Details Panel ───────────────────────────────────────────────────────
-
 function DetailsPanel({ event, attachmentsRef }: { event: Event; attachmentsRef?: React.RefObject<HTMLDivElement | null> }) {
     const startDate = toDate(event.startDate);
     const endDate = toDate(event.endDate);
@@ -241,7 +233,7 @@ function DetailsPanel({ event, attachmentsRef }: { event: Event; attachmentsRef?
     return (
         <div className="flex-1 overflow-y-auto">
 
-            {/* ── Banner hero image ── */}
+            {}
             <div className="relative h-44 md:h-56 w-full bg-linear-to-br from-violet-700 to-indigo-900 shrink-0">
                 {event.branding?.bannerImage && (
                     <img
@@ -271,7 +263,7 @@ function DetailsPanel({ event, attachmentsRef }: { event: Event; attachmentsRef?
                 </div>
             </div>
 
-            {/* ── Content area ── */}
+            {}
             <div className="px-4 md:px-6 py-6 space-y-6">
 
                 <div>
@@ -462,7 +454,7 @@ function DetailsPanel({ event, attachmentsRef }: { event: Event; attachmentsRef?
 
                 <Divider />
 
-                {/* Attachments section — anchor for Paperclip button */}
+                {}
                 <div ref={attachmentsRef}>
                     <SectionLabel>Attachments</SectionLabel>
                     <button className="w-full text-xs text-gray-400 border border-dashed border-gray-200 rounded-xl py-5 hover:border-violet-300 hover:text-violet-500 transition-colors flex items-center justify-center gap-2">
@@ -475,8 +467,6 @@ function DetailsPanel({ event, attachmentsRef }: { event: Event; attachmentsRef?
         </div>
     );
 }
-
-// ─── People Panel ─────────────────────────────────────────────────────────────
 
 function PeoplePanel({ event, rightTab, setRightTab }: {
     event: Event; rightTab: RightTab; setRightTab: (t: RightTab) => void;
@@ -548,7 +538,7 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
             <AddRegistrationModal eventId={eventId} isOpen={isRegModalOpen} onClose={() => setIsRegModalOpen(false)} />
             <AddInvitationModal eventId={eventId} isOpen={isInvModalOpen} onClose={() => setIsInvModalOpen(false)} />
 
-            {/* Tab switcher */}
+            {}
             <div className="bg-white border-b border-gray-100 px-4 py-3 flex gap-2 shrink-0">
                 <button
                     onClick={() => handleTabChange('registrations')}
@@ -584,7 +574,7 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
                 </button>
             </div>
 
-            {/* Purple pane */}
+            {}
             <div className="flex-1 flex flex-col overflow-hidden transition-colors duration-300" style={{ backgroundColor: '#6c63d5' }}>
 
                 <div className="px-5 md:px-6 pt-5 pb-4 shrink-0">
@@ -700,8 +690,6 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
     );
 }
 
-// ─── Main page ────────────────────────────────────────────────────────────────
-
 export default function EventDetailsPage() {
     const params = useParams();
     const router = useRouter();
@@ -725,7 +713,6 @@ export default function EventDetailsPage() {
         enabled: !!eventId,
     });
 
-    // Pre-fetch registrations + invitations for analytics
     const { data: registrations = [] } = useQuery<Registration[]>({
         queryKey: ['registrations', eventId],
         queryFn: async () => {
@@ -746,7 +733,6 @@ export default function EventDetailsPage() {
         enabled: !!eventId,
     });
 
-    // ── Toggle featured ───────────────────────────────────────────────────────
     const featuredMutation = useMutation({
         mutationFn: async (featured: boolean) => {
             const res = await fetch(`/api/events/${eventId}`, {
@@ -763,7 +749,6 @@ export default function EventDetailsPage() {
         },
     });
 
-    // ── Copy public event link ────────────────────────────────────────────────
     const copyEventLink = async () => {
         const url = `${window.location.origin}/e/${eventId}`;
         try {
@@ -771,7 +756,7 @@ export default function EventDetailsPage() {
             setCopySuccess(true);
             setTimeout(() => setCopySuccess(false), 2000);
         } catch {
-            // fallback
+            
             const ta = document.createElement('textarea');
             ta.value = url;
             document.body.appendChild(ta);
@@ -783,7 +768,6 @@ export default function EventDetailsPage() {
         }
     };
 
-    // ── Share via Web Share API ───────────────────────────────────────────────
     const shareEvent = async () => {
         const url = `${window.location.origin}/e/${eventId}`;
         if (navigator.share) {
@@ -793,14 +777,13 @@ export default function EventDetailsPage() {
                     text: event?.shortDescription || event?.description || '',
                     url,
                 });
-            } catch { /* cancelled */ }
+            } catch {  }
         } else {
-            // fallback to copy
+            
             copyEventLink();
         }
     };
 
-    // ── Scroll to attachments ─────────────────────────────────────────────────
     const scrollToAttachments = () => {
         attachmentsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
@@ -819,12 +802,11 @@ export default function EventDetailsPage() {
         </div>
     );
 
-    // ── Shared action buttons ─────────────────────────────────────────────────
     const ActionButtons = ({ size = 'md' }: { size?: 'sm' | 'md' }) => {
         const s = size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4';
         return (
             <div className="flex items-center gap-2 text-gray-400">
-                {/* Star / Featured */}
+                {}
                 <button
                     onClick={() => featuredMutation.mutate(!event.featured)}
                     disabled={featuredMutation.isPending}
@@ -834,7 +816,7 @@ export default function EventDetailsPage() {
                     <Star className={s} fill={event.featured ? 'currentColor' : 'none'} />
                 </button>
 
-                {/* Copy public link */}
+                {}
                 <button
                     onClick={copyEventLink}
                     title={copySuccess ? 'Copied!' : 'Copy public event link'}
@@ -843,7 +825,7 @@ export default function EventDetailsPage() {
                     <Link2 className={s} />
                 </button>
 
-                {/* Scroll to attachments */}
+                {}
                 <button
                     onClick={scrollToAttachments}
                     title="Attachments"
@@ -852,7 +834,7 @@ export default function EventDetailsPage() {
                     <Paperclip className={s} />
                 </button>
 
-                {/* Analytics */}
+                {}
                 <button
                     onClick={() => setAnalyticsOpen(true)}
                     title="View Analytics"
@@ -861,12 +843,12 @@ export default function EventDetailsPage() {
                     <BarChart3 className={s} />
                 </button>
 
-                {/* Edit */}
+                {}
                 <Link href={`/admin/events/${event.id}/edit`} title="Edit event" className="hover:text-violet-600 transition-colors">
                     <Edit className={s} />
                 </Link>
 
-                {/* Share */}
+                {}
                 <button onClick={shareEvent} title="Share event" className="hover:text-violet-500 transition-colors">
                     <Share2 className={s} />
                 </button>
@@ -877,7 +859,7 @@ export default function EventDetailsPage() {
     return (
         <div className="flex flex-col lg:flex-row h-screen bg-gray-50 overflow-hidden font-sans">
 
-            {/* Analytics Drawer */}
+            {}
             <AnalyticsDrawer
                 open={analyticsOpen}
                 onClose={() => setAnalyticsOpen(false)}
@@ -887,7 +869,7 @@ export default function EventDetailsPage() {
                 invitations={invitations}
             />
 
-            {/* ── Mobile top bar ───────────────────────────────────────────── */}
+            {}
             <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shrink-0">
                 <Link href="/admin/events"
                     className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-violet-600 transition-colors uppercase tracking-wider">
@@ -896,7 +878,7 @@ export default function EventDetailsPage() {
                 <ActionButtons size="sm" />
             </div>
 
-            {/* ── Mobile panel tab bar ─────────────────────────────────────── */}
+            {}
             <div className="lg:hidden flex bg-white border-b border-gray-100 px-4 gap-1.5 py-2 shrink-0">
                 {([
                     { id: 'details' as MobilePanel, label: 'Details' },
@@ -912,7 +894,7 @@ export default function EventDetailsPage() {
                 ))}
             </div>
 
-            {/* ── Mobile panels ────────────────────────────────────────────── */}
+            {}
             <div className={cn('lg:hidden flex-1 flex flex-col overflow-hidden bg-white', mobilePanel === 'details' ? 'flex' : 'hidden')}>
                 <DetailsPanel event={event} attachmentsRef={attachmentsRef} />
             </div>
@@ -920,9 +902,9 @@ export default function EventDetailsPage() {
                 <PeoplePanel event={event} rightTab={rightTab} setRightTab={setRightTab} />
             </div>
 
-            {/* ── Desktop: two panels ──────────────────────────────────────── */}
+            {}
 
-            {/* Left panel — event details */}
+            {}
             <div className="hidden lg:flex flex-1 bg-white flex-col overflow-hidden border-r border-gray-200 min-w-0">
                 <div className="shrink-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
                     <Link href="/admin/events"
@@ -934,7 +916,7 @@ export default function EventDetailsPage() {
                 <DetailsPanel event={event} attachmentsRef={attachmentsRef} />
             </div>
 
-            {/* Right panel — tab switcher + purple pane */}
+            {}
             <div className="hidden lg:flex w-96 shrink-0 flex-col overflow-hidden">
                 <PeoplePanel event={event} rightTab={rightTab} setRightTab={setRightTab} />
             </div>

@@ -1,9 +1,8 @@
-import { initializeApp, getApps, cert } from "firebase-admin/app";
+﻿import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
 import { getStorage } from "firebase-admin/storage";
 
-// Initialize Firebase Admin SDK
 const initializeFirebaseAdmin = () => {
   if (getApps().length === 0) {
     const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(
@@ -16,7 +15,6 @@ const initializeFirebaseAdmin = () => {
       !process.env.FIREBASE_ADMIN_PROJECT_ID ||
       !process.env.FIREBASE_ADMIN_CLIENT_EMAIL
     ) {
-      console.warn("Firebase Admin credentials are not properly configured");
       initializeApp({ projectId: "demo-project" });
       return;
     }
@@ -30,26 +28,20 @@ const initializeFirebaseAdmin = () => {
       storageBucket: `${process.env.FIREBASE_ADMIN_PROJECT_ID}.appspot.com`,
     });
 
-    // Set Firestore settings immediately after initialization
     getFirestore().settings({
       ignoreUndefinedProperties: true,
     });
   }
 };
 
-// Initialize on module load
 initializeFirebaseAdmin();
 
-// Export Firestore instance
 export const adminDb = getFirestore();
 
-// Export Auth instance
 export const adminAuth = getAuth();
 
-// Export Storage instance
 export const adminStorage = getStorage();
 
-// Helper function to convert Firestore timestamp to Date
 export const timestampToDate = (timestamp: unknown): Date => {
   if (!timestamp) return new Date();
   if (
@@ -64,7 +56,6 @@ export const timestampToDate = (timestamp: unknown): Date => {
   return new Date(timestamp as string | number);
 };
 
-// Helper function to create server timestamp
 export const serverTimestamp = () => {
   return new Date();
 };

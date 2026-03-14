@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { queryDocuments } from "@/src/lib/firebase/firestore";
 
 export async function GET() {
@@ -11,7 +11,6 @@ export async function GET() {
     );
     return NextResponse.json({ success: true, data: prayers });
   } catch (error) {
-    console.error("Error fetching prayer requests:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch prayer requests" },
       { status: 500 },

@@ -22,10 +22,6 @@ const toDate = (d: FirestoreDate) =>
     ? (d as { toDate: () => Date }).toDate()
     : new Date(d as string | number | Date);
 
-/**
- * POST /api/events/[eventId]/register
- * Register for an event (public endpoint)
- */
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ eventId: string }> },
@@ -34,13 +30,11 @@ export async function POST(
     const { eventId } = await params;
     const body = await request.json();
 
-    // Validate request body
     const validated = createRegistrationSchema.parse({
       ...body,
       eventId,
     });
 
-    // Check if event exists and registration is open
     const event = await getDocument<Event>("events", eventId);
     if (!event) {
       return notFoundResponse("Event not found");
@@ -55,7 +49,6 @@ export async function POST(
       );
     }
 
-    // Check registration dates
     const now = new Date();
     const openDate = toDate(event.registrationOpenDate);
     const closeDate = toDate(event.registrationCloseDate);
@@ -78,34 +71,27 @@ export async function POST(
       );
     }
 
-    // Check capacity
     if (
       event.registrationConfig.capacity &&
       event.registrationCount >= event.registrationConfig.capacity
     ) {
-      // Add to waitlist
       validated.status = "waitlist";
     }
 
-    // Generate confirmation code
     const confirmationCode = generateRandomString(16).toUpperCase();
 
-    // Create registration
     const registrationId = await createDocument("registrations", {
       ...validated,
       confirmationCode,
       registrationDate: new Date(),
     });
 
-    // Update event registration count
     await updateDocument("events", eventId, {
       registrationCount: event.registrationCount + 1,
     });
 
-    // Send confirmation email
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
 
-    // Don't block response on email sending, but log errors
     sendRegistrationEmail(
       validated.attendee.email,
       validated.attendee.firstName,
@@ -137,7 +123,6 @@ export async function POST(
       return validationErrorResponse((error as ZodError).errors);
     }
 
-    console.error("Registration error:", error);
     return errorResponse(
       "REGISTRATION_ERROR",
       "Failed to register",

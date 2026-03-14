@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { db } from "@/src/lib/firebaseAdmin";
 import { AdminAuthError, requireAdminSession } from "@/src/lib/adminSession";
 
 type DailyPoint = {
-  date: string; // YYYY-MM-DD
-  label: string; // e.g. Jan 10
+  date: string;
+  label: string;
   registrations: number;
   invitations: number;
 };
@@ -16,7 +16,6 @@ function toDate(value: unknown): Date | null {
     const d = new Date(value);
     return Number.isNaN(d.getTime()) ? null : d;
   }
-  // Firestore Timestamp (admin sdk) has toDate()
   if (value && typeof value === "object" && "toDate" in value && typeof (value as { toDate: unknown }).toDate === "function") {
     try {
       const d = (value as { toDate: () => Date }).toDate();
@@ -47,7 +46,6 @@ export async function GET(request: Request) {
     const daysParam = Number(url.searchParams.get("days") || "14");
     const days = Number.isFinite(daysParam) ? Math.min(Math.max(daysParam, 7), 60) : 14;
 
-    // Build day buckets in UTC
     const now = new Date();
     const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
     start.setUTCDate(start.getUTCDate() - (days - 1));
@@ -65,7 +63,6 @@ export async function GET(request: Request) {
       });
     }
 
-    // Query only recent docs. ISO strings are lexicographically sortable by time.
     const startIso = start.toISOString();
 
     const [regSnapshot, invSnapshot] = await Promise.all([
@@ -118,4 +115,3 @@ export async function GET(request: Request) {
     );
   }
 }
-

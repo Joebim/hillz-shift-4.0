@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { db } from "@/src/lib/firebaseAdmin";
 
 export async function GET(request: Request) {
@@ -6,7 +6,6 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search")?.toLowerCase().trim() || "";
 
-    // Fetch all registrations (participants)
     const snapshot = await db
       .collection("registrations")
       .orderBy("createdAt", "desc")
@@ -19,7 +18,6 @@ export async function GET(request: Request) {
       phone: doc.data().phone || "",
     }));
 
-    // Filter by search query if provided
     if (search) {
       participants = participants.filter(
         (participant) =>
@@ -29,7 +27,6 @@ export async function GET(request: Request) {
       );
     }
 
-    // Limit results to 20 for performance
     participants = participants.slice(0, 20);
 
     return NextResponse.json({
@@ -38,7 +35,6 @@ export async function GET(request: Request) {
       total: participants.length,
     });
   } catch (error: unknown) {
-    console.error("[API Participants] Error fetching participants:", error);
     const errorMessage = error instanceof Error ? error.message : "Failed to fetch participants";
     return NextResponse.json(
       { success: false, error: errorMessage },

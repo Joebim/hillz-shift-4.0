@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import Image from 'next/image';
 import { queryDocuments } from '@/src/lib/firebase/firestore';
 import { toJsDate } from '@/src/lib/utils';
@@ -24,14 +24,12 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-    // Fetch featured content
     const [rawEvents, rawSermons, rawMinistries] = await Promise.all([
         queryDocuments<Event>('events', { status: 'published', featured: true }, 'startDate', 3),
         queryDocuments<Sermon>('sermons', {}, 'date', 3),
         queryDocuments<Ministry>('ministries', { active: true }, 'order', 4),
     ]);
 
-    // Serialize data for components
     const featuredEvents = rawEvents.map(event => ({
         ...event,
         startDate: toJsDate(event.startDate),
@@ -59,7 +57,7 @@ export default async function HomePage() {
 
             <Hero />
 
-            {/* Sunday Service Times Section - Inspired by reference */}
+            {}
             <Section bg="none" className="py-32 relative overflow-hidden">
                 <div className="absolute inset-0 bg-slate-50/50" />
                 <div className="absolute -top-24 -right-24 w-96 h-96 bg-purple-100/50 rounded-full blur-3xl opacity-50" />
@@ -80,7 +78,7 @@ export default async function HomePage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                        {/* Service Card 1 */}
+                        {}
                         <div className="group bg-white rounded-[40px] p-10 border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-purple-200/40 transition-all duration-500 hover:-translate-y-2">
                             <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-purple-600 group-hover:text-white transition-all duration-500 mb-8">
                                 <Clock className="w-8 h-8" />
@@ -95,7 +93,7 @@ export default async function HomePage() {
                             </Button>
                         </div>
 
-                        {/* Service Card 2 - FEATURED */}
+                        {}
                         <div className="group relative bg-slate-900 rounded-[40px] p-10 shadow-2xl shadow-indigo-200 overflow-hidden transform md:scale-110 z-10">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-purple-600/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                             <div className="relative z-10">
@@ -113,7 +111,7 @@ export default async function HomePage() {
                             </div>
                         </div>
 
-                        {/* Service Card 3 */}
+                        {}
                         <div className="group bg-white rounded-[40px] p-10 border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-purple-200/40 transition-all duration-500 hover:-translate-y-2">
                             <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-purple-600 group-hover:text-white transition-all duration-500 mb-8">
                                 <Clock className="w-8 h-8" />
@@ -131,7 +129,7 @@ export default async function HomePage() {
                 </div>
             </Section>
 
-            {/* Info Section 1 - Text Left, Image Right */}
+            {}
             <Section bg="white" className="py-32">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                     <div className="max-w-xl">
@@ -188,7 +186,7 @@ export default async function HomePage() {
                 </div>
             </Section>
 
-            {/* Testimonials - Inspired by reference */}
+            {}
             <Section className="py-32 bg-slate-900 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
                     <div className="absolute top-0 left-1/4 w-[1000px] h-[1000px] bg-purple-600 rounded-full blur-[150px] -translate-y-1/2" />
@@ -245,7 +243,7 @@ export default async function HomePage() {
                 </div>
             </Section>
 
-            {/* Featured Events Section */}
+            {}
             {featuredEvents.length > 0 && (
                 <Section bg="white" className="py-32">
                     <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
@@ -274,7 +272,7 @@ export default async function HomePage() {
                 </Section>
             )}
 
-            {/* Latest Sermons Section */}
+            {}
             <Section bg="gray" className="py-32">
                 <div className="flex flex-col md:flex-row items-center justify-between mb-20 gap-8">
                     <div className="text-center md:text-left">
@@ -299,7 +297,7 @@ export default async function HomePage() {
                 </div>
             </Section>
 
-            {/* Ministries Section */}
+            {}
             <Section bg="white" className="py-32">
                 <div className="text-center max-w-3xl mx-auto mb-20">
                     <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter">
@@ -325,7 +323,7 @@ export default async function HomePage() {
                 </div>
             </Section>
 
-            {/* Newsletter */}
+            {}
             <Newsletter />
 
             <Footer />

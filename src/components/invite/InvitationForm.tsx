@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { useInvitationStore } from '@/src/store/useInvitationStore';
@@ -22,17 +22,13 @@ export const InvitationForm = ({ eventId, config }: Props) => {
     const toast = useToast();
     const [errors, setErrors] = React.useState<Record<string, string>>({});
 
-    // ── Validation ───────────────────────────────────────────────────────
     const validateForm = (): boolean => {
         const newErrors: Record<string, string> = {};
 
-        // Default required: your name
         if (!form.inviterName?.trim()) newErrors.inviterName = 'Your name is required';
 
-        // Default required: invitee name
         if (!form.inviteeName?.trim()) newErrors.inviteeName = "Guest's name is required";
 
-        // Default required: invitee phone
         if (!form.inviteePhone?.trim()) {
             newErrors.inviteePhone = 'Phone / WhatsApp number is required';
         } else {
@@ -42,7 +38,6 @@ export const InvitationForm = ({ eventId, config }: Props) => {
             }
         }
 
-        // Optional email — validate format only if provided
         if (form.inviteeEmail?.trim()) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(form.inviteeEmail.trim())) {
@@ -50,10 +45,8 @@ export const InvitationForm = ({ eventId, config }: Props) => {
             }
         }
 
-        // Invitation message (always required)
         if (!form.customMessage?.trim()) newErrors.customMessage = 'Invitation message is required';
 
-        // Dynamic custom fields
         if (config?.fields) {
             config.fields.forEach(field => {
                 if (field.required) {
@@ -69,7 +62,6 @@ export const InvitationForm = ({ eventId, config }: Props) => {
         return Object.keys(newErrors).length === 0;
     };
 
-    // ── Submit ───────────────────────────────────────────────────────────
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -130,7 +122,6 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                 toast.error(result.error || 'Failed to send invitation');
             }
         } catch (error) {
-            console.error(error);
             toast.error('Something went wrong!');
         } finally {
             setIsSubmitting(false);
@@ -140,7 +131,7 @@ export const InvitationForm = ({ eventId, config }: Props) => {
     return (
         <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-10">
 
-            {/* ── Step 1: Your Info (default) ─────────────────────────────── */}
+            {}
             <div className="space-y-6 rounded-3xl border border-primary/10 bg-primary/5 p-8 shadow-sm">
                 <h3 className="text-lg font-bold text-primary flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-sm text-white font-black">
@@ -163,7 +154,7 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                 )}
             </div>
 
-            {/* ── Step 2: Guest Info — default fields ─────────────────────── */}
+            {}
             <div className="space-y-6 rounded-3xl border border-accent/10 bg-accent/5 p-8 shadow-sm">
                 <h3 className="text-lg font-bold text-accent flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent text-sm text-white font-black">
@@ -175,7 +166,7 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                     </span>
                 </h3>
 
-                {/* Default: Name + Phone */}
+                {}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <Input
                         label="Guest Full Name"
@@ -196,7 +187,7 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                     />
                 </div>
 
-                {/* Default: Email (optional) */}
+                {}
                 <Input
                     label="Email Address (Optional)"
                     type="email"
@@ -206,7 +197,7 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                     error={errors.inviteeEmail}
                 />
 
-                {/* Always-present: personal invitation message */}
+                {}
                 <Textarea
                     label="Personal Invitation Note"
                     placeholder="Write a message to your guest..."
@@ -218,7 +209,7 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                 />
             </div>
 
-            {/* ── Step 3: Event Custom Fields ─────────────────────────────── */}
+            {}
             {config?.fields && config.fields.length > 0 && (
                 <div className="space-y-6 rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
                     <h3 className="text-lg font-bold text-gray-900 flex items-center gap-3">

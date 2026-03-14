@@ -16,10 +16,6 @@ import { Event } from "@/src/types/event";
 import { updateEventSchema } from "@/src/schemas/event.schema";
 import { ZodError } from "zod";
 
-/**
- * GET /api/events/[eventId]
- * Get single event details
- */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ eventId: string }> },
@@ -32,7 +28,6 @@ export async function GET(
       return notFoundResponse("Event not found");
     }
 
-    // Check if event is published or user is admin
     const session = await getSession();
     const isAdmin =
       session && ["super_admin", "admin", "editor"].includes(session.role);
@@ -43,7 +38,6 @@ export async function GET(
 
     return successResponse(event);
   } catch (error) {
-    console.error("Fetch event error:", error);
     return errorResponse(
       "FETCH_ERROR",
       "Failed to fetch event",
@@ -52,16 +46,12 @@ export async function GET(
   }
 }
 
-/**
- * PATCH /api/events/[eventId]
- * Update event (admin only)
- */
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ eventId: string }> },
 ) {
   try {
-    // Check authentication
+    
     const session = await getSession();
     if (!session || !["super_admin", "admin"].includes(session.role)) {
       return unauthorizedResponse("Admin access required");
@@ -70,16 +60,13 @@ export async function PATCH(
     const { eventId } = await params;
     const body = await request.json();
 
-    // Validate request body
     const validated = updateEventSchema.parse(body);
 
-    // Check if event exists
     const event = await getDocument<Event>("events", eventId);
     if (!event) {
       return notFoundResponse("Event not found");
     }
 
-    // Update event
     await updateDocument("events", eventId, validated);
 
     return successResponse({ id: eventId }, "Event updated successfully");
@@ -88,7 +75,6 @@ export async function PATCH(
       return validationErrorResponse(error.errors);
     }
 
-    console.error("Update event error:", error);
     return errorResponse(
       "UPDATE_ERROR",
       "Failed to update event",
@@ -97,16 +83,12 @@ export async function PATCH(
   }
 }
 
-/**
- * DELETE /api/events/[eventId]
- * Delete event (super admin only)
- */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ eventId: string }> },
 ) {
   try {
-    // Check authentication (super admin only)
+    
     const session = await getSession();
     if (!session || session.role !== "super_admin") {
       return unauthorizedResponse("Super admin access required");
@@ -114,18 +96,15 @@ export async function DELETE(
 
     const { eventId } = await params;
 
-    // Check if event exists
     const event = await getDocument<Event>("events", eventId);
     if (!event) {
       return notFoundResponse("Event not found");
     }
 
-    // Delete event
     await deleteDocument("events", eventId);
 
     return successResponse(null, "Event deleted successfully");
   } catch (error) {
-    console.error("Delete event error:", error);
     return errorResponse(
       "DELETE_ERROR",
       "Failed to delete event",

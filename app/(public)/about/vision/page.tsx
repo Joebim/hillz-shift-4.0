@@ -1,4 +1,4 @@
-import Image from 'next/image';
+﻿import Image from 'next/image';
 import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
 import { Section } from '@/src/components/shared/Section';
@@ -15,7 +15,7 @@ export default function VisionMissionPage() {
         <div className="min-h-screen bg-slate-50">
             <Header />
 
-            {/* Hero Section */}
+            {}
             <section className="relative pt-48 pb-32 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/70 via-slate-900/50 to-slate-900 z-10" />
@@ -51,7 +51,7 @@ export default function VisionMissionPage() {
                     <Card variant="default" padding="none" className="-mt-32 relative z-20 shadow-2xl shadow-indigo-900/10 border border-slate-100 bg-white rounded-[40px] overflow-hidden animate-fade-in-up delay-200">
                         <div className="p-8 md:p-16">
                             <div className="grid md:grid-cols-2 gap-16">
-                                {/* Vision Column */}
+                                {}
                                 <div>
                                     <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6">
                                         <Sparkles className="w-8 h-8" />
@@ -62,7 +62,7 @@ export default function VisionMissionPage() {
                                     </p>
                                 </div>
 
-                                {/* Mission Column */}
+                                {}
                                 <div>
                                     <div className="w-16 h-16 bg-pink-50 text-pink-600 rounded-2xl flex items-center justify-center mb-6">
                                         <Target className="w-8 h-8" />

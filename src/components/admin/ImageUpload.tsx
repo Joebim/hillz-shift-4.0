@@ -1,13 +1,4 @@
-// Assuming I need to check ImageUpload since I updated its usage context but not the file itself.
-// Let's first read ImageUpload to ensure it matches the light theme.
-// Actually, I should list files first.
-// Wait, I can try to guess the path c:\Users\Public\Projects\hillz-shift-4.0\src\components\admin\ImageUpload.tsx
-// But I should be safe. I will read it first.
-// Wait, I already read it in the previous step (Step 291).
-// The content shows it uses `bg-gray-50`, `border-gray-300` etc which are already light mode friendly.
-// However I will refine it to match the `slate` palette used in other components for consistency.
-
-// ImageUpload.tsx
+﻿
 import { useState } from 'react';
 import { Button } from '@/src/components/ui/Button';
 import { X, Image as ImageIcon, Loader2, Upload } from 'lucide-react';

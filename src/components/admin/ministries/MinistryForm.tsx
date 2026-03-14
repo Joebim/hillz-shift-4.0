@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -52,7 +52,6 @@ export const MinistryForm = ({ initialData, onSubmit, isLoading }: MinistryFormP
         try {
             await onSubmit(data);
         } catch (error) {
-            console.error('Form submission error:', error);
             toast({
                 title: 'Error',
                 description: 'Failed to save ministry. Please check your inputs.',
@@ -65,7 +64,7 @@ export const MinistryForm = ({ initialData, onSubmit, isLoading }: MinistryFormP
 
     return (
         <form onSubmit={handleSubmit(submitHandler)} className="max-w-6xl mx-auto pb-20">
-            {/* Header / Actions Sidebar alternative - Sticky bar */}
+            {}
             <div className="flex items-center justify-between mb-8 sticky top-0 z-30 bg-gray-50/80 backdrop-blur-md py-4 border-b border-gray-200 -mx-4 px-4 sm:mx-0 sm:px-0">
                 <div className="flex items-center gap-3">
                     <button
@@ -107,9 +106,9 @@ export const MinistryForm = ({ initialData, onSubmit, isLoading }: MinistryFormP
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Main Content Area */}
+                {}
                 <div className="lg:col-span-8 space-y-8">
-                    {/* Basic Info */}
+                    {}
                     <Card variant="glass" padding="lg">
                         <div className="flex items-center gap-2 mb-6 text-emerald-600">
                             <Users className="w-5 h-5" />
@@ -173,7 +172,7 @@ export const MinistryForm = ({ initialData, onSubmit, isLoading }: MinistryFormP
                         </div>
                     </Card>
 
-                    {/* Leadership */}
+                    {}
                     <Card variant="glass" padding="lg">
                         <div className="flex items-center gap-2 mb-6 text-emerald-600">
                             <Smile className="w-5 h-5" />
@@ -206,9 +205,9 @@ export const MinistryForm = ({ initialData, onSubmit, isLoading }: MinistryFormP
                     </Card>
                 </div>
 
-                {/* Sidebar area */}
+                {}
                 <div className="lg:col-span-4 space-y-8">
-                    {/* Thumbnail */}
+                    {}
                     <Card variant="glass" padding="md">
                         <div className="flex items-center gap-2 mb-4 text-emerald-600">
                             <ImageIcon className="w-5 h-5" />
@@ -228,7 +227,7 @@ export const MinistryForm = ({ initialData, onSubmit, isLoading }: MinistryFormP
                         </p>
                     </Card>
 
-                    {/* Settings Card */}
+                    {}
                     <Card variant="glass" padding="md">
                         <div className="flex items-center gap-2 mb-4 text-emerald-600">
                             <Settings className="w-5 h-5" />

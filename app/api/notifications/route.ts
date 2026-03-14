@@ -1,17 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/src/lib/firebase/admin";
 import { getSession } from "@/src/lib/auth/session";
 import { formatDistanceToNow } from "date-fns";
 
 const DEFAULT_LIMIT = 20;
 
-/**
- * GET /api/notifications
- * Fetch notifications with pagination
- * Query Params:
- *  - limit: number (default 20)
- *  - lastId: string (ID of the last notification fetched, for cursor pagination)
- */
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
@@ -56,7 +49,7 @@ export async function GET(request: NextRequest) {
       const data = doc.data();
       const createdAt = data.createdAt?.toDate
         ? data.createdAt.toDate()
-        : new Date(data.createdAt); // Fallback if stored as string/number
+        : new Date(data.createdAt);
 
       return {
         id: doc.id,
@@ -65,7 +58,7 @@ export async function GET(request: NextRequest) {
         highlight: data.highlight || "",
         suffix: data.suffix || "",
         eventTitle: data.eventTitle || "",
-        createdAt: createdAt.toISOString(), // Send ISO string for client parsing
+        createdAt: createdAt.toISOString(),
         time: formatDistanceToNow(createdAt, { addSuffix: true }),
         read: data.read || false,
         type: data.type || "info",
@@ -83,7 +76,6 @@ export async function GET(request: NextRequest) {
           : null,
     });
   } catch (error) {
-    console.error("Fetch notifications error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch notifications" },
       { status: 500 },

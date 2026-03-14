@@ -1,6 +1,5 @@
-import { Timestamp } from "firebase/firestore";
+﻿import { Timestamp } from "firebase/firestore";
 
-// Event Types
 export type EventStatus =
   | "draft"
   | "published"
@@ -136,7 +135,7 @@ export interface EventChannel {
 export interface EventMinister {
   id: string;
   name: string;
-  position: string; // e.g., "Senior Pastor", "Worship Leader"
+  position: string; 
   type: "primary" | "secondary" | "guest" | "other";
   photo?: string;
   bio?: string;
@@ -154,7 +153,6 @@ export interface Event {
   description: string;
   shortDescription: string;
 
-  // New Fields
   eventBibleVerse?: string;
   theme?: string;
   themeBibleVerse?: string;
@@ -163,37 +161,29 @@ export interface Event {
   channels?: EventChannel[];
   ministers?: EventMinister[];
 
-  // Dates & Status
   status: EventStatus;
   startDate: Timestamp | Date | string;
   endDate: Timestamp | Date | string;
   registrationOpenDate: Timestamp | Date | string;
   registrationCloseDate: Timestamp | Date | string;
 
-  // Location
   venue: EventVenue;
 
-  // Branding & Media
   branding: EventBranding;
 
-  // Content
   category: EventCategory;
   tags: string[];
   speakers: EventSpeaker[];
   schedule: EventScheduleItem[];
   faqs: EventFAQ[];
 
-  // Registration & Invitation
   registrationConfig: EventRegistrationConfig;
   invitationConfig: EventInvitationConfig;
 
-  // Media & Links
   mediaLinks: EventMediaLinks;
 
-  // Sponsors (optional)
   sponsors?: EventSponsor[];
 
-  // Metadata
   featured: boolean;
   registrationCount: number;
   invitationCount: number;
@@ -202,7 +192,6 @@ export interface Event {
   createdBy: string;
 }
 
-// Event creation/update types
 export type CreateEventInput = Omit<
   Event,
   | "id"
@@ -214,7 +203,6 @@ export type CreateEventInput = Omit<
 >;
 export type UpdateEventInput = Partial<CreateEventInput>;
 
-// Event filters
 export interface EventFilters {
   status?: EventStatus | EventStatus[];
   category?: EventCategory | EventCategory[];
@@ -224,7 +212,6 @@ export interface EventFilters {
   search?: string;
 }
 
-// Event with computed properties
 export interface EventWithComputed extends Event {
   isUpcoming: boolean;
   isOngoing: boolean;

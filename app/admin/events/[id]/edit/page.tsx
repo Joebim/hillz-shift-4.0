@@ -15,8 +15,6 @@ type EventFormData = z.infer<typeof createEventSchema>;
 
 import { SkeletonForm } from '@/src/components/skeletons/SkeletonForm';
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
 export default function EditEventPage() {
     const router = useRouter();
     const params = useParams();
@@ -77,7 +75,7 @@ export default function EditEventPage() {
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
 
-            {/* ── Sticky page header ────────────────────────────────────── */}
+            {}
             <header className="bg-white border-b border-gray-100 px-4 md:px-6 py-3 flex items-center justify-between sticky top-0 z-20">
                 <div className="flex items-center gap-2 min-w-0">
                     <Link
@@ -98,7 +96,7 @@ export default function EditEventPage() {
                     </div>
                 </div>
 
-                {/* Status chip */}
+                {}
                 <div className="flex items-center gap-3">
                     <span className={cn(
                         'hidden sm:inline-flex px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider',
@@ -118,7 +116,7 @@ export default function EditEventPage() {
                 </div>
             </header>
 
-            {/* ── Content area ─────────────────────────────────────────── */}
+            {}
             <div className="max-w-5xl mx-auto px-4 md:px-6 py-6">
                 <EventForm
                     initialData={event}

@@ -1,4 +1,4 @@
-import Image from 'next/image';
+﻿import Image from 'next/image';
 import { queryDocuments } from '@/src/lib/firebase/firestore';
 import { toJsDate } from '@/src/lib/utils';
 import { Ministry } from '@/src/types/ministry';
@@ -28,7 +28,7 @@ export default async function MinistriesPage() {
         <div className="min-h-screen bg-white">
             <Header />
 
-            {/* Hero Section */}
+            {}
             <section className="relative pt-48 pb-32 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
@@ -54,7 +54,7 @@ export default async function MinistriesPage() {
                 </div>
             </section>
 
-            {/* Ministries Grid */}
+            {}
             <Section bg="white" className="py-24">
                 <div className="flex items-center gap-3 mb-12">
                     <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">

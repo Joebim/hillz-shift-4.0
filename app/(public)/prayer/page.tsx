@@ -1,4 +1,4 @@
-import Image from 'next/image';
+﻿import Image from 'next/image';
 import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
 
@@ -17,7 +17,7 @@ export default function PrayerPage() {
         <div className="min-h-screen bg-white">
             <Header />
 
-            {/* Hero Section */}
+            {}
             <section className="relative pt-48 pb-32 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
@@ -45,7 +45,7 @@ export default function PrayerPage() {
                     </div>
                 </div>
 
-                {/* Decorative element */}
+                {}
                 <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-linear-to-tr from-indigo-600/20 to-transparent blur-3xl" />
             </section>
 

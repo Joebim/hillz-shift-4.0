@@ -1,12 +1,10 @@
 
-// app/admin/events/[id]/modals.tsx
 'use client';
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
 
-// Simple Modal Component
 function SimpleModal({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
     if (!isOpen) return null;
     return (
@@ -84,12 +82,7 @@ export function AddInvitationModal({ eventId, isOpen, onClose }: { eventId: stri
 
     const mutation = useMutation({
         mutationFn: async (data: { name: string; email: string }) => {
-            // Mock API call or real one if exists. 
-            // Ideally: /api/events/${eventId}/invitations
-            // For now we simulate or use a real endpoint if we create one. 
-            // Let's assume we use the same invite logic or a new endpoint.
-            // Since the USER asked to "let the add buttons work", we should ideally implement the API too.
-            // I'll assume standard POST to /api/events/[id]/invitations
+            
             const res = await fetch(`/api/events/${eventId}/invitations`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

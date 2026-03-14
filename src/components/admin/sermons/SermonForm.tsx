@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -36,7 +36,7 @@ export const SermonForm = ({ initialData, onSubmit, isLoading }: SermonFormProps
         resolver: zodResolver(createSermonSchema),
         defaultValues: (initialData ? {
             ...initialData,
-            date: toJsDate(initialData.date).toISOString().slice(0, 16), // datetime-local format
+            date: toJsDate(initialData.date).toISOString().slice(0, 16),
         } : {
             mediaType: 'video',
             status: 'draft',
@@ -54,7 +54,6 @@ export const SermonForm = ({ initialData, onSubmit, isLoading }: SermonFormProps
         try {
             await onSubmit(data);
         } catch (error) {
-            console.error('Form submission error:', error);
             toast({
                 title: 'Error',
                 description: 'Failed to save sermon. Please check your inputs.',
@@ -67,7 +66,7 @@ export const SermonForm = ({ initialData, onSubmit, isLoading }: SermonFormProps
 
     return (
         <form onSubmit={handleSubmit(submitHandler)} className="max-w-6xl mx-auto pb-20">
-            {/* Header / Actions Sidebar alternative - Sticky bar */}
+            {}
             <div className="flex items-center justify-between mb-8 sticky top-0 z-30 bg-gray-50/80 backdrop-blur-md py-4 border-b border-gray-200 -mx-4 px-4 sm:mx-0 sm:px-0">
                 <div className="flex items-center gap-3">
                     <button
@@ -109,9 +108,9 @@ export const SermonForm = ({ initialData, onSubmit, isLoading }: SermonFormProps
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Main Content Area */}
+                {}
                 <div className="lg:col-span-8 space-y-8">
-                    {/* Basic Info */}
+                    {}
                     <Card variant="glass" padding="lg">
                         <div className="flex items-center gap-2 mb-6 text-violet-600">
                             <Type className="w-5 h-5" />
@@ -171,7 +170,7 @@ export const SermonForm = ({ initialData, onSubmit, isLoading }: SermonFormProps
                         </div>
                     </Card>
 
-                    {/* Media Content */}
+                    {}
                     <Card variant="glass" padding="lg">
                         <div className="flex items-center gap-2 mb-6 text-violet-600">
                             <Video className="w-5 h-5" />
@@ -222,9 +221,9 @@ export const SermonForm = ({ initialData, onSubmit, isLoading }: SermonFormProps
                     </Card>
                 </div>
 
-                {/* Sidebar area */}
+                {}
                 <div className="lg:col-span-4 space-y-8">
-                    {/* Thumbnail */}
+                    {}
                     <Card variant="glass" padding="md">
                         <div className="flex items-center gap-2 mb-4 text-violet-600">
                             <ImageIcon className="w-5 h-5" />
@@ -244,7 +243,7 @@ export const SermonForm = ({ initialData, onSubmit, isLoading }: SermonFormProps
                         </p>
                     </Card>
 
-                    {/* Settings Card */}
+                    {}
                     <Card variant="glass" padding="md">
                         <div className="flex items-center gap-2 mb-4 text-violet-600">
                             <Settings className="w-5 h-5" />

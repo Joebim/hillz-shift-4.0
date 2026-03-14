@@ -1,4 +1,4 @@
-import { HTMLAttributes, ReactNode } from 'react';
+﻿import { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/src/lib/utils';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
@@ -11,7 +11,7 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
 export const Card = ({
     children,
     className,
-    variant = 'glass', // Default to glass
+    variant = 'glass',
     padding = 'md',
     hover = false,
     ...props
@@ -19,29 +19,25 @@ export const Card = ({
     return (
         <div
             className={cn(
-                // Base styles
                 'rounded-3xl transition-all duration-300 relative overflow-hidden',
 
-                // Variants
                 variant === 'default' && 'bg-white border border-slate-200 shadow-sm',
                 variant === 'elevated' && 'bg-white shadow-xl border border-slate-100',
                 variant === 'bordered' && 'bg-transparent border border-slate-200',
                 variant === 'glass' && 'bg-white/80 backdrop-blur-xl border border-white/50 shadow-sm',
 
-                // Padding
                 padding === 'none' && 'p-0',
                 padding === 'sm' && 'p-4',
                 padding === 'md' && 'p-6 md:p-8',
                 padding === 'lg' && 'p-8 md:p-10',
 
-                // Hover effect
                 hover && 'hover:bg-white hover:shadow-lg hover:-translate-y-1 cursor-pointer hover:border-violet-200',
 
                 className
             )}
             {...props}
         >
-            {/* Optional inner glow/gradient for depth */}
+            {}
             {variant === 'glass' && (
                 <div className="absolute inset-0 bg-linear-to-br from-white/40 to-transparent pointer-events-none" />
             )}

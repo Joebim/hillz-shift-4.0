@@ -1,11 +1,9 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Check } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
-
-// ─── Source → endpoint mapping ────────────────────────────────────────────────
 
 export type DbSource =
     | 'registrations'
@@ -14,18 +12,14 @@ export type DbSource =
     | 'tags'
     | 'ministers'
     | 'channels'
-    | 'participants'; // legacy alias
+    | 'participants';
 
 interface DbOption {
     id: string;
-    label: string;   // display text
-    sub?: string;    // optional sub-text (email, date, etc.)
+    label: string;
+    sub?: string;
 }
 
-/**
- * Fetches options from the correct API for a given source and search term.
- * Each case normalises the API response into { id, label, sub? }.
- */
 async function fetchOptions(source: DbSource, search: string, eventId?: string): Promise<DbOption[]> {
     const q = search ? `?search=${encodeURIComponent(search)}` : '';
 
@@ -83,7 +77,6 @@ async function fetchOptions(source: DbSource, search: string, eventId?: string):
         }
 
         case 'tags': {
-            // Tags are simple strings stored on events — fetch events and collect unique tags
             const res = await fetch('/api/events');
             const json = await res.json();
             const events = (json.data || []) as { tags?: string[] }[];
@@ -95,7 +88,6 @@ async function fetchOptions(source: DbSource, search: string, eventId?: string):
         }
 
         case 'ministers': {
-            // Ministers are nested in events; fetch all events and collect unique ministers
             const res = await fetch('/api/events');
             const json = await res.json();
             const events = (json.data || []) as { ministers?: { id: string; name: string; position?: string }[] }[];
@@ -139,11 +131,9 @@ async function fetchOptions(source: DbSource, search: string, eventId?: string):
     }
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 interface DbSearchSelectProps {
     source: DbSource;
-    eventId?: string;       // narrows registrations/invitations to a specific event
+    eventId?: string;
     value: string;
     onChange: (value: string) => void;
     onSelect?: (option: DbOption | null) => void;
@@ -170,7 +160,6 @@ export const DbSearchSelect: React.FC<DbSearchSelectProps> = ({
     const [selected, setSelected] = useState<DbOption | null>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
-    // Debounce
     useEffect(() => {
         const t = setTimeout(() => setDebounced(searchQuery), 300);
         return () => clearTimeout(t);
@@ -185,7 +174,6 @@ export const DbSearchSelect: React.FC<DbSearchSelectProps> = ({
         staleTime: 30_000,
     });
 
-    // Click outside
     useEffect(() => {
         function handler(e: MouseEvent) {
             if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {

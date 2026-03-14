@@ -21,7 +21,6 @@ export default async function EventHubLayout({
 
     const event = events[0];
 
-    // Serialize event for client components (Next.js server-client prop boundary)
     const serializedEvent = serializeFirestoreData(event);
 
     const themeStyles = {
@@ -53,7 +52,6 @@ export default async function EventHubLayout({
                 .event-hub-wrapper .bg-accent\\/10 { background-color: color-mix(in srgb, var(--accent) 10%, transparent); }
                 .event-hub-wrapper .border-accent\\/10 { border-color: color-mix(in srgb, var(--accent) 10%, transparent); }
                 
-                /* Override buttons global to event hub */
                 .event-hub-wrapper .btn-primary { background-color: var(--primary); color: white; }
                 .event-hub-wrapper .btn-primary:hover { opacity: 0.9; }
             `}</style>

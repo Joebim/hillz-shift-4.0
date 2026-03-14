@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -20,7 +20,7 @@ interface ParticipantsSearchSelectProps {
     label?: string;
     placeholder?: string;
     required?: boolean;
-    showRegisterPrompt?: boolean; // Show register button when no matches found
+    showRegisterPrompt?: boolean;
 }
 
 async function fetchParticipants(search: string): Promise<Participant[]> {
@@ -56,7 +56,6 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
     const inputRef = useRef<HTMLInputElement>(null);
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Debounce search query to avoid multiple requests for the same input
     useEffect(() => {
         if (debounceTimerRef.current) {
             clearTimeout(debounceTimerRef.current);
@@ -64,7 +63,7 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
 
         debounceTimerRef.current = setTimeout(() => {
             setDebouncedSearchQuery(searchQuery);
-        }, 300); // 300ms debounce delay
+        }, 300);
 
         return () => {
             if (debounceTimerRef.current) {
@@ -73,43 +72,36 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
         };
     }, [searchQuery]);
 
-    // Normalize search query for query key (trim and lowercase for consistent caching)
     const normalizedSearchQuery = useMemo(() => {
         return debouncedSearchQuery.trim().toLowerCase();
     }, [debouncedSearchQuery]);
 
-    // Fetch participants with debounced search query - only fetch when user types at least 2 characters
     const { data: participants = [], isLoading, error } = useQuery<Participant[]>({
         queryKey: ['participants', normalizedSearchQuery],
         queryFn: () => fetchParticipants(debouncedSearchQuery),
-        enabled: normalizedSearchQuery.length >= 2, // Only fetch if search is at least 2 chars
-        staleTime: 60000, // 60 seconds - cache results for 1 minute
-        gcTime: 300000, // 5 minutes - keep in cache for 5 minutes
+        enabled: normalizedSearchQuery.length >= 2,
+        staleTime: 60000,
+        gcTime: 300000,
     });
 
-    // Filter participants using useMemo for performance
-    // Note: API already does filtering, but we can do additional client-side filtering if needed
     const filteredParticipants = useMemo(() => {
         if (!normalizedSearchQuery || normalizedSearchQuery.length < 2) {
-            return []; // Don't show anything if search is less than 2 chars
+            return []; 
         }
-        return participants; // API already filtered, just return results
+        return participants;
     }, [participants, normalizedSearchQuery]);
 
-    // Check if current value matches any participant
     const hasExactMatch = useMemo(() => {
         if (!value || value.length < 2) return false;
         const query = value.toLowerCase().trim();
         return participants.some((p) => p.name.toLowerCase().trim() === query);
     }, [participants, value]);
 
-    // Check if there are any similar matches
     const hasSimilarMatches = useMemo(() => {
         if (!value || value.length < 2) return false;
         return filteredParticipants.length > 0;
     }, [filteredParticipants, value]);
 
-    // Handle input change
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value;
         onChange(newValue);
@@ -117,13 +109,11 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
         setIsOpen(true);
         setSelectedParticipant(null);
 
-        // Call onSelect with null when typing manually
         if (onSelect) {
             onSelect(null);
         }
     };
 
-    // Handle participant selection
     const handleSelectParticipant = (participant: Participant) => {
         setSelectedParticipant(participant);
         onChange(participant.name);
@@ -134,13 +124,11 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
             onSelect(participant);
         }
 
-        // Focus back to input after selection
         setTimeout(() => {
             inputRef.current?.blur();
         }, 100);
     };
 
-    // Compute if dropdown should be open (instead of using effect with setState)
     const shouldShowDropdown = useMemo(() => {
         if (!isOpen) return false;
         if (isLoading) return true;
@@ -148,7 +136,6 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
         return filteredParticipants.length > 0;
     }, [isOpen, isLoading, normalizedSearchQuery.length, filteredParticipants.length]);
 
-    // Handle click outside to close dropdown
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -162,15 +149,13 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
         };
     }, []);
 
-    // Show register button if no matches and user has typed something
-    // Show when there are no results and search is complete (not loading)
     const shouldShowRegisterButton = useMemo(() => {
-        if (!showRegisterPrompt) return false; // Don't show if disabled
+        if (!showRegisterPrompt) return false; 
         if (value.length < 2) return false;
         if (isLoading) return false;
         if (normalizedSearchQuery.length < 2) return false;
         if (hasExactMatch || hasSimilarMatches) return false;
-        // Only show if we've searched and got no results (not just initial state)
+        
         return filteredParticipants.length === 0 && !shouldShowDropdown;
     }, [showRegisterPrompt, value.length, isLoading, normalizedSearchQuery.length, hasExactMatch, hasSimilarMatches, filteredParticipants.length, shouldShowDropdown]);
 
@@ -182,7 +167,7 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
             </label>
 
             <div className="relative">
-                {/* Input Field */}
+                {}
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <input
@@ -205,7 +190,7 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
                     />
                 </div>
 
-                {/* Dropdown Menu */}
+                {}
                 {shouldShowDropdown && (
                     <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
                         {isLoading ? (
@@ -237,7 +222,7 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
                     </div>
                 )}
 
-                {/* Register Button with Info Icon */}
+                {}
                 {shouldShowRegisterButton && (
                     <div className="mt-2 flex items-start gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
                         <AlertCircle className="h-5 w-5 text-yellow-600 shrink-0 mt-0.5" />
@@ -258,7 +243,7 @@ export const ParticipantsSearchSelect: React.FC<ParticipantsSearchSelectProps> =
                 )}
             </div>
 
-            {/* Error State */}
+            {}
             {error && (
                 <p className="text-xs text-red-600 mt-1">
                     Failed to load participants. You can still type your name manually.

@@ -1,26 +1,11 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 
-/**
- * ── DEFAULT FIELDS ────────────────────────────────────────────────────────────
- * Every invitation always collects:
- *   - senderName   (inviter's name)
- *   - recipientName (guest's name)
- *   - recipientPhone (guest's phone / WhatsApp)
- *   - recipientEmail (guest's email — optional)
- *   - personalMessage (invitation note)
- * These are non-negotiable defaults.
- * Event-specific questions are stored in customFields.
- */
-
-// Create Invitation Schema
 export const createInvitationSchema = z.object({
   eventId: z.string().min(1, "Event ID is required"),
 
-  // Default: Sender (inviter)
   senderName: z.string().min(1, "Sender name is required").max(100),
   senderEmail: z.string().email("Invalid sender email"),
 
-  // Default: Recipient (guest) — name + phone required
   recipientName: z.string().min(1, "Guest name is required").max(100),
   recipientPhone: z
     .string()
@@ -28,21 +13,17 @@ export const createInvitationSchema = z.object({
     .optional()
     .or(z.literal("")),
 
-  // Default: recipient email (optional)
   recipientEmail: z
     .string()
     .email("Invalid recipient email")
     .optional()
     .or(z.literal("")),
 
-  // Default: personal message
   personalMessage: z.string().max(1000).optional(),
 
-  // Custom event-specific answers — keyed by field label
   customFields: z.record(z.any()).optional(),
 });
 
-// Update Invitation Schema
 export const updateInvitationSchema = z.object({
   status: z.enum(["sent", "opened", "accepted", "declined"]).optional(),
   openedDate: z.coerce.date().optional(),
@@ -50,7 +31,6 @@ export const updateInvitationSchema = z.object({
   registrationId: z.string().optional(),
 });
 
-// Accept Invitation Schema
 export const acceptInvitationSchema = z.object({
   invitationCode: z.string().min(1, "Invitation code is required"),
   attendee: z.object({
@@ -62,7 +42,6 @@ export const acceptInvitationSchema = z.object({
   }),
 });
 
-// Invitation Query Params Schema
 export const invitationQuerySchema = z.object({
   eventId: z.string().optional(),
   status: z.enum(["sent", "opened", "accepted", "declined"]).optional(),
@@ -71,7 +50,6 @@ export const invitationQuerySchema = z.object({
   limit: z.coerce.number().positive().max(100).optional(),
 });
 
-// Export types
 export type CreateInvitationInput = z.infer<typeof createInvitationSchema>;
 export type UpdateInvitationInput = z.infer<typeof updateInvitationSchema>;
 export type AcceptInvitationInput = z.infer<typeof acceptInvitationSchema>;

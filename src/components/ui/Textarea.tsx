@@ -1,4 +1,4 @@
-import { TextareaHTMLAttributes, forwardRef, useId } from 'react';
+﻿import { TextareaHTMLAttributes, forwardRef, useId } from 'react';
 import { cn } from '@/src/lib/utils';
 import { AlertCircle } from 'lucide-react';
 
@@ -31,13 +31,11 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
                         id={textareaId}
                         rows={rows}
                         className={cn(
-                            // Base styles
                             'w-full px-4 py-3 rounded-xl transition-all duration-300 min-h-[120px] resize-y',
                             'bg-white border border-slate-200 shadow-sm',
                             'text-slate-800 placeholder:text-slate-400',
                             'focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500',
 
-                            // States
                             error
                                 ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
                                 : 'hover:border-slate-300',

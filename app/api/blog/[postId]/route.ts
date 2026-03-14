@@ -17,9 +17,6 @@ export async function GET(
   try {
     const { postId } = await params;
 
-    // In admin mode or if public but fetching by ID, we might need auth check if it's a draft?
-    // For simplicity, allow fetching any post by ID, but maybe hide drafts if not admin?
-    // Let's just return the post. The frontend can decide what to show based on status.
     const post = await getDocument<BlogPost>("blog", postId);
 
     if (!post) {
@@ -28,7 +25,6 @@ export async function GET(
 
     return successResponse(post);
   } catch (error) {
-    console.error("Error fetching blog post:", error);
     return errorResponse(
       "INTERNAL_ERROR",
       "Failed to fetch blog post",
@@ -54,21 +50,17 @@ export async function PATCH(
     const { postId } = await params;
     const body = await request.json();
 
-    // Validate request body
     const validatedData = updateBlogPostSchema.parse(body);
 
-    // Update the document
     await updateDocument("blog", postId, {
       ...validatedData,
       updatedAt: new Date().toISOString(),
     });
 
-    // Return the updated document data (or at least success)
     const updatedPost = await getDocument<BlogPost>("blog", postId);
 
     return successResponse(updatedPost, "Blog post updated successfully");
   } catch (error) {
-    console.error("Error updating blog post:", error);
     if (error instanceof ZodError) {
       return errorResponse("VALIDATION_ERROR", "Invalid data", error.errors);
     }
@@ -97,7 +89,6 @@ export async function DELETE(
 
     return successResponse(null, "Blog post deleted successfully");
   } catch (error) {
-    console.error("Error deleting blog post:", error);
     return errorResponse(
       "INTERNAL_ERROR",
       "Failed to delete blog post",

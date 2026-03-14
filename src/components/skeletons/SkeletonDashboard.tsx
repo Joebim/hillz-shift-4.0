@@ -1,4 +1,4 @@
-
+﻿
 import { cn } from "@/src/lib/utils";
 
 function Sk({ className }: { className?: string }) {
@@ -8,7 +8,7 @@ function Sk({ className }: { className?: string }) {
 export function SkeletonDashboard() {
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Nav */}
+            {}
             <div className="bg-white border-b border-gray-100 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3">
                 <Sk className="h-7 w-28 shrink-0" />
                 <Sk className="hidden md:block h-10 rounded-full flex-1 max-w-sm" />
@@ -21,7 +21,7 @@ export function SkeletonDashboard() {
             </div>
             <div className="flex">
                 <main className="flex-1 p-4 md:p-6 space-y-5 min-w-0">
-                    {/* Ticket classes */}
+                    {}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
                         {[1, 2, 3].map(i => (
                             <div key={i} className="bg-white rounded-2xl p-4 md:p-5 flex items-center gap-4 shadow-sm border border-gray-100">
@@ -33,7 +33,7 @@ export function SkeletonDashboard() {
                             </div>
                         ))}
                     </div>
-                    {/* Ongoing */}
+                    {}
                     <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-100">
                         <div className="flex items-center justify-between mb-4">
                             <Sk className="h-5 w-32" />
@@ -51,7 +51,7 @@ export function SkeletonDashboard() {
                             ))}
                         </div>
                     </div>
-                    {/* Upcoming */}
+                    {}
                     <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-100">
                         <div className="flex items-center justify-between mb-4">
                             <Sk className="h-5 w-32" />
@@ -71,7 +71,7 @@ export function SkeletonDashboard() {
                         </div>
                     </div>
                 </main>
-                {/* Sidebar skeleton – desktop only */}
+                {}
                 <aside className="hidden lg:block w-72 shrink-0 bg-white border-l border-gray-100 p-5 space-y-5">
                     <div className="flex items-center justify-between">
                         <Sk className="h-5 w-28" />

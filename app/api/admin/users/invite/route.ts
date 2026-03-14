@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { getFirestore } from "firebase-admin/firestore";
 import { getSession } from "@/src/lib/auth/session";
 import { User, UserRole } from "@/src/types/user";
@@ -6,7 +6,6 @@ import admin from "firebase-admin";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 
-// Initialize Firebase Admin (Singleton check)
 if (admin.apps.length === 0) {
   if (process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
     admin.initializeApp({
@@ -24,7 +23,6 @@ if (admin.apps.length === 0) {
 
 const db = getFirestore();
 
-// Helper: Generate Random Password
 function generatePassword(length = 12) {
   const charset =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
@@ -35,7 +33,6 @@ function generatePassword(length = 12) {
   return retVal;
 }
 
-// Helper: Send Email
 async function sendInviteEmail(
   email: string,
   displayName: string,
@@ -75,7 +72,6 @@ async function sendInviteEmail(
   return info;
 }
 
-// POST: Invite a new user
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
@@ -83,19 +79,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Only super_admin or admin can invite
     if (session.role !== "super_admin" && session.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const body = await request.json();
-    const { email, displayName, role, managedEventId } = body;
+    const { email, displayName, role, managedEventId, managedEventIds } = body;
+    const eventIds: string[] = managedEventIds?.length
+      ? managedEventIds
+      : managedEventId
+        ? [managedEventId]
+        : [];
 
     if (!email || !displayName || !role) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    // 1. Check uniqueness in Firestore
     const existingDocs = await db
       .collection("users")
       .where("email", "==", email)
@@ -111,18 +110,20 @@ export async function POST(request: NextRequest) {
     const password = generatePassword();
     let firebaseAuthUid = "";
 
-    // 2. Create in Firebase Auth
     try {
       const userRecord = await admin.auth().createUser({
         email,
         password,
         displayName,
-        emailVerified: true, // Auto-verify since admin invited
+        emailVerified: true,
       });
       firebaseAuthUid = userRecord.uid;
+
+      // Set custom claims so the login route can verify the admin role.
+      // Without this, the login endpoint returns 403 "User does not have admin access"
+      // because it checks userRecord.customClaims.role, not Firestore.
+      await admin.auth().setCustomUserClaims(firebaseAuthUid, { role });
     } catch (authError: unknown) {
-      // Context: If user exists in Auth but not Firestore (edge case), we might just link it.
-      // But for now, fail if Auth user exists to avoid conflict
       const err = authError as { code?: string };
       if (err.code === "auth/email-already-exists") {
         return NextResponse.json(
@@ -133,14 +134,13 @@ export async function POST(request: NextRequest) {
       throw authError;
     }
 
-    // 3. Create in Firestore
-    // Use the same UID from Auth for the Doc ID to keep them linked easily
     const newUser: Partial<User> = {
-      id: firebaseAuthUid, // explicitly save ID in doc too
+      id: firebaseAuthUid,
       email,
       displayName,
       role,
-      managedEventId: managedEventId || null,
+      managedEventId: eventIds[0] || null,
+      managedEventIds: eventIds,
       permissions: [],
       active: true,
       createdAt: new Date(),
@@ -150,33 +150,26 @@ export async function POST(request: NextRequest) {
 
     await db.collection("users").doc(firebaseAuthUid).set(newUser);
 
-    // 4. Send Email
     let emailSent = false;
     try {
-      // Verify SMTP config exists roughly before trying
       if (
         process.env.SMTP_USER &&
         !process.env.SMTP_USER.includes("example.com")
       ) {
         await sendInviteEmail(email, displayName, password, role);
         emailSent = true;
-      } else {
-        console.warn("SMTP not configured properly, skipping email sending.");
       }
     } catch (emailError) {
-      console.error("Failed to send invite email:", emailError);
-      // Don't fail the request, but inform the admin
+      // Email sending is best-effort; don't fail the whole request
     }
 
     return NextResponse.json({
       success: true,
       data: newUser,
       emailSent,
-      // Return password ONLY if email wasn't sent, so admin can manually share it
       tempPassword: emailSent ? undefined : password,
     });
   } catch (error) {
-    console.error("Invite user error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

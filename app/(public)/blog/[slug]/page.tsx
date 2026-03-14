@@ -33,7 +33,6 @@ export default async function BlogPostPage({
 }) {
     const { slug } = await params;
 
-    // Fetch post by slug
     const posts = await queryDocuments<BlogPost>('blog', { slug });
     const post = posts[0] ? {
         ...posts[0],
@@ -44,7 +43,6 @@ export default async function BlogPostPage({
 
     if (!post) notFound();
 
-    // Fetch related posts
     const relatedPostsRaw = await queryDocuments<BlogPost>('blog', { category: post.category }, 'publishedDate', 4);
     const relatedPosts = relatedPostsRaw
         .filter(p => p.id !== post.id)
@@ -60,7 +58,7 @@ export default async function BlogPostPage({
         <div className="min-h-screen bg-white">
             <Header />
 
-            {/* Cinematic Background for Header */}
+            {}
             <div className="relative pt-48 pb-64 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-white z-10" />
@@ -93,7 +91,7 @@ export default async function BlogPostPage({
                 </div>
             </div>
 
-            {/* Author Overlay Card */}
+            {}
             <div className="container mx-auto px-6 relative z-20 -mt-24 mb-16">
                 <div className="max-w-5xl mx-auto bg-white rounded-[40px] p-8 md:p-12 shadow-2xl shadow-purple-900/10 border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
                     <div className="flex items-center gap-6">
@@ -122,7 +120,7 @@ export default async function BlogPostPage({
                 </div>
             </div>
 
-            {/* Article Content */}
+            {}
             <div className="container mx-auto px-6 max-w-4xl mb-32">
                 <article className="prose prose-2xl prose-purple max-w-none text-slate-600 leading-relaxed font-medium selection:bg-purple-100 selection:text-purple-900">
                     {post.content.split('\n').map((paragraph, idx) => (
@@ -135,7 +133,7 @@ export default async function BlogPostPage({
                 </article>
             </div>
 
-            {/* Related Posts Section */}
+            {}
             <Section bg="gray" className="py-32">
                 <div className="flex items-center justify-center gap-3 mb-16">
                     <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">

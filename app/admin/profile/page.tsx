@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -11,7 +11,10 @@ import {
     Save,
     Clock,
     CheckCircle2,
-    AlertCircle
+    AlertCircle,
+    Eye,
+    EyeOff,
+    Lock,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -28,7 +31,13 @@ export default function ProfilePage() {
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Fetch session and user details
+    // --- Password state ---
+    const [showPwForm, setShowPwForm] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPw, setShowPw] = useState(false);
+    const [isChangingPw, setIsChangingPw] = useState(false);
+
     const { data: session, isLoading } = useQuery({
         queryKey: ['session'],
         queryFn: async () => {
@@ -42,7 +51,6 @@ export default function ProfilePage() {
     const [displayName, setDisplayName] = useState('');
     const [photoUrl, setPhotoUrl] = useState('');
 
-    // Pre-fill form when data is loaded
     React.useEffect(() => {
         if (session) {
             setDisplayName(session.displayName || '');
@@ -63,18 +71,10 @@ export default function ProfilePage() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['session'] });
-            toast({
-                title: 'Profile Updated',
-                description: 'Your profile details have been successfully saved.',
-                type: 'success'
-            });
+            toast('Profile updated successfully.', 'success');
         },
         onError: (error) => {
-            toast({
-                title: 'Update Failed',
-                description: error.message || 'Something went wrong while saving.',
-                type: 'error'
-            });
+            toast(error.message || 'Something went wrong while saving.', 'error');
         }
     });
 
@@ -85,6 +85,38 @@ export default function ProfilePage() {
             await updateProfileMutation.mutateAsync({ displayName, photoUrl });
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleChangePassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (newPassword.length < 8) {
+            toast('Password must be at least 8 characters.', 'warning');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            toast('Passwords do not match.', 'warning');
+            return;
+        }
+        setIsChangingPw(true);
+        try {
+            const res = await fetch('/api/admin/users/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newPassword }),
+            });
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || 'Failed to change password');
+            }
+            toast('Password changed successfully.', 'success');
+            setNewPassword('');
+            setConfirmPassword('');
+            setShowPwForm(false);
+        } catch (err: unknown) {
+            toast((err as Error).message || 'Failed to change password.', 'error');
+        } finally {
+            setIsChangingPw(false);
         }
     };
 
@@ -107,7 +139,7 @@ export default function ProfilePage() {
             <AdminTopNav title="Profile Settings" showSearch={false} />
 
             <main className="flex-1 p-4 md:p-8 max-w-5xl mx-auto w-full space-y-8">
-                {/* Header Section */}
+                {/* Cover + avatar */}
                 <div className="relative group">
                     <div className="h-48 md:h-64 rounded-3xl bg-linear-to-br from-violet-600 via-indigo-600 to-purple-700 overflow-hidden shadow-2xl relative">
                         <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
@@ -125,16 +157,16 @@ export default function ProfilePage() {
                                     </div>
                                 )}
                             </div>
-                            <button className="absolute -bottom-2 -right-2 p-2.5 bg-violet-600 text-white rounded-xl shadow-lg hover:bg-violet-700 transition-all border-2 border-white ring-4 ring-violet-50">
+                            <span className="absolute -bottom-2 -right-2 p-2.5 bg-violet-600 text-white rounded-xl shadow-lg border-2 border-white ring-4 ring-violet-50 pointer-events-none">
                                 <Camera className="w-5 h-5" />
-                            </button>
+                            </span>
                         </div>
 
                         <div className="flex-1 text-center md:text-left mb-4">
                             <h1 className="text-3xl font-black text-gray-900 tracking-tight">{displayName || 'User'}</h1>
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-2">
                                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-violet-50 text-violet-700 rounded-full text-xs font-bold uppercase tracking-wider border border-violet-100">
-                                    <Shield className="w-3.5 h-3.5" /> {session?.role || 'Administrator'}
+                                    <Shield className="w-3.5 h-3.5" /> {session?.role?.replace('_', ' ') || 'Administrator'}
                                 </span>
                                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium border border-gray-200">
                                     <Mail className="w-3.5 h-3.5" /> {session?.email}
@@ -145,8 +177,9 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
-                    {/* Main Settings Form */}
+                    {/* Left column */}
                     <div className="lg:col-span-8 space-y-8">
+                        {/* Public info */}
                         <Card variant="glass" padding="lg">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="w-10 h-10 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center">
@@ -189,6 +222,9 @@ export default function ProfilePage() {
                                         folder="admin-profiles"
                                         aspectRatio="square"
                                     />
+                                    {photoUrl && (
+                                        <p className="text-[11px] text-emerald-600 font-medium px-1">✓ Photo selected — click Save Changes to apply</p>
+                                    )}
                                 </div>
 
                                 <div className="pt-4 flex border-t border-gray-100">
@@ -213,6 +249,7 @@ export default function ProfilePage() {
                             </form>
                         </Card>
 
+                        {/* Security */}
                         <Card variant="glass" padding="lg">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center">
@@ -235,13 +272,73 @@ export default function ProfilePage() {
                                             <p className="text-[10px] text-gray-500 font-medium tracking-wide">Update your current account password.</p>
                                         </div>
                                     </div>
-                                    <button className="text-xs font-bold text-violet-600 hover:text-violet-700 underline underline-offset-4">Update</button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPwForm(v => !v)}
+                                        className="text-xs font-bold text-violet-600 hover:text-violet-700 underline underline-offset-4"
+                                    >
+                                        {showPwForm ? 'Cancel' : 'Update'}
+                                    </button>
                                 </div>
+
+                                {showPwForm && (
+                                    <form
+                                        onSubmit={handleChangePassword}
+                                        className="bg-violet-50/50 rounded-2xl border border-violet-100 p-5 space-y-4 animate-in slide-in-from-top-2 duration-300"
+                                    >
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">New Password</label>
+                                            <div className="relative">
+                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                <input
+                                                    type={showPw ? 'text' : 'password'}
+                                                    value={newPassword}
+                                                    onChange={e => setNewPassword(e.target.value)}
+                                                    placeholder="Min. 8 characters"
+                                                    className="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowPw(v => !v)}
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors"
+                                                    tabIndex={-1}
+                                                >
+                                                    {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Confirm Password</label>
+                                            <div className="relative">
+                                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                <input
+                                                    type={showPw ? 'text' : 'password'}
+                                                    value={confirmPassword}
+                                                    onChange={e => setConfirmPassword(e.target.value)}
+                                                    placeholder="Repeat new password"
+                                                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                                                />
+                                            </div>
+                                            {confirmPassword && newPassword !== confirmPassword && (
+                                                <p className="text-xs text-red-500 font-medium">Passwords do not match</p>
+                                            )}
+                                        </div>
+                                        <Button
+                                            type="submit"
+                                            variant="primary"
+                                            isLoading={isChangingPw}
+                                            className="w-full bg-violet-600 hover:bg-violet-700 rounded-xl"
+                                        >
+                                            <Lock className="w-4 h-4 mr-2" />
+                                            Update Password
+                                        </Button>
+                                    </form>
+                                )}
                             </div>
                         </Card>
                     </div>
 
-                    {/* Sidebar / Activity */}
+                    {/* Right column */}
                     <div className="lg:col-span-4 space-y-6">
                         <Card variant="glass" padding="lg">
                             <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-4">Account Status</h3>
@@ -262,7 +359,7 @@ export default function ProfilePage() {
                                     <div>
                                         <p className="text-xs font-bold text-gray-800">Joined Since</p>
                                         <p className="text-[10px] text-gray-500 uppercase font-black">
-                                            {session?.expiresAt ? format(new Date(), 'MMMM yyyy') : 'Recently'}
+                                            {format(new Date(), 'MMMM yyyy')}
                                         </p>
                                     </div>
                                 </div>

@@ -30,7 +30,6 @@ export async function GET(
 
     return successResponse(ministry);
   } catch (error) {
-    console.error("Error fetching ministry:", error);
     return errorResponse(
       "INTERNAL_ERROR",
       "Failed to fetch ministry",
@@ -53,10 +52,8 @@ export async function PATCH(
     const { ministryId } = await params;
     const body = await request.json();
 
-    // Validate request body
     const validatedData = updateMinistrySchema.parse(body);
 
-    // Update the document
     await updateDocument("ministries", ministryId, {
       ...validatedData,
       updatedAt: new Date().toISOString(),
@@ -69,7 +66,6 @@ export async function PATCH(
 
     return successResponse(updatedMinistry, "Ministry updated successfully");
   } catch (error) {
-    console.error("Error updating ministry:", error);
     if (error instanceof ZodError) {
       return errorResponse("VALIDATION_ERROR", "Invalid data", error.errors);
     }
@@ -98,7 +94,6 @@ export async function DELETE(
 
     return successResponse(null, "Ministry deleted successfully");
   } catch (error) {
-    console.error("Error deleting ministry:", error);
     return errorResponse(
       "INTERNAL_ERROR",
       "Failed to delete ministry",

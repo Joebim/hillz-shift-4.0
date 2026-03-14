@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+﻿import { NextRequest } from "next/server";
 import {
   successResponse,
   errorResponse,
@@ -15,19 +15,13 @@ import {
 import { ZodError } from "zod";
 import { generateSlug } from "@/src/lib/utils";
 
-/**
- * GET /api/sermons
- * List all sermons (public)
- */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    // Parse and validate query parameters
     const queryParams = Object.fromEntries(searchParams.entries());
     const validated = sermonQuerySchema.parse(queryParams);
 
-    // Build filters
     const filters: Record<string, unknown> = {};
 
     if (validated.category) {
@@ -46,7 +40,6 @@ export async function GET(request: NextRequest) {
       filters.featured = validated.featured;
     }
 
-    // Query sermons
     const sermons = await queryDocuments<Sermon>(
       "sermons",
       filters,
@@ -54,7 +47,6 @@ export async function GET(request: NextRequest) {
       validated.limit || 50,
     );
 
-    // Filter by search if provided
     let filteredSermons = sermons;
     if (validated.search) {
       const searchLower = validated.search.toLowerCase();
@@ -73,7 +65,6 @@ export async function GET(request: NextRequest) {
       return validationErrorResponse(error.errors);
     }
 
-    console.error("Fetch sermons error:", error);
     return errorResponse(
       "FETCH_ERROR",
       "Failed to fetch sermons",
@@ -82,13 +73,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/**
- * POST /api/sermons
- * Create new sermon (admin only)
- */
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
     const session = await getSession();
     if (
       !session ||
@@ -99,15 +85,12 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    // Generate slug if not provided
     if (!body.slug && body.title) {
       body.slug = generateSlug(body.title);
     }
 
-    // Validate request body
     const validated = createSermonSchema.parse(body);
 
-    // Create sermon
     const sermonId = await createDocument("sermons", {
       ...validated,
       createdBy: session.userId,
@@ -120,7 +103,6 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(error.errors);
     }
 
-    console.error("Create sermon error:", error);
     return errorResponse(
       "CREATE_ERROR",
       "Failed to create sermon",

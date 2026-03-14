@@ -1,4 +1,4 @@
-
+﻿
 import Link from 'next/link';
 import { Search, Bell, Plus, User } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -27,10 +27,10 @@ export function AdminTopNav({ title, searchPlaceholder = 'Search...', action, sh
 
     return (
         <div className="bg-white border-b border-gray-100 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3 sticky top-0 z-30 shadow-sm/50">
-            {/* Mobile Title */}
+            {}
             <h1 className="text-xl font-bold tracking-tight text-gray-900 lg:hidden">{title}</h1>
 
-            {/* Desktop Search */}
+            {}
             {showSearch && (
                 <div className="hidden md:flex flex-1 max-w-sm relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

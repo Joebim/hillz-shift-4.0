@@ -1,11 +1,10 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { createDocument } from "@/src/lib/firebase/firestore";
 
 export async function POST(req: Request) {
   try {
     const data = await req.json();
 
-    // Basic validation
     if (!data.message) {
       return NextResponse.json(
         { success: false, error: "Message is required" },
@@ -21,7 +20,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, data: { id: requestId } });
   } catch (error) {
-    console.error("Contact request error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to submit contact request" },
       { status: 500 },

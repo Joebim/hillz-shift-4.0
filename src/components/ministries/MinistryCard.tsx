@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import Image from 'next/image';
 import { Ministry } from '@/src/types/ministry';
 import { Card } from '@/src/components/ui/Card';
@@ -20,7 +20,7 @@ export const MinistryCard = ({ ministry }: MinistryCardProps) => {
                 />
                 <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-slate-900/0 transition-colors duration-500 z-10" />
 
-                {/* Floating Icon */}
+                {}
                 <div className="absolute top-6 left-6 z-20">
                     <div className="w-12 h-12 bg-white/90 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl shadow-xl">
                         {ministry.icon || '✨'}

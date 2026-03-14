@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import { Facebook, Twitter, Instagram, Youtube, Phone, MapPin } from 'lucide-react';
 
 const footerLinks = {
@@ -31,10 +31,10 @@ export const Footer = () => {
         <footer className="bg-[#020617] text-white pt-24 pb-12 border-t border-white/5 relative overflow-hidden">
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] -translate-y-1/2" />
 
-            {/* Main Footer */}
+            {}
             <div className="container mx-auto px-6 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 mb-20">
-                    {/* Brand */}
+                    {}
                     <div className="lg:col-span-4">
                         <Link href="/" className="flex items-center gap-3 mb-8 group">
                             <div className="w-12 h-12 bg-linear-to-br from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform duration-300">
@@ -49,7 +49,7 @@ export const Footer = () => {
                             Transforming lives through the power of God&apos;s love and stepping into new dimensions of glory.
                         </p>
 
-                        {/* Social Links */}
+                        {}
                         <div className="flex gap-4">
                             {socialLinks.map((social) => {
                                 const Icon = social.icon;
@@ -67,7 +67,7 @@ export const Footer = () => {
                         </div>
                     </div>
 
-                    {/* Links Grid */}
+                    {}
                     <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-8">
                         <div>
                             <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/40 mb-8">Ministry</h3>
@@ -124,7 +124,7 @@ export const Footer = () => {
                     </div>
                 </div>
 
-                {/* Bottom Bar */}
+                {}
                 <div className="pt-12 border-t border-white/5">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                         <p className="text-slate-500 text-xs font-bold tracking-widest uppercase">

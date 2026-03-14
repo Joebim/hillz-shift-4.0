@@ -1,16 +1,11 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { adminDb } from "@/src/lib/firebase/admin";
 import { getSession } from "@/src/lib/auth/session";
 import { QueryDocumentSnapshot, DocumentData } from "firebase-admin/firestore";
 import { Event } from "@/src/types/event";
 
-/**
- * GET /api/events/active/analytics
- * Get analytics for the current active event (Registrations & Invitations)
- */
 export async function GET() {
   try {
-    // Check authentication
     const session = await getSession();
     if (
       !session ||
@@ -22,7 +17,6 @@ export async function GET() {
       );
     }
 
-    // 1. Find the target event for analytics (ongoing or most recently concluded)
     const now = new Date();
     const publishedEventsQuery = await adminDb
       .collection("events")
@@ -79,8 +73,6 @@ export async function GET() {
 
     const event = { id: eventDoc.id, ...eventDoc.data() } as Event;
 
-    // 2. Fetch all registrations and invitations for this event to build the graph
-    // (In production, use pre-aggregated stats or limit by date/count)
     const [registrationsSnapshot, invitationsSnapshot] = await Promise.all([
       adminDb
         .collection("registrations")
@@ -89,7 +81,6 @@ export async function GET() {
       adminDb.collection("invitations").where("eventId", "==", event.id).get(),
     ]);
 
-    // Helper: Group docs by date (YYYY-MM-DD)
     const groupByDate = (docs: FirebaseFirestore.QueryDocumentSnapshot[]) => {
       const counts: Record<string, number> = {};
 
@@ -97,7 +88,6 @@ export async function GET() {
         const data = doc.data();
         let dateObj: Date | null = null;
 
-        // Handle various timestamp formats (Firestore Timestamp, Date, string)
         if (data.createdAt && typeof data.createdAt.toDate === "function") {
           dateObj = data.createdAt.toDate();
         } else if (data.createdAt instanceof Date) {
@@ -107,7 +97,6 @@ export async function GET() {
         }
 
         if (dateObj && !isNaN(dateObj.getTime())) {
-          // Format as YYYY-MM-DD
           const key = dateObj.toISOString().split("T")[0];
           counts[key] = (counts[key] || 0) + 1;
         }
@@ -118,9 +107,7 @@ export async function GET() {
     const regCounts = groupByDate(registrationsSnapshot.docs);
     const invCounts = groupByDate(invitationsSnapshot.docs);
 
-    // Helper to turn map into sorted series array
     const processSeries = (counts: Record<string, number>) => {
-      // Sort by date key
       const sortedKeys = Object.keys(counts).sort();
       return sortedKeys.map((date) => ({
         x: date,
@@ -128,7 +115,6 @@ export async function GET() {
       }));
     };
 
-    // Construct analytics payload
     const analytics = {
       event: {
         id: event.id,
@@ -143,7 +129,6 @@ export async function GET() {
       data: analytics,
     });
   } catch (error) {
-    console.error("Fetch active event analytics error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch analytics" },
       { status: 500 },

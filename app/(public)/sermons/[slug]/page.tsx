@@ -44,13 +44,11 @@ export default async function SermonDetailPage({
 }) {
     const { slug } = await params;
 
-    // Fetch sermon by slug
     const results = await queryDocuments<Sermon>('sermons', { slug });
     const rawSermon = results[0];
 
     if (!rawSermon) notFound();
 
-    // Serialize
     const sermon = {
         ...rawSermon,
         date: toJsDate(rawSermon.date),
@@ -58,7 +56,6 @@ export default async function SermonDetailPage({
         updatedAt: toJsDate(rawSermon.updatedAt),
     };
 
-    // Fetch related sermons
     const relatedResults = await queryDocuments<Sermon>('sermons', {
         series: sermon.series || ''
     }, 'date', 4);
@@ -77,7 +74,7 @@ export default async function SermonDetailPage({
         <div className="min-h-screen bg-white">
             <Header />
 
-            {/* Cinematic Background for Media Section */}
+            {}
             <div className="relative pt-48 pb-32 overflow-hidden bg-slate-950">
                 <div className="absolute inset-0 z-0 opacity-40">
                     <div className="absolute inset-0 bg-linear-to-b from-black via-transparent to-black z-10" />
@@ -96,7 +93,7 @@ export default async function SermonDetailPage({
                     </Link>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-center">
-                        {/* Media Player Column */}
+                        {}
                         <div className="lg:col-span-2">
                             <div className="relative aspect-video bg-black rounded-[40px] overflow-hidden shadow-2xl shadow-purple-900/40 border border-white/5 group">
                                 {sermon.videoUrl ? (
@@ -129,7 +126,7 @@ export default async function SermonDetailPage({
                             </div>
                         </div>
 
-                        {/* Sermon Info Column */}
+                        {}
                         <div className="lg:col-span-1">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-600 text-white text-[10px] font-black uppercase tracking-widest mb-6 shadow-lg shadow-purple-900/40">
                                 <Sparkles className="w-3 h-3" /> {sermon.series || 'Latest Message'}
@@ -181,7 +178,7 @@ export default async function SermonDetailPage({
                 </div>
             </div>
 
-            {/* Description Section */}
+            {}
             <Section className="py-24 bg-white">
                 <div className="max-w-4xl mx-auto">
                     <div className="flex items-center gap-3 mb-12">
@@ -194,7 +191,7 @@ export default async function SermonDetailPage({
                 </div>
             </Section>
 
-            {/* Related Content */}
+            {}
             <Section bg="gray" className="py-24">
                 <div className="flex items-center justify-between mb-12">
                     <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">More from this Series</h2>

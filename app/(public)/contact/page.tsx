@@ -1,4 +1,4 @@
-import Image from 'next/image';
+﻿import Image from 'next/image';
 import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
 
@@ -17,7 +17,7 @@ export default function ContactPage() {
         <div className="min-h-screen bg-white">
             <Header />
 
-            {/* Hero */}
+            {}
             <section className="relative pt-48 pb-32 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
@@ -46,7 +46,7 @@ export default function ContactPage() {
 
             <Section className="py-32 bg-slate-50">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-                    {/* Contact Form */}
+                    {}
                     <div className="lg:col-span-7">
                         <div className="bg-white rounded-[40px] p-12 shadow-2xl shadow-purple-900/5 border border-slate-100">
                             <h2 className="text-3xl font-black text-slate-900 mb-8 tracking-tight">Send us a Message</h2>
@@ -54,7 +54,7 @@ export default function ContactPage() {
                         </div>
                     </div>
 
-                    {/* Contact Info */}
+                    {}
                     <div className="lg:col-span-5 flex flex-col justify-center">
                         <div className="mb-12">
                             <h2 className="text-4xl font-black text-slate-900 mb-6 tracking-tight">Connect with Us</h2>
@@ -85,7 +85,7 @@ export default function ContactPage() {
                 </div>
             </Section>
 
-            {/* Map Placeholder */}
+            {}
             <section className="h-[500px] w-full relative overflow-hidden">
                 <Image
                     src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=2066&auto=format&fit=crop"

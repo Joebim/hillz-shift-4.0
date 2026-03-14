@@ -1,13 +1,10 @@
-import {
+﻿import {
   CollectionReference,
   Query,
   QueryDocumentSnapshot,
 } from "firebase-admin/firestore";
 import { adminDb } from "./admin";
 
-/**
- * Create a new document in a collection
- */
 export async function createDocument<T extends Record<string, unknown>>(
   collectionName: string,
   data: T,
@@ -20,9 +17,6 @@ export async function createDocument<T extends Record<string, unknown>>(
   return docRef.id;
 }
 
-/**
- * Get a single document by ID
- */
 export async function getDocument<T>(
   collectionName: string,
   id: string,
@@ -35,9 +29,6 @@ export async function getDocument<T>(
   return { id: doc.id, ...doc.data() } as T;
 }
 
-/**
- * Update a document by ID
- */
 export async function updateDocument<T extends Record<string, unknown>>(
   collectionName: string,
   id: string,
@@ -50,9 +41,6 @@ export async function updateDocument<T extends Record<string, unknown>>(
   });
 }
 
-/**
- * Delete a document by ID
- */
 export async function deleteDocument(
   collectionName: string,
   id: string,
@@ -61,9 +49,6 @@ export async function deleteDocument(
   await docRef.delete();
 }
 
-/**
- * Query documents with filters
- */
 export async function queryDocuments<T>(
   collectionName: string,
   filters: Record<string, unknown> = {},
@@ -72,19 +57,16 @@ export async function queryDocuments<T>(
 ): Promise<T[]> {
   let queryRef: Query = adminDb.collection(collectionName);
 
-  // Apply filters
   Object.entries(filters).forEach(([field, value]) => {
     if (value !== undefined && value !== null) {
       queryRef = queryRef.where(field, "==", value);
     }
   });
 
-  // Apply ordering
   if (orderByField) {
     queryRef = queryRef.orderBy(orderByField, "desc");
   }
 
-  // Apply limit
   if (limitCount) {
     queryRef = queryRef.limit(limitCount);
   }
@@ -95,9 +77,6 @@ export async function queryDocuments<T>(
   );
 }
 
-/**
- * Query documents with complex filters
- */
 export async function queryDocumentsAdvanced<T>(
   collectionName: string,
   queryBuilder: (ref: CollectionReference) => Query,
@@ -110,9 +89,6 @@ export async function queryDocumentsAdvanced<T>(
   );
 }
 
-/**
- * Count documents in a collection with filters
- */
 export async function countDocuments(
   collectionName: string,
   filters: Record<string, unknown> = {},
@@ -130,9 +106,6 @@ export async function countDocuments(
   return snapshot.size;
 }
 
-/**
- * Check if document exists
- */
 export async function documentExists(
   collectionName: string,
   id: string,
@@ -142,9 +115,6 @@ export async function documentExists(
   return doc.exists;
 }
 
-/**
- * Batch create documents
- */
 export async function batchCreateDocuments<T extends Record<string, unknown>>(
   collectionName: string,
   documents: T[],
@@ -166,9 +136,6 @@ export async function batchCreateDocuments<T extends Record<string, unknown>>(
   return ids;
 }
 
-/**
- * Batch update documents
- */
 export async function batchUpdateDocuments(
   collectionName: string,
   updates: Array<{ id: string; data: Record<string, unknown> }>,
@@ -186,9 +153,6 @@ export async function batchUpdateDocuments(
   await batch.commit();
 }
 
-/**
- * Batch delete documents
- */
 export async function batchDeleteDocuments(
   collectionName: string,
   ids: string[],

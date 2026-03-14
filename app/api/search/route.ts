@@ -1,12 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { getFirestore } from "firebase-admin/firestore";
 import { getSession } from "@/src/lib/auth/session";
 import { Event } from "@/src/types/event";
 import { Registration } from "@/src/types/registration";
 import { Invitation } from "@/src/types/invitation";
 
-// Init Firestore (assuming global stored or re-init safely)
-// Note: In Next.js, it's better to have a singleton for admin, but for now we follow pattern
 import admin from "firebase-admin";
 
 if (admin.apps.length === 0) {
@@ -44,18 +42,10 @@ export async function GET(request: NextRequest) {
 
     const lowerQuery = query.toLowerCase();
 
-    // Perform parallel searches
-    // Note: Firestore doesn't support native full-text search.
-    // We will fetch recent items or simple prefix search if capable,
-    // or client-side filter if dataset small, BUT for scalability we simulate a search
-    // by fetching a reasonable batch and filtering in memory for this MVP.
-    // A real app should use Algolia or ElasticSearch.
-
-    // 1. Search Events (Title)
     const eventsSnapshot = await db
       .collection("events")
       .orderBy("createdAt", "desc")
-      .limit(50) // Limit scan
+      .limit(50)
       .get();
 
     const events = eventsSnapshot.docs
@@ -67,7 +57,6 @@ export async function GET(request: NextRequest) {
       )
       .slice(0, 5);
 
-    // 2. Search Registrations (Name, Email)
     const registrationsSnapshot = await db
       .collection("registrations")
       .orderBy("createdAt", "desc")
@@ -83,7 +72,6 @@ export async function GET(request: NextRequest) {
       )
       .slice(0, 5);
 
-    // 3. Search Invitations (Invitee Name)
     const invitationsSnapshot = await db
       .collection("invitations")
       .orderBy("createdAt", "desc")
@@ -103,7 +91,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Search error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

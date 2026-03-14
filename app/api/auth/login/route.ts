@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+﻿import { NextRequest } from "next/server";
 import {
   successResponse,
   errorResponse,
@@ -9,24 +9,14 @@ import { adminAuth } from "@/src/lib/firebase/admin";
 import { loginSchema } from "@/src/schemas/auth.schema";
 import { ZodError } from "zod";
 
-/**
- * POST /api/auth/login
- * Admin login endpoint
- */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // The frontend sends an idToken after signing in with the Client SDK.
-    // The loginSchema originally required email/password, but our API
-    // actually uses the idToken to create the session.
     const { idToken, email, password } = body;
 
-    // Validate based on what was provided
     if (idToken) {
-      // If we have an idToken, we can skip email/password validation
     } else if (email && password) {
-      // Validate against schema if trying to login with email/password
       loginSchema.parse({ email, password });
     } else {
       return errorResponse(
@@ -37,10 +27,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify the ID token
     const decodedToken = await adminAuth.verifyIdToken(idToken);
 
-    // Check if user has admin role
     const userRecord = await adminAuth.getUser(decodedToken.uid);
     const customClaims = userRecord.customClaims || {};
 
@@ -58,7 +46,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create session cookie
     await createSession(idToken);
 
     return successResponse(
@@ -77,7 +64,6 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(error.errors);
     }
 
-    console.error("Login error:", error);
     return errorResponse(
       "LOGIN_ERROR",
       "Login failed",

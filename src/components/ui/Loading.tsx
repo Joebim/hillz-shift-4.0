@@ -1,4 +1,4 @@
-import { cn } from '@/src/lib/utils';
+﻿import { cn } from '@/src/lib/utils';
 
 export interface SpinnerProps {
     size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -11,7 +11,6 @@ export const Spinner = ({ size = 'md', className }: SpinnerProps) => {
             className={cn(
                 'animate-spin rounded-full border-4 border-slate-200 border-t-violet-600',
 
-                // Sizes
                 size === 'sm' && 'w-4 h-4 border-2',
                 size === 'md' && 'w-8 h-8',
                 size === 'lg' && 'w-12 h-12',

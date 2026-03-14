@@ -32,13 +32,11 @@ export default async function MinistryDetailPage({
 }) {
     const { slug } = await params;
 
-    // Fetch ministry by slug
     const results = await queryDocuments<Ministry>('ministries', { slug });
     const rawMinistry = results[0];
 
     if (!rawMinistry) notFound();
 
-    // Serialize
     const ministry = {
         ...rawMinistry,
         createdAt: toJsDate(rawMinistry.createdAt),
@@ -49,7 +47,7 @@ export default async function MinistryDetailPage({
         <div className="min-h-screen bg-white">
             <Header />
 
-            {/* Cinematic Hero */}
+            {}
             <section className="relative pt-48 pb-64 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-white z-10" />
@@ -81,15 +79,15 @@ export default async function MinistryDetailPage({
                     </div>
                 </div>
 
-                {/* Decorative element */}
+                {}
                 <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-linear-to-tr from-purple-600/20 to-transparent blur-3xl" />
             </section>
 
-            {/* Content Section */}
+            {}
             <Section className="py-0 relative z-20">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 -mt-24">
                     <div className="lg:col-span-2 space-y-20 pb-32">
-                        {/* About Ministry Card */}
+                        {}
                         <Card variant="default" padding="none" className="bg-white rounded-[40px] p-10 md:p-12 shadow-2xl shadow-purple-900/10 border border-slate-100">
                             <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-purple-600 mb-8 flex items-center gap-2">
                                 <Sparkles className="w-4 h-4" /> The Vision
@@ -116,7 +114,7 @@ export default async function MinistryDetailPage({
                     </div>
 
                     <div className="space-y-8 h-fit lg:sticky lg:top-32 pb-32">
-                        {/* Contact & Leader Card */}
+                        {}
                         <Card variant="default" padding="none" className="bg-slate-900 rounded-[40px] p-10 shadow-2xl shadow-purple-900/20 text-white relative overflow-hidden group">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-purple-600/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 

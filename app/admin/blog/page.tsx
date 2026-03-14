@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -65,7 +65,7 @@ export default function AdminBlogPage() {
 
     return (
         <div className="min-h-screen bg-gray-50/50 font-sans">
-            {/* Header */}
+            {}
             <div className="sticky top-0 z-20 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center transition-transform hover:scale-105">
@@ -99,7 +99,7 @@ export default function AdminBlogPage() {
             </div>
 
             <main className="p-6 max-w-[1600px] mx-auto space-y-8">
-                {/* Stats Row */}
+                {}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 transition-all hover:shadow-md">
                         <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
@@ -134,7 +134,7 @@ export default function AdminBlogPage() {
                     </div>
                 </div>
 
-                {/* Grid Content */}
+                {}
                 {isLoading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {[1, 2, 3, 4].map(i => (
@@ -163,7 +163,7 @@ export default function AdminBlogPage() {
                                 href={`/admin/blog/${post.id}`}
                                 className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
                             >
-                                {/* Thumbnail */}
+                                {}
                                 <div className="relative aspect-video bg-gray-100 overflow-hidden">
                                     {post.featuredImage ? (
                                         <Image
@@ -192,7 +192,7 @@ export default function AdminBlogPage() {
                                     </div>
                                 </div>
 
-                                {/* Content */}
+                                {}
                                 <div className="p-4 flex-1 flex flex-col">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-2">

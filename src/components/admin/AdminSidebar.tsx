@@ -1,28 +1,28 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/src/lib/utils';
 import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   Calendar, Settings, LogOut, Building,
   Mic, FileText, Sparkles, Menu, X,
   PanelLeftClose, PanelLeftOpen, Image, User, MessageSquare, Heart
 } from 'lucide-react';
+import { SessionUser, ADMIN_ROLES } from '@/src/types/user';
 
-const navigation = [
-  { name: 'Events', href: '/admin/events', icon: Calendar },
-  { name: 'Sermons', href: '/admin/sermons', icon: Mic },
-  { name: 'Blog Posts', href: '/admin/blog', icon: FileText },
-  { name: 'Ministries', href: '/admin/ministries', icon: Building },
-  { name: 'Media', href: '/admin/media', icon: Image },
-  { name: 'Contact Reqs', href: '/admin/requests/contact', icon: MessageSquare },
-  { name: 'Prayer Reqs', href: '/admin/requests/prayer', icon: Heart },
-  { name: 'Profile', href: '/admin/profile', icon: User },
-  { name: 'Settings', href: '/admin/settings', icon: Settings },
+const allNavigation = [
+  { name: 'Events', href: '/admin/events', icon: Calendar, adminOnly: false },
+  { name: 'Sermons', href: '/admin/sermons', icon: Mic, adminOnly: true },
+  { name: 'Blog Posts', href: '/admin/blog', icon: FileText, adminOnly: true },
+  { name: 'Ministries', href: '/admin/ministries', icon: Building, adminOnly: true },
+  { name: 'Media', href: '/admin/media', icon: Image, adminOnly: true },
+  { name: 'Contact Reqs', href: '/admin/requests/contact', icon: MessageSquare, adminOnly: true },
+  { name: 'Prayer Reqs', href: '/admin/requests/prayer', icon: Heart, adminOnly: true },
+  { name: 'Profile', href: '/admin/profile', icon: User, adminOnly: false },
+  { name: 'Settings', href: '/admin/settings', icon: Settings, adminOnly: true },
 ];
-
-// ─── Tooltip shown in icon-only mode ─────────────────────────────────────────
 
 function NavTooltip({ label }: { label: string }) {
   return (
@@ -38,12 +38,10 @@ function NavTooltip({ label }: { label: string }) {
   );
 }
 
-// ─── Shared nav link ──────────────────────────────────────────────────────────
-
 function NavLink({
   item, isActive, collapsed, onClick,
 }: {
-  item: typeof navigation[number];
+  item: { name: string; href: string; icon: React.ElementType };
   isActive: boolean;
   collapsed: boolean;
   onClick?: () => void;
@@ -61,7 +59,6 @@ function NavLink({
           : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
       )}
     >
-      {/* Active Indicator (Dot) - only in expanded mode */}
       {isActive && !collapsed && (
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-violet-600 rounded-r-full opacity-0" />
       )}
@@ -72,7 +69,6 @@ function NavLink({
         isActive ? 'text-violet-600' : 'text-slate-400 group-hover:text-slate-600'
       )} />
 
-      {/* Label — slides out when expanding */}
       {!collapsed && (
         <span className={cn(
           "text-sm truncate transition-colors",
@@ -80,46 +76,49 @@ function NavLink({
         )}>{item.name}</span>
       )}
 
-      {/* Tooltip in icon-only mode */}
       {collapsed && <NavTooltip label={item.name} />}
     </Link>
   );
 }
-
-// ─── Inner sidebar content (shared by desktop + mobile drawer) ────────────────
 
 function SidebarContent({
   collapsed,
   onToggle,
   onLinkClick,
   showToggle = true,
+  session,
 }: {
   collapsed: boolean;
   onToggle: () => void;
   onLinkClick?: () => void;
   showToggle?: boolean;
+  session: SessionUser | null | undefined;
 }) {
   const pathname = usePathname();
   const router = useRouter();
+
+  const isAdmin = session ? ADMIN_ROLES.includes(session.role) : false;
+
+  // Filter nav based on role
+  const navigation = allNavigation.filter(item =>
+    !item.adminOnly || isAdmin
+  );
 
   const handleLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
       router.push('/admin/login');
-    } catch (e) {
-      console.error('Logout failed', e);
-    }
+    } catch (e) { }
   };
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-white/80 backdrop-blur-xl">
 
-      {/* ── Header: Logo & Toggle ── */}
+      {/* Header */}
       <div className={cn(
         'flex items-center border-b border-slate-100/80 shrink-0 transition-all duration-300',
         collapsed ? 'h-16 justify-center px-0' : 'h-16 px-4 justify-between'
       )}>
-        {/* Logo / Brand - Hidden when collapsed to show toggle */}
         {!collapsed && (
           <div className="flex items-center gap-3 overflow-hidden">
             <div className="w-8 h-8 rounded-lg bg-linear-to-br from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200/50 shrink-0">
@@ -131,7 +130,6 @@ function SidebarContent({
           </div>
         )}
 
-        {/* Toggle Button - At the top as requested */}
         {showToggle && (
           <button
             onClick={onToggle}
@@ -142,7 +140,6 @@ function SidebarContent({
             title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             {collapsed ? (
-              // When collapsed, this is the main interaction point
               <PanelLeftOpen className="w-5 h-5" />
             ) : (
               <PanelLeftClose className="w-4 h-4" />
@@ -151,7 +148,7 @@ function SidebarContent({
         )}
       </div>
 
-      {/* ── Nav items ── */}
+      {/* Nav */}
       <nav className={cn(
         'flex-1 py-6 space-y-1.5 overflow-y-auto overflow-x-hidden scrollbar-none',
         collapsed ? 'px-2' : 'px-3'
@@ -171,12 +168,11 @@ function SidebarContent({
         })}
       </nav>
 
-      {/* ── Bottom: logout ── */}
+      {/* Bottom: logout */}
       <div className={cn(
         'shrink-0 border-t border-slate-100/80 py-4 space-y-1',
         collapsed ? 'px-2' : 'px-3'
       )}>
-        {/* Logout */}
         <button
           onClick={handleLogout}
           className={cn(
@@ -196,36 +192,40 @@ function SidebarContent({
   );
 }
 
-// ─── Main export ──────────────────────────────────────────────────────────────
-
 export const AdminSidebar = () => {
-  // Desktop: expanded by default; mobile: collapsed (icon-only bar)
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Close mobile drawer on route change
   const pathname = usePathname();
+
+  const { data: session } = useQuery<SessionUser | null>({
+    queryKey: ['session'],
+    queryFn: async () => {
+      const res = await fetch('/api/auth/session');
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data as SessionUser;
+    },
+    staleTime: 60_000,
+  });
+
   useEffect(() => {
-    // defer state update to avoid synchronous render warning
     const t = setTimeout(() => setMobileOpen(false), 0);
     return () => clearTimeout(t);
   }, [pathname]);
 
-  // Prevent body scroll when mobile drawer is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
+  const isAdmin = session ? ADMIN_ROLES.includes(session.role) : false;
+  const mobileNavItems = allNavigation.filter(item => !item.adminOnly || isAdmin);
+
   return (
     <>
-      {/* ─────────────────────────────────────────────────────────────
-                MOBILE: Thin icon-only bar (always visible) + Drawer overlay
-            ──────────────────────────────────────────────────────────────── */}
-
-      {/* Thin mobile icon bar */}
+      {/* Mobile narrow rail */}
       <div className="lg:hidden fixed left-0 top-0 h-full w-14 bg-white/90 backdrop-blur-md border-r border-slate-100 z-30 flex flex-col items-center py-3 gap-2 shadow-sm">
-        {/* Hamburger toggle */}
         <button
           onClick={() => setMobileOpen(true)}
           className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors mb-2"
@@ -234,13 +234,11 @@ export const AdminSidebar = () => {
           <Menu className="w-5 h-5" />
         </button>
 
-        {/* Logo mark */}
         <div className="w-9 h-9 rounded-xl bg-linear-to-br from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200/50 mb-4">
           <Sparkles className="w-4 h-4 text-white" />
         </div>
 
-        {/* Nav icons */}
-        {navigation.map(item => {
+        {mobileNavItems.map(item => {
           const isActive = pathname === item.href ||
             (item.href !== '/admin' && pathname?.startsWith(item.href));
           const Icon = item.icon;
@@ -262,7 +260,7 @@ export const AdminSidebar = () => {
         })}
       </div>
 
-      {/* Mobile drawer backdrop */}
+      {/* Mobile overlay */}
       <div
         onClick={() => setMobileOpen(false)}
         className={cn(
@@ -271,12 +269,11 @@ export const AdminSidebar = () => {
         )}
       />
 
-      {/* Mobile full drawer */}
+      {/* Mobile drawer */}
       <aside className={cn(
         'lg:hidden fixed top-0 left-0 h-full w-64 bg-white z-50 shadow-2xl transition-transform duration-300 ease-out',
         mobileOpen ? 'translate-x-0' : '-translate-x-full'
       )}>
-        {/* Close button */}
         <button
           onClick={() => setMobileOpen(false)}
           className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors z-10"
@@ -289,12 +286,11 @@ export const AdminSidebar = () => {
           onToggle={() => setMobileOpen(false)}
           onLinkClick={() => setMobileOpen(false)}
           showToggle={false}
+          session={session}
         />
       </aside>
 
-      {/* ─────────────────────────────────────────────────────────────
-                DESKTOP: Retractable sidebar (expanded ↔ icon-only)
-            ──────────────────────────────────────────────────────────────── */}
+      {/* Desktop sidebar */}
       <aside className={cn(
         'hidden lg:flex flex-col h-screen bg-white/50 border-r border-slate-200/60 sticky top-0 z-20 shrink-0 transition-all duration-300 ease-in-out overflow-hidden',
         desktopCollapsed ? 'w-20' : 'w-64'
@@ -303,6 +299,7 @@ export const AdminSidebar = () => {
           collapsed={desktopCollapsed}
           onToggle={() => setDesktopCollapsed(prev => !prev)}
           showToggle={true}
+          session={session}
         />
       </aside>
     </>

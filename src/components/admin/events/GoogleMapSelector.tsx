@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+﻿import React, { useState, useCallback } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import { Button } from '@/src/components/ui/Button';
 
@@ -10,7 +10,7 @@ const mapContainerStyle = {
 
 const defaultCenter = {
     lat: 9.0820,
-    lng: 8.6753 // Nigeria default
+    lng: 8.6753
 };
 
 interface GoogleMapSelectorProps {

@@ -1,8 +1,7 @@
-import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
+﻿import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getAuth, Auth } from 'firebase/auth';
 
-// Firebase Client Configuration
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyAJvGhsHRhAYU_mdGnjsiDfnMdwyoZQG94",
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "hillz-shift-4-55277.firebaseapp.com",
@@ -13,7 +12,6 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-H0N9H6VN9R"
 };
 
-// Initialize Firebase Client (only if not already initialized)
 let app: FirebaseApp | undefined;
 if (!getApps().length) {
   app = initializeApp(firebaseConfig);
@@ -21,7 +19,6 @@ if (!getApps().length) {
   app = getApps()[0];
 }
 
-// Export Firebase services (only available on client-side)
 export const db: Firestore | null = typeof window !== 'undefined' ? getFirestore(app) : null;
 export const auth: Auth | null = typeof window !== 'undefined' ? getAuth(app) : null;
 export { app };

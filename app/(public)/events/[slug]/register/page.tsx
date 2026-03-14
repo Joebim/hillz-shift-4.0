@@ -30,7 +30,6 @@ export default async function EventRegistrationPage({
 }) {
     const { slug } = await params;
 
-    // Fetch event by slug
     const events = await queryDocuments<Event>('events', { slug });
     const event = events[0];
 
@@ -38,7 +37,6 @@ export default async function EventRegistrationPage({
         notFound();
     }
 
-    // Check if registration is enabled
     if (!event.registrationConfig.enabled) {
         notFound();
     }

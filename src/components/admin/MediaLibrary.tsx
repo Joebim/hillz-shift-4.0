@@ -45,7 +45,6 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
     const confirmCheck = useConfirmModal();
     const { toast } = useToast();
 
-    // Fetch Media
     const { data: mediaList, isLoading } = useQuery({
         queryKey: ['uploads', searchQuery],
         queryFn: async () => {
@@ -58,7 +57,6 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
         }
     });
 
-    // Upload Mutation
     const uploadMutation = useMutation({
         mutationFn: async (files: File[]) => {
             const promises = files.map(async (file) => {
@@ -84,7 +82,6 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
         }
     });
 
-    // Delete Mutation
     const deleteMutation = useMutation({
         mutationFn: async (id: string) => {
             const res = await fetch(`/api/uploads/${encodeURIComponent(id)}`, {
@@ -134,9 +131,9 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
 
     return (
         <div className="flex h-full bg-white transition-all overflow-hidden">
-            {/* Left Content Area */}
+            {}
             <div className="flex-1 flex flex-col h-full overflow-hidden border-r border-gray-100">
-                {/* Header / Toolbar */}
+                {}
                 <div className="p-4 border-b border-gray-100 flex flex-wrap gap-4 items-center justify-between bg-white sticky top-0 z-10">
                     <div className="flex items-center gap-3 flex-1 min-w-[240px]">
                         <div className="relative flex-1">
@@ -177,16 +174,15 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                 type="file"
                                 multiple
                                 className="hidden"
-                                accept="image/*,video/*"
+                                accept="image/*"
                                 onChange={handleFileChange}
                             />
                             <Upload className="w-4 h-4" />
-                            <span>Upload Asset</span>
+                            Upload Media
                         </label>
                     </div>
                 </div>
 
-                {/* Content Grid */}
                 <div className="flex-1 overflow-y-auto p-6 bg-gray-50/30">
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center h-full gap-4">
@@ -256,7 +252,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                                     />
                                                 )}
 
-                                                {/* Selection Badge */}
+                                                {}
                                                 <div className={cn(
                                                     "absolute top-3 right-3 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center transition-all",
                                                     selectedMedia?._id === media._id ? "bg-violet-600 scale-110" : "bg-black/20 opacity-0 group-hover:opacity-100"
@@ -264,7 +260,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                                     <Check className="w-3 h-3 text-white" />
                                                 </div>
 
-                                                {/* Meta Overlay */}
+                                                {}
                                                 <div className="absolute inset-x-0 bottom-0 p-3 bg-linear-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <p className="text-white text-[10px] font-bold uppercase tracking-wider truncate mb-1">{media.public_id.split('/').pop()}</p>
                                                     <div className="flex items-center justify-between">
@@ -305,7 +301,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                 </div>
             </div>
 
-            {/* Right Pane: Details */}
+            {}
             <div className={cn(
                 "w-80 bg-white flex flex-col transition-all duration-300 transform",
                 selectedMedia ? "translate-x-0" : "translate-x-full absolute right-0"
@@ -323,7 +319,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                         </div>
 
                         <div className="flex-1 overflow-y-auto p-6 space-y-8">
-                            {/* Preview */}
+                            {}
                             <div className="aspect-video rounded-2xl overflow-hidden bg-gray-50 relative border border-gray-100 shadow-inner">
                                 {selectedMedia.resource_type === 'video' ? (
                                     <video src={selectedMedia.secure_url} controls className="w-full h-full object-contain" />
@@ -337,7 +333,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                 )}
                             </div>
 
-                            {/* Actions */}
+                            {}
                             <div className="grid grid-cols-2 gap-3">
                                 <button
                                     onClick={() => copyToClipboard(selectedMedia.secure_url)}
@@ -357,7 +353,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                 </a>
                             </div>
 
-                            {/* Metadata */}
+                            {}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2 text-gray-400 mb-2">
                                     <Info className="w-4 h-4" />
@@ -409,7 +405,6 @@ function MetadataItem({ icon: Icon, label, value }: { icon: React.ElementType, l
     );
 }
 
-// Modal Wrapper for Usage in Forms
 export function UploadModal({ isOpen, onClose, onSelect }: UploadModalProps) {
     const [mounted, setMounted] = useState(false);
     useEffect(() => {
@@ -447,4 +442,4 @@ export function UploadModal({ isOpen, onClose, onSelect }: UploadModalProps) {
         document.body
     );
 }
-
+

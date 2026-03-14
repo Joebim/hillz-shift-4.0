@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+﻿import { NextRequest } from "next/server";
 import {
   successResponse,
   errorResponse,
@@ -11,13 +11,8 @@ import { Invitation } from "@/src/types/invitation";
 import { invitationQuerySchema } from "@/src/schemas/invitation.schema";
 import { ZodError } from "zod";
 
-/**
- * GET /api/invitations
- * List all invitations (admin only)
- */
 export async function GET(request: NextRequest) {
   try {
-    // Check authentication
     const session = await getSession();
     if (
       !session ||
@@ -28,11 +23,9 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
 
-    // Parse and validate query parameters
     const queryParams = Object.fromEntries(searchParams.entries());
     const validated = invitationQuerySchema.parse(queryParams);
 
-    // Build filters
     const filters: Record<string, unknown> = {};
 
     if (validated.eventId) {
@@ -43,7 +36,6 @@ export async function GET(request: NextRequest) {
       filters.status = validated.status;
     }
 
-    // Query invitations
     const invitations = await queryDocuments<Invitation>(
       "invitations",
       filters,
@@ -51,7 +43,6 @@ export async function GET(request: NextRequest) {
       validated.limit || 100,
     );
 
-    // Filter by search if provided
     let filteredInvitations = invitations;
     if (validated.search) {
       const searchLower = validated.search.toLowerCase();
@@ -71,7 +62,6 @@ export async function GET(request: NextRequest) {
       return validationErrorResponse(error.errors);
     }
 
-    console.error("Fetch invitations error:", error);
     return errorResponse(
       "FETCH_ERROR",
       "Failed to fetch invitations",

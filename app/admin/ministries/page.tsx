@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -64,7 +64,7 @@ export default function AdminMinistriesPage() {
 
     return (
         <div className="min-h-screen bg-gray-50/50 font-sans">
-            {/* Header */}
+            {}
             <div className="sticky top-0 z-20 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shadow-sm">
@@ -98,7 +98,7 @@ export default function AdminMinistriesPage() {
             </div>
 
             <main className="p-6 max-w-[1600px] mx-auto space-y-8">
-                {/* Stats Row */}
+                {}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 transition-all hover:bg-gray-50/50">
                         <div className="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
@@ -133,7 +133,7 @@ export default function AdminMinistriesPage() {
                     </div>
                 </div>
 
-                {/* Grid Content */}
+                {}
                 {isLoading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {[1, 2, 3, 4].map(i => (
@@ -162,7 +162,7 @@ export default function AdminMinistriesPage() {
                                 href={`/admin/ministries/${ministry.id}`}
                                 className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col"
                             >
-                                {/* Cover Photo or Icon */}
+                                {}
                                 <div className="relative h-40 bg-linear-to-br from-indigo-500 to-indigo-700 overflow-hidden">
                                     {ministry.image ? (
                                         <Image
@@ -199,7 +199,7 @@ export default function AdminMinistriesPage() {
                                     </div>
                                 </div>
 
-                                {/* Content */}
+                                {}
                                 <div className="p-5 flex-1 flex flex-col">
                                     <div className="flex-1">
                                         <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors line-clamp-1 text-lg mb-1" title={ministry.name}>

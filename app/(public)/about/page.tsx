@@ -1,4 +1,4 @@
-import Image from 'next/image';
+﻿import Image from 'next/image';
 import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
 import { Section } from '@/src/components/shared/Section';
@@ -16,7 +16,7 @@ export default function AboutPage() {
         <div className="min-h-screen bg-white font-medium">
             <Header />
 
-            {/* Hero Section */}
+            {}
             <section className="relative pt-48 pb-32 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
@@ -43,7 +43,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* Vision & Mission */}
+            {}
             <Section bg="white" className="py-32">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                     <div className="relative">
@@ -94,7 +94,7 @@ export default function AboutPage() {
                 </div>
             </Section>
 
-            {/* Core Values */}
+            {}
             <Section bg="gray" className="py-32">
                 <div className="text-center max-w-3xl mx-auto mb-20">
                     <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter">
@@ -125,7 +125,7 @@ export default function AboutPage() {
                 </div>
             </Section>
 
-            {/* CTA Section */}
+            {}
             <Section bg="none" className="py-32 relative overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-r from-purple-900/90 to-slate-900/90" />

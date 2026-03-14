@@ -1,6 +1,5 @@
-import { Timestamp } from "firebase/firestore";
+﻿import { Timestamp } from "firebase/firestore";
 
-// Media Types
 export type MediaFileType = "image" | "video" | "audio" | "document";
 
 export interface MediaDimensions {
@@ -15,22 +14,17 @@ export interface Media {
   fileSize: number;
   url: string;
 
-  // Metadata
   uploadedBy: string;
   uploadedAt: Timestamp | Date;
 
-  // Organization
   folder?: string;
   tags: string[];
 
-  // Image-specific
   dimensions?: MediaDimensions;
 }
 
-// Media creation type
 export type CreateMediaInput = Omit<Media, "id" | "uploadedAt">;
 
-// Media filters
 export interface MediaFilters {
   folder?: string;
   fileType?: string;

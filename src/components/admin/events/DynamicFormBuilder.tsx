@@ -1,16 +1,14 @@
-import React from 'react';
+﻿import React from 'react';
 import { useFieldArray, Control, UseFormRegister, FieldErrors, FieldValues, UseFormWatch, UseFormSetValue, ArrayPath, FieldArrayPath } from 'react-hook-form';
 import { Plus, Trash2, GripVertical, Lock, User, Mail, Phone } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
-// ─── Default Fields (always present, cannot be removed) ───────────────────────
 export const DEFAULT_FORM_FIELDS = [
     { id: '_name', label: 'Full Name', type: 'text', icon: User, placeholder: 'e.g. John Doe' },
     { id: '_email', label: 'Email Address', type: 'email', icon: Mail, placeholder: 'e.g. john@example.com' },
     { id: '_phone', label: 'Phone Number', type: 'phone', icon: Phone, placeholder: 'e.g. +234...' },
 ] as const;
 
-// ─── Locked preview row for default fields ────────────────────────────────────
 function DefaultFieldsPreview() {
     return (
         <div className="space-y-2 mb-4">
@@ -36,8 +34,6 @@ function DefaultFieldsPreview() {
     );
 }
 
-
-// Simple inputs matching the style of EventForm
 function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
     return (
         <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-1.5">
@@ -121,11 +117,8 @@ export function DynamicFormBuilder<TFieldValues extends FieldValues = FieldValue
 
     const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const watchField = (name: string) => watch(name as any) as any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const registerField = (name: string, options?: any) => register(name as any, options);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const setValueField = (name: string, value: any) => setValue(name as any, value);
 
     const addField = () => {
@@ -140,17 +133,16 @@ export function DynamicFormBuilder<TFieldValues extends FieldValues = FieldValue
 
     return (
         <div className="space-y-4">
-            {/* Always-present default fields */}
+            {}
             <DefaultFieldsPreview />
 
-            {/* Divider */}
+            {}
             {fields.length > 0 && (
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pt-2">Custom Fields</p>
             )}
 
             {fields.map((field, index) => {
                 const pathParts = path.split('.');
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 let fieldError: any = errors;
                 for (const part of pathParts) {
                     fieldError = fieldError?.[part];

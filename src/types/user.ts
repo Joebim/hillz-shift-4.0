@@ -1,7 +1,12 @@
-import { Timestamp } from "firebase/firestore";
+﻿import { Timestamp } from "firebase/firestore";
 
-// User/Admin Types
 export type UserRole = "super_admin" | "admin" | "moderator" | "event_manager";
+
+/** Roles that have access to Settings page and higher-level admin features */
+export const ADMIN_ROLES: UserRole[] = ["super_admin", "admin"];
+
+/** Roles that are scoped to specific event(s) */
+export const EVENT_SCOPED_ROLES: UserRole[] = ["event_manager", "moderator"];
 
 export interface User {
   id: string;
@@ -9,28 +14,26 @@ export interface User {
   displayName: string;
   photoUrl?: string;
 
-  // Role & Permissions
   role: UserRole;
-  managedEventId?: string; // For event_manager role
+  /** Single event (legacy) */
+  managedEventId?: string | null;
+  /** Multi-event support */
+  managedEventIds?: string[];
   permissions: string[];
 
-  // Status
   active: boolean;
   lastLogin?: Timestamp | Date;
 
-  // Metadata
   createdAt: Timestamp | Date;
   updatedAt: Timestamp | Date;
 }
 
-// User creation/update types
 export type CreateUserInput = Omit<
   User,
   "id" | "lastLogin" | "createdAt" | "updatedAt"
 >;
 export type UpdateUserInput = Partial<CreateUserInput>;
 
-// Auth types
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -46,6 +49,7 @@ export interface AuthSession {
 export interface SessionUser extends AuthSession {
   displayName: string;
   photoUrl: string | null;
+  managedEventIds?: string[];
 }
 
 export interface AuthResponse {

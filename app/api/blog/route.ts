@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+﻿import { NextRequest } from "next/server";
 import {
   successResponse,
   errorResponse,
@@ -15,27 +15,19 @@ import {
 import { ZodError } from "zod";
 import { generateSlug } from "@/src/lib/utils";
 
-/**
- * GET /api/blog
- * List all published blog posts (public) or all posts (admin)
- */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    // Parse and validate query parameters
     const queryParams = Object.fromEntries(searchParams.entries());
     const validated = blogQuerySchema.parse(queryParams);
 
-    // Check if admin is authenticated
     const session = await getSession();
     const isAdmin =
       session && ["super_admin", "admin", "editor"].includes(session.role);
 
-    // Build filters
     const filters: Record<string, unknown> = {};
 
-    // If not admin, only show published posts
     if (!isAdmin) {
       filters.status = "published";
     } else if (validated.status) {
@@ -50,7 +42,6 @@ export async function GET(request: NextRequest) {
       filters["author.id"] = validated.author;
     }
 
-    // Query blog posts
     const posts = await queryDocuments<BlogPost>(
       "blog",
       filters,
@@ -58,7 +49,6 @@ export async function GET(request: NextRequest) {
       validated.limit || 50,
     );
 
-    // Filter by search if provided
     let filteredPosts = posts;
     if (validated.search) {
       const searchLower = validated.search.toLowerCase();
@@ -76,7 +66,6 @@ export async function GET(request: NextRequest) {
       return validationErrorResponse(error.errors);
     }
 
-    console.error("Fetch blog posts error:", error);
     return errorResponse(
       "FETCH_ERROR",
       "Failed to fetch blog posts",
@@ -85,13 +74,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/**
- * POST /api/blog
- * Create new blog post (admin only)
- */
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
     const session = await getSession();
     if (
       !session ||
@@ -102,15 +86,12 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    // Generate slug if not provided
     if (!body.slug && body.title) {
       body.slug = generateSlug(body.title);
     }
 
-    // Validate request body
     const validated = createBlogPostSchema.parse(body);
 
-    // Create blog post
     const postId = await createDocument("blog", {
       ...validated,
       viewCount: 0,
@@ -122,7 +103,6 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(error.errors);
     }
 
-    console.error("Create blog post error:", error);
     return errorResponse(
       "CREATE_ERROR",
       "Failed to create blog post",

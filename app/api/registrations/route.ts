@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+﻿import { NextRequest } from "next/server";
 import {
   successResponse,
   errorResponse,
@@ -11,13 +11,8 @@ import { Registration } from "@/src/types/registration";
 import { registrationQuerySchema } from "@/src/schemas/registration.schema";
 import { ZodError } from "zod";
 
-/**
- * GET /api/registrations
- * List all registrations (admin only)
- */
 export async function GET(request: NextRequest) {
   try {
-    // Check authentication
     const session = await getSession();
     if (
       !session ||
@@ -28,11 +23,9 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
 
-    // Parse and validate query parameters
     const queryParams = Object.fromEntries(searchParams.entries());
     const validated = registrationQuerySchema.parse(queryParams);
 
-    // Build filters
     const filters: Record<string, unknown> = {};
 
     if (validated.eventId) {
@@ -51,7 +44,6 @@ export async function GET(request: NextRequest) {
       filters.checkedIn = validated.checkedIn;
     }
 
-    // Query registrations
     const registrations = await queryDocuments<Registration>(
       "registrations",
       filters,
@@ -59,7 +51,6 @@ export async function GET(request: NextRequest) {
       validated.limit || 100,
     );
 
-    // Filter by search if provided
     let filteredRegistrations = registrations;
     if (validated.search) {
       const searchLower = validated.search.toLowerCase();
@@ -78,7 +69,6 @@ export async function GET(request: NextRequest) {
       return validationErrorResponse(error.errors);
     }
 
-    console.error("Fetch registrations error:", error);
     return errorResponse(
       "FETCH_ERROR",
       "Failed to fetch registrations",

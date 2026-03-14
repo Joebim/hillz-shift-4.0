@@ -1,6 +1,5 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 
-// Contact Form Schema
 export const contactFormSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
   email: z.string().email("Invalid email address"),
@@ -9,7 +8,6 @@ export const contactFormSchema = z.object({
   message: z.string().min(1, "Message is required").max(2000),
 });
 
-// Prayer Request Schema
 export const prayerRequestSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
   email: z.string().email("Invalid email address"),
@@ -27,7 +25,6 @@ export const prayerRequestSchema = z.object({
   allowPublic: z.boolean().default(false),
 });
 
-// Newsletter Subscription Schema
 export const newsletterSubscriptionSchema = z.object({
   email: z.string().email("Invalid email address"),
   name: z.string().min(1, "Name is required").max(100).optional(),
@@ -40,7 +37,6 @@ export const newsletterSubscriptionSchema = z.object({
     .optional(),
 });
 
-// Export types
 export type ContactFormInput = z.infer<typeof contactFormSchema>;
 export type PrayerRequestInput = z.infer<typeof prayerRequestSchema>;
 export type NewsletterSubscriptionInput = z.infer<

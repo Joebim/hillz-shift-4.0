@@ -1,17 +1,8 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { Play } from 'lucide-react';
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Hero — Variant 2
-   Reference: River Valley Church
-   Style: Full-bleed worship photo, minimal overlay, church name bottom-left,
-          two pill CTAs, sparse nav top-right, logo mark top-left.
-   No mosaic — the image IS the hero. UI sits on top with light touch.
-───────────────────────────────────────────────────────────────────────────── */
-
-// Today's verse — swap out each week
 const TODAYS_VERSE = {
     label: "TODAY'S VERSE",
     ref: 'John 15:13',
@@ -21,34 +12,32 @@ export const Hero = () => {
     return (
         <section className="relative w-full h-screen min-h-[580px] overflow-hidden bg-black font-sans">
 
-            {/* ── Full-bleed background photo ────────────────────────────── */}
+            {}
             <div className="absolute inset-0 z-0">
                 <img
                     src="/landing_hero.png"
                     alt="Preaching at The Hillz"
                     className="w-full h-full object-cover object-center"
                 />
-                {/* Very subtle gradient — only bottom and slight left, keeps image vivid */}
+                {}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/30" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
             </div>
 
-
-
-            {/* ── Bottom-left content block ───────────────────────────────── */}
+            {}
             <div className="absolute bottom-0 left-0 z-20 px-6 sm:px-10 pb-10 sm:pb-14 space-y-5">
 
-                {/* Church name — compact, bold, white, uppercase, tight tracking */}
+                {}
                 <h1
                     className="text-white font-black uppercase tracking-[0.06em] text-2xl sm:text-3xl md:text-4xl leading-tight opacity-0 animate-[fadeUp_0.6s_0.2s_ease_forwards]"
                 >
                     The Hillz Church
                 </h1>
 
-                {/* Two pill CTAs side by side */}
+                {}
                 <div className="flex items-center gap-3 opacity-0 animate-[fadeUp_0.6s_0.4s_ease_forwards]">
 
-                    {/* Primary CTA — purple, matches site aesthetics */}
+                    {}
                     <Link
                         href="/sermons"
                         className="
@@ -62,7 +51,7 @@ export const Hero = () => {
                         Watch Latest Sermon
                     </Link>
 
-                    {/* Secondary CTA — dark pill with label + verse, matches reference */}
+                    {}
                     <Link
                         href="/devotional"
                         className="
@@ -81,7 +70,7 @@ export const Hero = () => {
                 </div>
             </div>
 
-            {/* ── Keyframe animations ─────────────────────────────────────── */}
+            {}
             <style>{`
                 @keyframes fadeUp {
                     from { opacity: 0; transform: translateY(18px); }

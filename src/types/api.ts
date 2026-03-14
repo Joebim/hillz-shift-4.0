@@ -1,5 +1,4 @@
-// API Response Types
-
+﻿
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
@@ -24,7 +23,6 @@ export interface PaginatedResponse<T> {
   };
 }
 
-// Common API parameters
 export interface PaginationParams {
   page?: number;
   limit?: number;
@@ -39,7 +37,6 @@ export interface SearchParams {
   search?: string;
 }
 
-// Analytics Types
 export interface DashboardStats {
   totalEvents: number;
   activeEvents: number;

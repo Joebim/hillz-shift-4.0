@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { auth } from "@/src/lib/firebaseAdmin";
 import { ADMIN_USER_COOKIE_NAME } from "@/src/lib/adminSession";
 import { cookies } from "next/headers";
@@ -74,7 +74,6 @@ export async function POST(request: Request) {
 
     const decoded = await auth.verifyIdToken(idToken);
 
-    // Allow either: custom claim admin=true OR email allowlist (if configured).
     const hasAdminClaim = (decoded as { admin?: boolean })?.admin === true;
     const isEmailAllowed = isAllowedAdminEmail(decoded.email);
 
@@ -128,7 +127,6 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE() {
-  // Best-effort logout: clear the session cookie.
   const res = NextResponse.json({ success: true });
   res.cookies.set(ADMIN_USER_COOKIE_NAME, "", {
     httpOnly: true,

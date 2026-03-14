@@ -10,16 +10,12 @@ export default async function RegisterPage({ params }: { params: Promise<{ event
     if (!events.length) return notFound();
     const event = serializeFirestoreData(events[0]);
 
-    // ── DEBUG: log form config coming from Firestore ──────────────────────────
-    console.log('[RegisterPage] event.registrationConfig:', JSON.stringify(event.registrationConfig, null, 2));
-    console.log('[RegisterPage] event.registrationConfig.fields:', JSON.stringify(event.registrationConfig?.fields, null, 2));
-
     return (
         <div className="min-h-screen bg-white">
             <main className="container mx-auto container-px py-8 md:py-12">
                 <div className="max-w-6xl mx-auto">
                     <div className="rounded-3xl md:rounded-[3rem] border-2 border-primary/10 bg-linear-to-br from-white via-primary/5 to-white p-8 md:p-12 lg:p-20 shadow-lg relative overflow-hidden mb-12">
-                        {/* Decorative circles */}
+                        {}
                         <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" style={{ backgroundColor: event.branding.primaryColor ? `${event.branding.primaryColor}20` : undefined }}></div>
                         <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-accent/10 blur-3xl"></div>
 
@@ -29,7 +25,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ event
                         </div>
                     </div>
 
-                    {/* We pass the event config to the form so it renders the dynamic fields */}
+                    {}
                     <RegistrationForm eventId={event.id} config={event.registrationConfig} />
                 </div>
             </main>

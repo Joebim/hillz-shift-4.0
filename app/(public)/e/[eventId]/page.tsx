@@ -23,7 +23,7 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
 
     return (
         <div className="min-h-screen selection:bg-primary/20 bg-white text-gray-900 pb-20">
-            {/* Premium Hero Section with Large Banner */}
+            {}
             <div className="relative w-full bg-white pt-6 md:pt-10">
                 <div className="container mx-auto container-px">
                     <div className="relative group">
@@ -70,7 +70,7 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                 </div>
             </div>
 
-            {/* Quick Info Bar */}
+            {}
             <div className="container mx-auto container-px -mt-8 relative z-20">
                 <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-0 rounded-3xl bg-white shadow-2xl shadow-primary/5 border border-gray-100 overflow-hidden divide-y md:divide-y-0 md:divide-x divide-gray-100">
                     <div className="p-6 flex items-center gap-4 hover:bg-gray-50 transition-colors">
@@ -103,12 +103,12 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                 </div>
             </div>
 
-            {/* Main Content Sections */}
+            {}
             <div className="container mx-auto container-px mt-20 md:mt-32">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-                    {/* Left Side: About & Features */}
+                    {}
                     <div className="lg:col-span-8 space-y-20">
-                        {/* Event Intro */}
+                        {}
                         <section className="space-y-6">
                             <div className="space-y-2">
                                 <h3 className="text-xs font-black text-primary uppercase tracking-[0.3em]">The Encounter</h3>
@@ -121,7 +121,7 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                             </p>
                         </section>
 
-                        {/* Ministers / Speakers */}
+                        {}
                         {event.ministers && event.ministers.length > 0 && (
                             <section className="space-y-10">
                                 <div className="space-y-2">
@@ -155,9 +155,9 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                             </section>
                         )}
 
-                        {/* Media Integration */}
+                        {}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {/* Spotify Card */}
+                            {}
                             <div className="relative overflow-hidden rounded-[2.5rem] bg-linear-to-br from-green-600 to-green-900 p-8 shadow-2xl group cursor-pointer transition-transform hover:-translate-y-1">
                                 <div className="absolute -right-10 -bottom-10 opacity-10 group-hover:scale-110 transition-transform duration-500">
                                     <Music size={200} />
@@ -176,7 +176,7 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                                 </div>
                             </div>
 
-                            {/* YouTube Card */}
+                            {}
                             <div className="relative overflow-hidden rounded-[2.5rem] bg-linear-to-br from-red-600 to-red-900 p-8 shadow-2xl group cursor-pointer transition-transform hover:-translate-y-1">
                                 <div className="absolute -right-10 -bottom-10 opacity-10 group-hover:scale-110 transition-transform duration-500">
                                     <Youtube size={200} />
@@ -197,7 +197,7 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                         </div>
                     </div>
 
-                    {/* Right Side: Floating Sticky CTA Card */}
+                    {}
                     <div className="lg:col-span-4 relative">
                         <div className="sticky top-10 space-y-6">
                             <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-2xl shadow-primary/10 space-y-8 overflow-hidden relative">
@@ -241,7 +241,7 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                                 </div>
                             </div>
 
-                            {/* Scripture Highlight */}
+                            {}
                             <div className="bg-linear-to-br from-primary to-primary-dark rounded-[2.5rem] p-8 text-white shadow-xl">
                                 <p className="text-lg font-medium italic leading-relaxed text-white/90">
                                     &ldquo;{event.themeBibleVerse || 'But as for you, continue in what you have learned and have become convinced of.'}&rdquo;
@@ -258,7 +258,7 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                 </div>
             </div>
 
-            {/* Live Streaming Highlight */}
+            {}
             <section className="container mx-auto container-px mt-32 text-center space-y-12">
                 <div className="max-w-2xl mx-auto space-y-4">
                     <h2 className="text-3xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter">
@@ -305,7 +305,7 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                 </div>
             </section>
 
-            {/* Final Floating Action (Mobile only) */}
+            {}
             <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden w-[calc(100%-48px)]">
                 {event.registrationConfig?.enabled && (
                     <Link href={`/e/${eventId}/register`}>

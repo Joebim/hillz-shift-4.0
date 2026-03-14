@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -44,7 +44,6 @@ export const Header = () => {
             setIsScrolled(window.scrollY > 50);
         };
         window.addEventListener('scroll', handleScroll);
-        // Initial check
         handleScroll();
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -60,7 +59,7 @@ export const Header = () => {
         >
             <nav className="container mx-auto px-6 h-full">
                 <div className="flex items-center justify-between h-full">
-                    {/* Logo */}
+                    {}
                     <Link href="/" className="flex items-center gap-3 group">
                         <div className="w-10 h-10 bg-linear-to-br from-[#6B46C1] via-[#805AD5] to-[#9F7AEA] rounded-xl flex items-center justify-center shadow-lg shadow-purple-200/50 group-hover:scale-110 transition-transform duration-300">
                             <span className="text-white font-black text-xl tracking-tighter">S</span>
@@ -83,7 +82,7 @@ export const Header = () => {
                         </div>
                     </Link>
 
-                    {/* Desktop Navigation */}
+                    {}
                     <div className="hidden lg:flex items-center gap-2">
                         <NavigationMenu>
                             <NavigationMenuList>
@@ -142,7 +141,7 @@ export const Header = () => {
                         </NavigationMenu>
                     </div>
 
-                    {/* CTA Buttons */}
+                    {}
                     <div className="hidden lg:flex items-center gap-4">
                         <Link href="/prayer">
                             <Button
@@ -158,7 +157,7 @@ export const Header = () => {
                         </Link>
                     </div>
 
-                    {/* Mobile Menu Button */}
+                    {}
                     <button
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                         className={cn(
@@ -170,7 +169,7 @@ export const Header = () => {
                     </button>
                 </div>
 
-                {/* Mobile Menu */}
+                {}
                 {mobileMenuOpen && (
                     <div className="lg:hidden absolute top-full left-0 right-0 bg-white border-t border-[#E5E7EB] py-4 shadow-xl animate-in fade-in slide-in-from-top-2">
                         {navigation.map((item) => (

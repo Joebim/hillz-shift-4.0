@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { useRegistrationStore } from '@/src/store/useRegistrationStore';
@@ -38,10 +38,8 @@ export const RegistrationForm = ({ eventId, config }: Props) => {
 
         if (!form.phone?.trim()) newErrors.phone = 'Phone number is required';
 
-        // "Who Invited You" is always required
         if (!form.whoInvited?.trim()) newErrors.whoInvited = 'Please tell us who invited you';
 
-        // Validate dynamic custom fields
         if (config?.fields) {
             config.fields.forEach(field => {
                 if (field.required) {
@@ -102,7 +100,6 @@ export const RegistrationForm = ({ eventId, config }: Props) => {
                 toast.error(result.error || 'Registration failed');
             }
         } catch (error) {
-            console.error(error);
             toast.error('Something went wrong!');
         } finally {
             setIsSubmitting(false);
@@ -112,7 +109,7 @@ export const RegistrationForm = ({ eventId, config }: Props) => {
     return (
         <form onSubmit={handleSubmit} className="mx-auto max-w-lg space-y-8">
 
-            {/* ── Default Fields — always required ─────────────────────── */}
+            {}
             <div className="space-y-6">
                 <div className="flex items-center gap-2">
                     <h3 className="text-lg font-bold text-gray-900 border-l-4 border-primary pl-4">
@@ -153,7 +150,7 @@ export const RegistrationForm = ({ eventId, config }: Props) => {
                     />
                 </div>
 
-                {/* Who Invited You — required default field */}
+                {}
                 <DbSearchSelect
                     source="registrations"
                     eventId={eventId}
@@ -169,7 +166,7 @@ export const RegistrationForm = ({ eventId, config }: Props) => {
                 />
             </div>
 
-            {/* ── Event Custom Fields (from registrationConfig.fields) ──── */}
+            {}
             {config?.fields && config.fields.length > 0 && (
                 <div className="space-y-6 pt-6 border-t border-gray-100">
                     <h3 className="text-lg font-bold text-gray-900 border-l-4 border-primary pl-4">

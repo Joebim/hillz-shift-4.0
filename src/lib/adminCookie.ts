@@ -5,8 +5,8 @@ import crypto from "crypto";
 export type AdminCookieUser = {
   uid: string;
   email: string | null;
-  iat: number; // seconds
-  exp: number; // seconds
+  iat: number;
+  exp: number;
 };
 
 const COOKIE_SECRET_ENV = "ADMIN_COOKIE_SECRET";
@@ -29,7 +29,7 @@ function base64UrlDecode(input: string): string {
 function getSecret(): string {
   const secret = process.env[COOKIE_SECRET_ENV];
   if (!secret) {
-    // We intentionally hard-fail so you don't accidentally run an unsigned admin cookie in prod.
+    
     throw new Error(
       `Missing ${COOKIE_SECRET_ENV}. Set it in .env.local (use a long random string).`
     );
@@ -77,4 +77,4 @@ export function verifyAdminUserCookie(
     return null;
   }
 }
-
+

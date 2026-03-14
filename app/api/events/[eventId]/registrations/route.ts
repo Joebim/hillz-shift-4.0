@@ -16,19 +16,14 @@ import { createRegistrationSchema } from "@/src/schemas/registration.schema";
 import { ZodError } from "zod";
 import { generateRandomString } from "@/src/lib/utils";
 import { sendRegistrationEmail } from "@/src/lib/email/send";
-import { Registration } from "@/src/types/registration"; // Helper type
+import { Registration } from "@/src/types/registration";
 
-// Helper to safely convert Firestore Timestamp or string to Date
 type FirestoreDate = Date | string | number | { toDate: () => Date };
 const toDate = (d: FirestoreDate) =>
   d && typeof (d as { toDate: () => Date }).toDate === "function"
     ? (d as { toDate: () => Date }).toDate()
     : new Date(d as string | number | Date);
 
-/**
- * GET /api/events/[eventId]/registrations
- * Get all registrations for an event
- */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ eventId: string }> },
@@ -40,7 +35,6 @@ export async function GET(
     });
     return successResponse(registrations, "Registrations fetched successfully");
   } catch (error) {
-    console.error("Fetch registrations error:", error);
     return errorResponse(
       "FETCH_ERROR",
       "Failed to fetch registrations",
@@ -49,10 +43,6 @@ export async function GET(
   }
 }
 
-/**
- * POST /api/events/[eventId]/registrations
- * Add a registration (Admin endpoint)
- */
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ eventId: string }> },
@@ -61,14 +51,12 @@ export async function POST(
     const { eventId } = await params;
     const body = await request.json();
 
-    // Map Admin simple payload to full schema if needed
-    // Admin payload: { name, email, type }
     let payload = { ...body, eventId };
 
     if (body.name && body.email && !body.attendee) {
       const nameParts = body.name.trim().split(" ");
       const firstName = nameParts[0];
-      const lastName = nameParts.slice(1).join(" ") || "Attendee"; // Default last name
+      const lastName = nameParts.slice(1).join(" ") || "Attendee";
 
       payload = {
         eventId,
@@ -76,47 +64,36 @@ export async function POST(
           firstName,
           lastName,
           email: body.email,
-          phone: "0000000000", // Placeholder
+          phone: "0000000000",
           customFields: {},
         },
-        ticketType: body.type, // Map 'type' to 'ticketType'
-        status: "confirmed", // Admin adds are explicitly confirmed usually
+        ticketType: body.type,
+        status: "confirmed",
         checkedIn: false,
       };
     }
 
-    // Validate request body
     const validated = createRegistrationSchema.parse(payload);
 
-    // Check if event exists
     const event = await getDocument<Event>("events", eventId);
     if (!event) {
       return notFoundResponse("Event not found");
     }
 
-    // Checking capacity/dates skipped for Admin overrides, or we can keep them.
-    // Let's assume Admin overrides restrictions.
-
-    // Generate confirmation code
     const confirmationCode = generateRandomString(16).toUpperCase();
 
-    // Create registration
     const registrationId = await createDocument("registrations", {
       ...validated,
       confirmationCode,
       registrationDate: new Date(),
     });
 
-    // Update event registration count
     await updateDocument("events", eventId, {
       registrationCount: (event.registrationCount || 0) + 1,
     });
 
-    // Send confirmation email ?
-    // Maybe admin doesn't want to spam, but confirmation is good.
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
 
-    // Don't block response on email sending, but log errors
     sendRegistrationEmail(
       validated.attendee.email,
       validated.attendee.firstName,
@@ -148,7 +125,6 @@ export async function POST(
       return validationErrorResponse((error as ZodError).errors);
     }
 
-    console.error("Registration error:", error);
     return errorResponse(
       "REGISTRATION_ERROR",
       "Failed to register",

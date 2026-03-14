@@ -1,4 +1,4 @@
-import { initializeApp, cert, getApps, App } from "firebase-admin/app";
+﻿import { initializeApp, cert, getApps, App } from "firebase-admin/app";
 import { getFirestore, Firestore } from "firebase-admin/firestore";
 import { getAuth, Auth } from "firebase-admin/auth";
 
@@ -20,10 +20,6 @@ if (!getApps().length && projectId && clientEmail && privateKey) {
   app = getApps()[0];
 }
 
-// Export Firestore - safe type assertion since app is checked before use
-// In production, app will always be initialized due to environment variable checks
 export const db: Firestore = app ? getFirestore(app) : (null as unknown as Firestore);
 
-// Export Auth - safe type assertion since app is checked before use
-// In production, app will always be initialized due to environment variable checks
 export const auth: Auth = app ? getAuth(app) : (null as unknown as Auth);

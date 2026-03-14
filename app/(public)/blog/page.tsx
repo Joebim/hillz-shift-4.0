@@ -1,4 +1,4 @@
-import Image from 'next/image';
+﻿import Image from 'next/image';
 import { queryDocuments } from '@/src/lib/firebase/firestore';
 import { toJsDate } from '@/src/lib/utils';
 import { BlogPost } from '@/src/types/blog';
@@ -29,7 +29,7 @@ export default async function BlogPage() {
         <div className="min-h-screen bg-white">
             <Header />
 
-            {/* Hero Section */}
+            {}
             <section className="relative pt-48 pb-32 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
@@ -56,11 +56,11 @@ export default async function BlogPage() {
                     </div>
                 </div>
 
-                {/* Decorative element */}
+                {}
                 <div className="absolute bottom-0 right-0 w-1/3 h-1/2 bg-linear-to-tl from-emerald-600/20 to-transparent blur-3xl" />
             </section>
 
-            {/* Blog Grid Section */}
+            {}
             <Section bg="gray" className="py-24">
                 <div className="flex items-center gap-3 mb-12">
                     <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">

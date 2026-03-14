@@ -1,8 +1,8 @@
-export const EXTERNAL_LINKS = {
+﻿export const EXTERNAL_LINKS = {
   WEBSITE: "https://thehillz.org",
   SPOTIFY:
     "https://open.spotify.com/show/1fAOjuJoh9JoBctssQJZT3?si=aceb9021810a408d",
-  YOUTUBE: "#", // Add YouTube channel link when available
+  YOUTUBE: "#",
   GOOGLE_MEET: {
     TITLE: "Mastering the mystery of Christ",
     DATE: "Sunday 11 Jan",
