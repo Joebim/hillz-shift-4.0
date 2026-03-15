@@ -1,11 +1,11 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { useInvitationStore } from '@/src/store/useInvitationStore';
 import { Input } from '@/src/components/ui/Input';
 import { Textarea } from '@/src/components/ui/Textarea';
 import { Button } from '@/src/components/ui/Button';
-import { ParticipantsSearchSelect } from '@/src/components/invite/ParticipantsSearchSelect';
+import { DbSearchSelect } from '@/src/components/shared/DbSearchSelect';
 import { Share2 } from 'lucide-react';
 import { generateWhatsAppInvite } from '@/src/utils/whatsapp';
 import { useToast } from '@/src/contexts/ToastContext';
@@ -142,16 +142,16 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                         Default
                     </span>
                 </h3>
-                <ParticipantsSearchSelect
+                <DbSearchSelect
+                    source="registrations"
+                    eventId={eventId}
                     label="Your Full Name"
                     placeholder="Search your name..."
                     required
                     value={form.inviterName}
                     onChange={(val) => setField('inviterName', val)}
+                    error={errors.inviterName}
                 />
-                {errors.inviterName && (
-                    <p className="text-xs text-red-500 -mt-4">{errors.inviterName}</p>
-                )}
             </div>
 
             {}

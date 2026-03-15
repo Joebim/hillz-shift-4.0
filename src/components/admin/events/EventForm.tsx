@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useForm, useFieldArray, FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -914,7 +914,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                         </div>
                                         <div>
                                             <p className="text-xs font-bold text-violet-800">Default fields are always collected</p>
-                                            <p className="text-xs text-violet-600 mt-0.5">Name, Email, and Phone are automatically required on every registration form. Add custom fields below for event-specific questions.</p>
+                                            <p className="text-xs text-violet-600 mt-0.5">Name, Email, Phone, and &quot;Who Invited You?&quot; are automatically required on every registration form. Add custom fields below for event-specific questions.</p>
                                         </div>
                                     </div>
                                     <DynamicFormBuilder
@@ -958,7 +958,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                     </div>
                                     <div>
                                         <p className="text-xs font-bold text-violet-800">Default fields are always collected</p>
-                                        <p className="text-xs text-violet-600 mt-0.5">Inviter name, Guest name, Phone, and Email are automatically included. Add custom fields below for event-specific questions.</p>
+                                        <p className="text-xs text-violet-600 mt-0.5">Inviter name, Guest name, Phone, Email, and a Personal Note are automatically included. Add custom fields below for event-specific questions.</p>
                                     </div>
                                 </div>
                                 <DynamicFormBuilder

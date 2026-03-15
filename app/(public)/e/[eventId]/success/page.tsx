@@ -1,42 +1,55 @@
-import { notFound } from 'next/navigation';
-import { queryDocuments } from '@/src/lib/firebase/firestore';
-import { Event } from '@/src/types/event';
+import { Banner } from '@/src/components/shared/Banner';
+import { Footer } from '@/src/components/shared/Footer';
 import { Button } from '@/src/components/ui/Button';
+import { CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { queryDocuments, getDocument } from '@/src/lib/firebase/firestore';
+import { Event } from '@/src/types/event';
 
 export default async function SuccessPage({ params }: { params: Promise<{ eventId: string }> }) {
     const { eventId } = await params;
-    const events = await queryDocuments<Event>('events', { slug: eventId });
-    if (!events.length) return notFound();
-    const event = events[0];
+    let ArrayEvents = await queryDocuments<Event>('events', { slug: eventId });
+    let event: Event | null = ArrayEvents.length > 0 ? ArrayEvents[0] : null;
+
+    if (!event) {
+        event = await getDocument<Event>('events', eventId);
+    }
+
+    if (!event) return notFound();
+    const eventSlug = event.slug || eventId;
 
     return (
-        <div className="min-h-screen bg-white">
-            <main className="container mx-auto container-px py-16 md:py-24">
-                <div className="max-w-3xl mx-auto">
-                    <div className="rounded-3xl border-2 border-primary/10 bg-linear-to-br from-white via-primary/5 to-white p-8 md:p-16 shadow-lg text-center">
-                        <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner shadow-green-200">
-                            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+        <div className="flex min-h-screen flex-col bg-gray-50">
+            <Banner />
+
+            <main className="flex flex-1 items-center justify-center p-4">
+                <div className="w-full max-w-md rounded-2xl md:rounded-3xl bg-white p-6 md:p-8 lg:p-12 text-center shadow-xl">
+                    <div className="mb-6 flex justify-center">
+                        <div className="rounded-full bg-green-100 p-4 text-green-600">
+                            <CheckCircle2 size={48} />
                         </div>
+                    </div>
 
-                        <h2 className="text-3xl md:text-4xl font-black text-gray-900 uppercase tracking-tight mb-4" style={{ color: event.branding.primaryColor || '#000' }}>
-                            Success!
-                        </h2>
+                    <h1 className="mb-2 text-3xl font-bold text-gray-900">Registration Successful!</h1>
+                    <p className="mb-8 text-gray-600">
+                        Thank you for registering. A confirmation email has been sent to your inbox for {event.title}.
+                    </p>
 
-                        <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto font-medium">
-                            Your action was completed successfully. Check your email for confirmation details regarding <strong className="text-gray-900">{event.title}</strong>!
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link href={`/e/${eventId}`}>
-                                <Button size="lg" className="rounded-2xl w-full sm:w-auto tracking-wider font-bold">
-                                    Return to Event Page
-                                </Button>
+                    <div className="flex flex-col gap-4">
+                        {event.invitationConfig?.enabled && (
+                            <Link href={`/e/${eventSlug}/invite`} className="w-full">
+                                <Button className="w-full" size="lg">Invite a Friend</Button>
                             </Link>
-                        </div>
+                        )}
+                        <Link href={`/e/${eventSlug}`} className="w-full">
+                            <Button variant="outline" className="w-full" size="lg">Back to Event Page</Button>
+                        </Link>
                     </div>
                 </div>
             </main>
+
+            <Footer />
         </div>
     );
 }

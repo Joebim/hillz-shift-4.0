@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { queryDocuments } from '@/src/lib/firebase/firestore';
+import { queryDocuments, getDocument } from '@/src/lib/firebase/firestore';
 import { Event } from '@/src/types/event';
 import React from 'react';
 import { StoreInitializer } from '@/src/components/shared/StoreInitializer';
@@ -13,13 +13,19 @@ export default async function EventHubLayout({
     params: Promise<{ eventId: string }>;
 }) {
     const { eventId } = await params;
-    const events = await queryDocuments<Event>('events', { slug: eventId, status: 'published' });
+    let ArrayEvents = await queryDocuments<Event>('events', { slug: eventId, status: 'published' });
+    let event: Event | null = ArrayEvents.length > 0 ? ArrayEvents[0] : null;
 
-    if (!events.length) {
-        return notFound();
+    if (!event) {
+        event = await getDocument<Event>('events', eventId);
+        if (event?.status !== 'published') {
+            event = null;
+        }
     }
 
-    const event = events[0];
+    if (!event) {
+        return notFound();
+    }
 
     const serializedEvent = serializeFirestoreData(event);
 
@@ -54,6 +60,14 @@ export default async function EventHubLayout({
                 
                 .event-hub-wrapper .btn-primary { background-color: var(--primary); color: white; }
                 .event-hub-wrapper .btn-primary:hover { opacity: 0.9; }
+
+                /* Footer overrides */
+                .event-hub-wrapper footer.bg-\\[\\#020617\\] {
+                    background-color: color-mix(in srgb, var(--primary) 20%, black) !important;
+                }
+                .event-hub-wrapper footer .bg-purple-600\\/10 {
+                    display: none !important;
+                }
             `}</style>
             {children}
         </div>

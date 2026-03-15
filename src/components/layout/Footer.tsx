@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import { Facebook, Twitter, Instagram, Youtube, Phone, MapPin } from 'lucide-react';
 
 const footerLinks = {
@@ -37,16 +37,18 @@ export const Footer = () => {
                     {}
                     <div className="lg:col-span-4">
                         <Link href="/" className="flex items-center gap-3 mb-8 group">
-                            <div className="w-12 h-12 bg-linear-to-br from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform duration-300">
-                                <span className="text-white font-black text-2xl">S</span>
-                            </div>
+                            <img 
+                                src="https://res.cloudinary.com/dr1decnfd/image/upload/v1773612049/Hillz_Logo_csgnms.svg" 
+                                alt="The Hillz Logo" 
+                                className="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300" 
+                            />
                             <div className="flex flex-col">
                                 <span className="text-xl font-black tracking-tighter">THE HILLZ</span>
                                 <span className="text-[10px] font-black tracking-[0.3em] text-purple-400">CHURCH</span>
                             </div>
                         </Link>
                         <p className="text-slate-400 mb-10 text-lg leading-relaxed max-w-sm font-medium">
-                            Transforming lives through the power of God&apos;s love and stepping into new dimensions of glory.
+                            And to make all men see what is the fellowship of the mystery&apos; Ephesians 3 vs 9
                         </p>
 
                         {}

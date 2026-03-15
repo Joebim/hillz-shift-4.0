@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import Image from 'next/image';
 import { queryDocuments } from '@/src/lib/firebase/firestore';
 import { toJsDate } from '@/src/lib/utils';
@@ -34,6 +34,8 @@ export default async function HomePage() {
         ...event,
         startDate: toJsDate(event.startDate),
         endDate: toJsDate(event.endDate),
+        registrationOpenDate: toJsDate(event.registrationOpenDate),
+        registrationCloseDate: toJsDate(event.registrationCloseDate),
         createdAt: toJsDate(event.createdAt),
         updatedAt: toJsDate(event.updatedAt),
     }));
@@ -55,7 +57,7 @@ export default async function HomePage() {
         <div className="min-h-screen bg-white selection:bg-purple-100 selection:text-purple-900 font-medium">
             <Header />
 
-            <Hero />
+            <Hero upcomingEvent={featuredEvents[0]} />
 
             {}
             <Section bg="none" className="py-32 relative overflow-hidden">

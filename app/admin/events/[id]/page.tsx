@@ -804,53 +804,80 @@ export default function EventDetailsPage() {
 
     const ActionButtons = ({ size = 'md' }: { size?: 'sm' | 'md' }) => {
         const s = size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4';
+        const showLabel = size === 'md';
+        const btnBase = 'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all duration-150';
         return (
-            <div className="flex items-center gap-2 text-gray-400">
-                {}
+            <div className="flex items-center gap-1.5">
+                {/* Featured */}
                 <button
                     onClick={() => featuredMutation.mutate(!event.featured)}
                     disabled={featuredMutation.isPending}
                     title={event.featured ? 'Remove from featured' : 'Mark as featured'}
-                    className={cn('hover:text-amber-500 transition-colors disabled:opacity-50', event.featured && 'text-amber-400')}
+                    className={cn(
+                        btnBase,
+                        'disabled:opacity-50',
+                        event.featured
+                            ? 'bg-amber-50 text-amber-500 hover:bg-amber-100'
+                            : 'bg-gray-100 text-gray-500 hover:bg-amber-50 hover:text-amber-500'
+                    )}
                 >
                     <Star className={s} fill={event.featured ? 'currentColor' : 'none'} />
+                    {showLabel && <span>{event.featured ? 'Featured' : 'Feature'}</span>}
                 </button>
 
-                {}
+                {/* Copy link */}
                 <button
                     onClick={copyEventLink}
                     title={copySuccess ? 'Copied!' : 'Copy public event link'}
-                    className={cn('transition-colors', copySuccess ? 'text-emerald-500' : 'hover:text-violet-500')}
+                    className={cn(
+                        btnBase,
+                        copySuccess
+                            ? 'bg-emerald-50 text-emerald-600'
+                            : 'bg-gray-100 text-gray-500 hover:bg-violet-50 hover:text-violet-600'
+                    )}
                 >
                     <Link2 className={s} />
+                    {showLabel && <span>{copySuccess ? 'Copied!' : 'Copy Link'}</span>}
                 </button>
 
-                {}
+                {/* Attachments */}
                 <button
                     onClick={scrollToAttachments}
                     title="Attachments"
-                    className="hover:text-violet-500 transition-colors"
+                    className={cn(btnBase, 'bg-gray-100 text-gray-500 hover:bg-violet-50 hover:text-violet-600')}
                 >
                     <Paperclip className={s} />
+                    {showLabel && <span>Attachments</span>}
                 </button>
 
-                {}
+                {/* Analytics */}
                 <button
                     onClick={() => setAnalyticsOpen(true)}
                     title="View Analytics"
-                    className="hover:text-violet-500 transition-colors"
+                    className={cn(btnBase, 'bg-gray-100 text-gray-500 hover:bg-violet-50 hover:text-violet-600')}
                 >
                     <BarChart3 className={s} />
+                    {showLabel && <span>Analytics</span>}
                 </button>
 
-                {}
-                <Link href={`/admin/events/${event.id}/edit`} title="Edit event" className="hover:text-violet-600 transition-colors">
+                {/* Edit */}
+                <Link
+                    href={`/admin/events/${event.id}/edit`}
+                    title="Edit event"
+                    className={cn(btnBase, 'bg-gray-100 text-gray-500 hover:bg-violet-50 hover:text-violet-600')}
+                >
                     <Edit className={s} />
+                    {showLabel && <span>Edit</span>}
                 </Link>
 
-                {}
-                <button onClick={shareEvent} title="Share event" className="hover:text-violet-500 transition-colors">
+                {/* Share */}
+                <button
+                    onClick={shareEvent}
+                    title="Share event"
+                    className={cn(btnBase, 'bg-gray-100 text-gray-500 hover:bg-violet-50 hover:text-violet-600')}
+                >
                     <Share2 className={s} />
+                    {showLabel && <span>Share</span>}
                 </button>
             </div>
         );

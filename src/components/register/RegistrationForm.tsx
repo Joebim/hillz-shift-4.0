@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { useRegistrationStore } from '@/src/store/useRegistrationStore';
@@ -13,10 +13,11 @@ import { EventRegistrationConfig } from '@/src/types/event';
 
 interface Props {
     eventId?: string;
+    eventSlug?: string;
     config?: EventRegistrationConfig;
 }
 
-export const RegistrationForm = ({ eventId, config }: Props) => {
+export const RegistrationForm = ({ eventId, eventSlug, config }: Props) => {
     const { form, setField, setCustomField, isSubmitting, setIsSubmitting } = useRegistrationStore();
     const router = useRouter();
     const toast = useToast();
@@ -93,7 +94,8 @@ export const RegistrationForm = ({ eventId, config }: Props) => {
             if (result.success) {
                 toast.success('Registration successful! Redirecting...', 2000);
                 setTimeout(() => {
-                    const successUrl = eventId ? `/e/${eventId}/success` : ROUTES.SUCCESS;
+                    const slugOrId = eventSlug || eventId;
+                    const successUrl = slugOrId ? `/e/${slugOrId}/success` : ROUTES.SUCCESS;
                     router.push(successUrl);
                 }, 500);
             } else {

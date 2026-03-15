@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -61,9 +61,11 @@ export const Header = () => {
                 <div className="flex items-center justify-between h-full">
                     {}
                     <Link href="/" className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 bg-linear-to-br from-[#6B46C1] via-[#805AD5] to-[#9F7AEA] rounded-xl flex items-center justify-center shadow-lg shadow-purple-200/50 group-hover:scale-110 transition-transform duration-300">
-                            <span className="text-white font-black text-xl tracking-tighter">S</span>
-                        </div>
+                        <img 
+                            src="https://res.cloudinary.com/dr1decnfd/image/upload/v1773612049/Hillz_Logo_csgnms.svg" 
+                            alt="The Hillz Logo" 
+                            className="w-10 h-10 object-contain group-hover:scale-110 transition-transform duration-300" 
+                        />
                         <div className="flex flex-col">
                             <span
                                 className={cn(

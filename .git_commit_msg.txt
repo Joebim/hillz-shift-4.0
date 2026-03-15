@@ -1,0 +1,7 @@
+feat: Comprehensive UI and Events updates
+
+- Replaced text logo with SVG logo in Header and Footer
+- Updated Event Card CTA based on registration status
+- Added new EventBannerHeader for event detail pages
+- Refactored event public pages (detail, invite, register, success)
+- Enhanced EventForm and DynamicFormBuilder in admin pages

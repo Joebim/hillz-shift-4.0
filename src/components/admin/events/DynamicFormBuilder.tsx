@@ -1,19 +1,29 @@
-﻿import React from 'react';
+import React from 'react';
 import { useFieldArray, Control, UseFormRegister, FieldErrors, FieldValues, UseFormWatch, UseFormSetValue, ArrayPath, FieldArrayPath } from 'react-hook-form';
-import { Plus, Trash2, GripVertical, Lock, User, Mail, Phone } from 'lucide-react';
+import { Plus, Trash2, GripVertical, Lock, User, Mail, Phone, AlignLeft, Users } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
-export const DEFAULT_FORM_FIELDS = [
-    { id: '_name', label: 'Full Name', type: 'text', icon: User, placeholder: 'e.g. John Doe' },
-    { id: '_email', label: 'Email Address', type: 'email', icon: Mail, placeholder: 'e.g. john@example.com' },
-    { id: '_phone', label: 'Phone Number', type: 'phone', icon: Phone, placeholder: 'e.g. +234...' },
+export const REGISTRATION_DEFAULT_FIELDS = [
+    { id: '_name', label: 'Full Name', type: 'text', icon: User, required: true },
+    { id: '_email', label: 'Email Address', type: 'email', icon: Mail, required: true },
+    { id: '_phone', label: 'Phone Number', type: 'phone', icon: Phone, required: true },
+    { id: '_who', label: 'Who Invited You?', type: 'select', icon: Users, required: true },
 ] as const;
 
-function DefaultFieldsPreview() {
+export const INVITATION_DEFAULT_FIELDS = [
+    { id: '_inviter', label: 'Your Full Name', type: 'select', icon: User, required: true },
+    { id: '_invitee', label: 'Guest Full Name', type: 'text', icon: User, required: true },
+    { id: '_phone', label: 'Phone / WhatsApp', type: 'phone', icon: Phone, required: true },
+    { id: '_email', label: 'Email Address (Optional)', type: 'email', icon: Mail, required: false },
+    { id: '_message', label: 'Personal Invitation Note', type: 'textarea', icon: AlignLeft, required: true },
+] as const;
+
+function DefaultFieldsPreview({ type }: { type: 'registration' | 'invitation' }) {
+    const fields = type === 'invitation' ? INVITATION_DEFAULT_FIELDS : REGISTRATION_DEFAULT_FIELDS;
     return (
         <div className="space-y-2 mb-4">
             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Default Fields (always included)</p>
-            {DEFAULT_FORM_FIELDS.map(({ id, label, type, icon: Icon }) => (
+            {fields.map(({ id, label, type: fieldType, icon: Icon, required }) => (
                 <div
                     key={id}
                     className="bg-gray-50 rounded-xl border border-gray-200 p-3 flex items-center gap-3 opacity-70"
@@ -23,10 +33,10 @@ function DefaultFieldsPreview() {
                     </div>
                     <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-700 truncate">{label}</p>
-                        <p className="text-[10px] text-gray-400 capitalize">{type} · Required</p>
+                        <p className="text-[10px] text-gray-400 capitalize">{fieldType}{required ? ' · Required' : ' · Optional'}</p>
                     </div>
-                    <span className="inline-flex items-center gap-1 bg-violet-50 text-violet-500 text-[10px] font-bold px-2 py-0.5 rounded-full border border-violet-100">
-                        <Lock className="w-2.5 h-2.5" /> Default
+                    <span className={cn("inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border", required ? "bg-violet-50 text-violet-500 border-violet-100" : "bg-gray-100 text-gray-500 border-gray-200")}>
+                        {required && <Lock className="w-2.5 h-2.5" />} Default
                     </span>
                 </div>
             ))}
@@ -134,7 +144,7 @@ export function DynamicFormBuilder<TFieldValues extends FieldValues = FieldValue
     return (
         <div className="space-y-4">
             {}
-            <DefaultFieldsPreview />
+            <DefaultFieldsPreview type={path.includes('invitation') ? 'invitation' : 'registration'} />
 
             {}
             {fields.length > 0 && (

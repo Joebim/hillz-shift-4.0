@@ -1,320 +1,518 @@
+import { Banner } from '@/src/components/shared/Banner';
+import { EventBannerHeader } from '@/src/components/shared/EventBannerHeader';
+import { Footer } from '@/src/components/shared/Footer';
 import { Button } from '@/src/components/ui/Button';
 import Link from 'next/link';
 import { EXTERNAL_LINKS } from '@/src/constants/links';
 import {
     ArrowRight, Music, Video, Phone, ExternalLink,
-    Youtube, Calendar, Clock, MapPin, UserPlus,
-    Sparkles, ShieldCheck, Zap
+    Youtube, Calendar, Clock, MapPin, UserPlus, AlertCircle, Lock
 } from 'lucide-react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { queryDocuments } from '@/src/lib/firebase/firestore';
+import { queryDocuments, getDocument } from '@/src/lib/firebase/firestore';
 import { Event } from '@/src/types/event';
 import { format } from 'date-fns';
 import { toJsDate } from '@/src/lib/utils';
 
 export default async function EventHomePage({ params }: { params: Promise<{ eventId: string }> }) {
     const { eventId } = await params;
-    const events = await queryDocuments<Event>('events', { slug: eventId });
-    if (!events.length) return notFound();
-    const event = events[0];
+    let ArrayEvents = await queryDocuments<Event>('events', { slug: eventId });
+    let event: Event | null = ArrayEvents.length > 0 ? ArrayEvents[0] : null;
+
+    if (!event) {
+        event = await getDocument<Event>('events', eventId);
+    }
+
+    if (!event) return notFound();
 
     const eventDate = toJsDate(event.startDate);
+    const primary = event.branding.primaryColor || '#6B46C1';
+    const secondary = event.branding.secondaryColor || '#553C9A';
+    const accent = event.branding.accentColor || '#D4AF37';
+
+    // Compute registration window status
+    const now = new Date();
+    const regOpen = event.registrationOpenDate ? toJsDate(event.registrationOpenDate) : null;
+    const regClose = event.registrationCloseDate ? toJsDate(event.registrationCloseDate) : null;
+    const registrationEnabled = !!event.registrationConfig?.enabled;
+    const registrationNotStarted = registrationEnabled && regOpen && now < regOpen;
+    const registrationEnded = registrationEnabled && regClose && now > regClose;
+    const registrationOpen = registrationEnabled && !registrationNotStarted && !registrationEnded;
 
     return (
-        <div className="min-h-screen selection:bg-primary/20 bg-white text-gray-900 pb-20">
-            {}
-            <div className="relative w-full bg-white pt-6 md:pt-10">
+        <div className="min-h-screen selection:bg-primary/20 bg-white text-gray-900">
+            <Banner />
+            <EventBannerHeader
+                bannerImage={event.branding.bannerImage}
+                title={event.title}
+                primaryColor={primary}
+                secondaryColor={secondary}
+            />
+
+            {/* Event Details */}
+            <section className="py-16 md:py-24 bg-white">
                 <div className="container mx-auto container-px">
-                    <div className="relative group">
-                        <div className="relative aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden rounded-[2rem] md:rounded-[3rem] shadow-2xl ring-1 ring-black/5 bg-gray-50">
-                            {event.branding.bannerImage ? (
-                                <Image
-                                    src={event.branding.bannerImage}
-                                    alt={event.title}
-                                    fill
-                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                    priority
-                                    sizes="100vw"
-                                />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary to-primary-dark text-white font-black text-4xl p-10 text-center uppercase tracking-tighter">
-                                    {event.title}
-                                </div>
-                            )}
-                            <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+                    <div className="max-w-6xl mx-auto">
+                        <div className="rounded-3xl md:rounded-[3rem] border-2 border-primary/10 bg-linear-to-br from-white via-primary/5 to-white p-8 md:p-12 lg:p-20 shadow-lg relative overflow-hidden">
+                            {/* Decorative circles */}
+                            <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl"></div>
+                            <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-gray-100 blur-3xl"></div>
 
-                            <div className="absolute bottom-8 left-8 right-8 md:bottom-12 md:left-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                                <div className="space-y-2">
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/20 backdrop-blur-md text-accent border border-accent/20 text-[10px] font-black uppercase tracking-[0.2em]">
-                                        <Sparkles size={12} />
-                                        Featured Event
+                            <div className="relative z-10 grid grid-cols-1 gap-12 lg:grid-cols-2 items-start">
+                                {/* Left: Event Info + CTA */}
+                                <div className="space-y-8">
+                                    <div className="space-y-4">
+                                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-black uppercase tracking-[0.3em] text-xs">
+                                            {event.title}
+                                        </div>
+                                        {/* Thin accent bar under the badge */}
+                                        <div className="h-[3px] w-10 rounded-full" style={{ backgroundColor: accent }}></div>
+                                        <h2 className="text-3xl md:text-5xl lg:text-[56px] font-black uppercase tracking-tighter leading-[1.2]">
+                                            <span className="text-primary">{event.theme}</span>
+                                        </h2>
+                                        {event.themeBibleVerse && (
+                                            <p className="text-sm font-bold uppercase tracking-[0.25em]" style={{ color: accent }}>
+                                                {event.themeBibleVerse}
+                                            </p>
+                                        )}
                                     </div>
-                                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tighter drop-shadow-lg">
-                                        {event.title}
-                                    </h1>
+
+                                    <div className="flex flex-wrap gap-4">
+                                        {registrationOpen && (
+                                            <Link href={`/e/${eventId}/register`}>
+                                                <Button size="lg" className="gap-3 rounded-2xl group btn-primary">
+                                                    Register Now
+                                                    <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                                                </Button>
+                                            </Link>
+                                        )}
+                                        {registrationNotStarted && (
+                                            <div className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 font-bold text-sm">
+                                                <Clock size={16} className="shrink-0" />
+                                                Registration opens {regOpen ? format(regOpen, 'do MMM yyyy') : ''}
+                                            </div>
+                                        )}
+                                        {registrationEnded && (
+                                            <div className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gray-100 border border-gray-200 text-gray-500 font-bold text-sm">
+                                                <Lock size={16} className="shrink-0" />
+                                                Registration Ended
+                                            </div>
+                                        )}
+                                        {event.invitationConfig?.enabled && (
+                                            <Link href={`/e/${eventId}/invite`}>
+                                                <Button size="lg" variant="outline" className="gap-3 rounded-2xl border-gray-300 text-gray-700 hover:bg-gray-50">
+                                                    Invite someone
+                                                    <UserPlus size={18} />
+                                                </Button>
+                                            </Link>
+                                        )}
+                                    </div>
                                 </div>
 
-                                <div className="flex gap-3">
-                                    {event.registrationConfig?.enabled && (
-                                        <Link href={`/e/${eventId}/register`}>
-                                            <Button size="lg" className="h-14 px-8 rounded-2xl bg-white text-primary hover:bg-gray-50 border-none font-bold shadow-xl">
-                                                Register Now
-                                            </Button>
-                                        </Link>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {}
-            <div className="container mx-auto container-px -mt-8 relative z-20">
-                <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-0 rounded-3xl bg-white shadow-2xl shadow-primary/5 border border-gray-100 overflow-hidden divide-y md:divide-y-0 md:divide-x divide-gray-100">
-                    <div className="p-6 flex items-center gap-4 hover:bg-gray-50 transition-colors">
-                        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                            <Calendar size={24} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Date</p>
-                            <p className="font-bold text-gray-900">{format(eventDate, 'MMMM do, yyyy')}</p>
-                        </div>
-                    </div>
-                    <div className="p-6 flex items-center gap-4 hover:bg-gray-50 transition-colors">
-                        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                            <Clock size={24} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Time</p>
-                            <p className="font-bold text-gray-900">{format(eventDate, 'h:mm a')}</p>
-                        </div>
-                    </div>
-                    <div className="p-6 flex items-center gap-4 hover:bg-gray-50 transition-colors">
-                        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                            <MapPin size={24} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Location</p>
-                            <p className="font-bold text-gray-900 line-clamp-1">{event.venue.name}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {}
-            <div className="container mx-auto container-px mt-20 md:mt-32">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-                    {}
-                    <div className="lg:col-span-8 space-y-20">
-                        {}
-                        <section className="space-y-6">
-                            <div className="space-y-2">
-                                <h3 className="text-xs font-black text-primary uppercase tracking-[0.3em]">The Encounter</h3>
-                                <h2 className="text-4xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter">
-                                    About <span className="text-primary">The Event</span>
-                                </h2>
-                            </div>
-                            <p className="text-lg text-gray-600 leading-relaxed font-medium whitespace-pre-wrap max-w-3xl">
-                                {event.description}
-                            </p>
-                        </section>
-
-                        {}
-                        {event.ministers && event.ministers.length > 0 && (
-                            <section className="space-y-10">
-                                <div className="space-y-2">
-                                    <h3 className="text-xs font-black text-primary uppercase tracking-[0.3em]">Ministers</h3>
-                                    <h2 className="text-4xl font-black text-gray-900 uppercase tracking-tighter">
-                                        Anointed <span className="text-primary">Voices</span>
-                                    </h2>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {event.ministers.map((minister, idx) => (
-                                        <div key={idx} className="group relative bg-gray-50 rounded-[2rem] p-6 border border-gray-100 transition-all hover:bg-white hover:shadow-xl hover:border-primary/20">
-                                            <div className="flex items-center gap-6">
-                                                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 border-white shadow-md">
-                                                    {minister.photo ? (
-                                                        <Image src={minister.photo} alt={minister.name} fill className="object-cover" />
-                                                    ) : (
-                                                        <div className="w-full h-full bg-primary/10 flex items-center justify-center text-primary">
-                                                            <UserPlus size={32} />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <h4 className="text-xl font-bold text-gray-900 underline decoration-primary decoration-4 underline-offset-4">{minister.name}</h4>
-                                                    <p className="text-sm text-primary font-bold uppercase tracking-widest mt-1">{minister.position || 'Guest Minister'}</p>
+                                {/* Right: Event info cards */}
+                                <div className="space-y-6">
+                                    <div className="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-sm p-6 shadow-sm">
+                                        <div className="flex items-start gap-3">
+                                            <div className="rounded-xl p-2" style={{ backgroundColor: `${accent}20`, color: accent }}>
+                                                <MapPin size={18} />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <div className="text-xs font-black uppercase tracking-[0.25em] text-gray-400">Venue</div>
+                                                <div className="mt-1 text-lg font-black text-gray-900">{event.venue.name}</div>
+                                                <div className="mt-2 text-sm font-semibold text-gray-600">
+                                                    <span className="text-gray-700">{event.venue.address}</span>
+                                                    {event.venue.city && `, ${event.venue.city}`}
+                                                    {event.venue.country && `, ${event.venue.country}`}.
                                                 </div>
                                             </div>
-                                            {minister.bio && <p className="mt-6 text-sm text-gray-500 leading-relaxed line-clamp-3">{minister.bio}</p>}
                                         </div>
-                                    ))}
-                                </div>
-                            </section>
-                        )}
-
-                        {}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {}
-                            <div className="relative overflow-hidden rounded-[2.5rem] bg-linear-to-br from-green-600 to-green-900 p-8 shadow-2xl group cursor-pointer transition-transform hover:-translate-y-1">
-                                <div className="absolute -right-10 -bottom-10 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                                    <Music size={200} />
-                                </div>
-                                <div className="relative z-10 space-y-6">
-                                    <div className="h-12 w-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
-                                        <Music size={24} />
                                     </div>
-                                    <div className="space-y-2">
-                                        <h4 className="text-2xl font-black text-white uppercase tracking-tighter leading-none">Spotify Playlist</h4>
-                                        <p className="text-sm text-white/70 font-medium">Prepare your spirit with the Shift Encounters series.</p>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-sm p-6 shadow-sm">
+                                            <div className="flex items-start gap-3">
+                                                <div className="rounded-xl p-2" style={{ backgroundColor: `${accent}20`, color: accent }}>
+                                                    <Calendar size={18} />
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs font-black uppercase tracking-[0.25em] text-gray-400">Date</div>
+                                                    <div className="mt-1 text-lg font-black text-gray-900">{format(eventDate, 'do MMM, yyyy').toUpperCase()}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-sm p-6 shadow-sm">
+                                            <div className="flex items-start gap-3">
+                                                <div className="rounded-xl p-2" style={{ backgroundColor: `${accent}20`, color: accent }}>
+                                                    <Clock size={18} />
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs font-black uppercase tracking-[0.25em] text-gray-400">Time</div>
+                                                    <div className="mt-1 text-lg font-black text-gray-900">{format(eventDate, 'h:mm a').toUpperCase()}</div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <a href={EXTERNAL_LINKS.SPOTIFY} target="_blank" rel="noopener noreferrer">
-                                        <Button className="w-full rounded-xl bg-white text-green-700 hover:bg-gray-100 border-none font-bold">Listen Now</Button>
-                                    </a>
-                                </div>
-                            </div>
 
-                            {}
-                            <div className="relative overflow-hidden rounded-[2.5rem] bg-linear-to-br from-red-600 to-red-900 p-8 shadow-2xl group cursor-pointer transition-transform hover:-translate-y-1">
-                                <div className="absolute -right-10 -bottom-10 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                                    <Youtube size={200} />
-                                </div>
-                                <div className="relative z-10 space-y-6">
-                                    <div className="h-12 w-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
-                                        <Youtube size={24} />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <h4 className="text-2xl font-black text-white uppercase tracking-tighter leading-none">Watch Live</h4>
-                                        <p className="text-sm text-white/70 font-medium">Subscribe and stay connected with our community.</p>
-                                    </div>
-                                    <a href={EXTERNAL_LINKS.YOUTUBE} target="_blank" rel="noopener noreferrer">
-                                        <Button className="w-full rounded-xl bg-white text-red-700 hover:bg-gray-100 border-none font-bold">Visit Channel</Button>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {}
-                    <div className="lg:col-span-4 relative">
-                        <div className="sticky top-10 space-y-6">
-                            <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-2xl shadow-primary/10 space-y-8 overflow-hidden relative">
-                                <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-primary/5 blur-3xl"></div>
-
-                                <div className="space-y-4 text-center">
-                                    <h3 className="text-2xl font-black text-gray-900 uppercase">Secure Your Place</h3>
-                                    <p className="text-sm text-gray-500 font-medium leading-relaxed">
-                                        Limited seats are available for this encounter. Register today to avoid missing out.
-                                    </p>
-                                </div>
-
-                                <div className="space-y-4">
-                                    {event.registrationConfig?.enabled && (
-                                        <Link href={`/e/${eventId}/register`} className="block">
-                                            <Button className="w-full h-16 text-lg btn-primary rounded-2xl shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group">
-                                                Register For Event
-                                                <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
-                                            </Button>
-                                        </Link>
+                                    {/* Registration status card */}
+                                    {registrationEnabled && (
+                                        <div className={`rounded-2xl border p-5 flex items-center gap-4 ${
+                                            registrationOpen
+                                                ? 'bg-green-50 border-green-200'
+                                                : registrationNotStarted
+                                                    ? 'bg-blue-50 border-blue-200'
+                                                    : 'bg-gray-50 border-gray-200'
+                                        }`}>
+                                            <div className={`rounded-xl p-2 shrink-0 ${
+                                                registrationOpen
+                                                    ? 'bg-green-100 text-green-600'
+                                                    : registrationNotStarted
+                                                        ? 'bg-blue-100 text-blue-600'
+                                                        : 'bg-gray-200 text-gray-500'
+                                            }`}>
+                                                {registrationOpen ? <UserPlus size={18} /> : registrationNotStarted ? <Clock size={18} /> : <Lock size={18} />}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <div className={`text-xs font-black uppercase tracking-[0.25em] ${
+                                                    registrationOpen ? 'text-green-600' : registrationNotStarted ? 'text-blue-600' : 'text-gray-400'
+                                                }`}>Registration</div>
+                                                <div className={`mt-0.5 text-sm font-bold ${
+                                                    registrationOpen ? 'text-green-800' : registrationNotStarted ? 'text-blue-800' : 'text-gray-500'
+                                                }`}>
+                                                    {registrationOpen
+                                                        ? `Open · Closes ${regClose ? format(regClose, 'do MMM yyyy') : ''}`
+                                                        : registrationNotStarted
+                                                            ? `Opens ${regOpen ? format(regOpen, 'do MMM yyyy') : ''}`
+                                                            : 'Registration Ended'
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
                                     )}
-                                    {event.invitationConfig?.enabled && (
-                                        <Link href={`/e/${eventId}/invite`} className="block">
-                                            <Button variant="outline" className="w-full h-16 text-lg rounded-2xl border-gray-100 hover:bg-gray-50 flex items-center justify-center gap-3 text-gray-600">
-                                                Invite Someone
-                                                <UserPlus size={20} className="opacity-60" />
-                                            </Button>
-                                        </Link>
-                                    )}
-                                </div>
 
-                                <div className="pt-6 border-t border-gray-50 space-y-4">
-                                    <div className="flex items-center gap-3 text-sm text-gray-600 font-medium">
-                                        <ShieldCheck size={18} className="text-green-500" />
-                                        Free Entry / Online Access
-                                    </div>
-                                    <div className="flex items-center gap-3 text-sm text-gray-600 font-medium">
-                                        <Zap size={18} className="text-amber-500" />
-                                        Spiritual Refreshment Guaranteed
+                                    {/* About card */}
+                                    <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100">
+                                        <div className="text-xs font-black uppercase tracking-[0.25em] mb-2" style={{ color: accent }}>About This Event</div>
+                                        <p className="text-sm text-gray-600 font-medium leading-relaxed line-clamp-6">
+                                            {event.description}
+                                        </p>
                                     </div>
                                 </div>
-                            </div>
-
-                            {}
-                            <div className="bg-linear-to-br from-primary to-primary-dark rounded-[2.5rem] p-8 text-white shadow-xl">
-                                <p className="text-lg font-medium italic leading-relaxed text-white/90">
-                                    &ldquo;{event.themeBibleVerse || 'But as for you, continue in what you have learned and have become convinced of.'}&rdquo;
-                                </p>
-                                <div className="mt-4 flex items-center gap-2">
-                                    <div className="h-px flex-1 bg-white/20"></div>
-                                    <span className="text-xs font-black uppercase tracking-widest text-white/60">
-                                        {event.theme || 'The Word'}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {}
-            <section className="container mx-auto container-px mt-32 text-center space-y-12">
-                <div className="max-w-2xl mx-auto space-y-4">
-                    <h2 className="text-3xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter">
-                        Join Us <span className="text-primary">From Everywhere</span>
-                    </h2>
-                    <p className="text-lg text-gray-500 font-medium">
-                        Can&apos;t make it in person? Experience the shift live via Google Meet.
-                    </p>
-                </div>
-
-                <div className="max-w-4xl mx-auto bg-gray-50 rounded-[3rem] p-8 md:p-12 border border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-12 items-center text-left">
-                    <div className="space-y-6">
-                        <div className="h-16 w-16 relative">
-                            <Image src="/icons/Google_Meet_icon.svg" alt="Google Meet" fill className="object-contain" />
-                        </div>
-                        <div className="space-y-2">
-                            <h4 className="text-2xl font-black text-gray-900 uppercase">Live Streaming</h4>
-                            <p className="text-sm text-gray-500 font-medium leading-relaxed">
-                                High-quality video and audio streaming for our global community members.
-                            </p>
-                        </div>
-                        <a href={EXTERNAL_LINKS.GOOGLE_MEET.VIDEO_LINK} target="_blank" rel="noopener noreferrer">
-                            <Button className="h-14 px-8 rounded-xl bg-[#00832d] hover:bg-[#006b24] text-white gap-3 font-bold border-none shadow-lg">
-                                Join Meeting
-                                <ExternalLink size={18} />
-                            </Button>
-                        </a>
-                    </div>
-                    <div className="space-y-6 border-t md:border-t-0 md:border-l border-gray-200 pt-6 md:pt-0 md:pl-12">
-                        <h5 className="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">Join By Phone</h5>
-                        <div className="space-y-4">
-                            <div>
-                                <p className="text-sm font-bold text-gray-900">Dial In:</p>
-                                <a href={`tel:${EXTERNAL_LINKS.GOOGLE_MEET.PHONE}`} className="text-primary font-black text-lg hover:underline transition-all">
-                                    {EXTERNAL_LINKS.GOOGLE_MEET.PHONE}
-                                </a>
-                            </div>
-                            <div>
-                                <p className="text-sm font-bold text-gray-900">PIN:</p>
-                                <p className="text-primary font-black text-lg">{EXTERNAL_LINKS.GOOGLE_MEET.PIN}</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {}
+            {/* Special Feature / Spotify Tie-in */}
+            <section
+                className="py-16 md:py-24 text-white"
+                style={{ backgroundColor: `color-mix(in srgb, ${primary} 55%, black)` }}
+            >
+                <div className="container mx-auto container-px">
+                    <div
+                        className="rounded-3xl md:rounded-[3rem] p-8 md:p-12 lg:p-20 relative overflow-hidden shadow-2xl"
+                        style={{
+                            background: `linear-gradient(to bottom right, ${secondary}, ${primary})`
+                        }}
+                    >
+                        {/* Decorative circles */}
+                        <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-white/5 blur-3xl"></div>
+                        <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-white/5 blur-3xl"></div>
+
+                        <div className="grid grid-cols-1 gap-12 items-center lg:grid-cols-2 relative z-10">
+                            <div className="space-y-8">
+                                <div className="space-y-4">
+                                    <span className="text-accent font-black uppercase tracking-[0.3em] text-xs">Spotify Premiere</span>
+                                    <h2 className="text-4xl font-black md:text-6xl tracking-tighter uppercase">
+                                        Shift <span className="text-white">Encounters</span>
+                                    </h2>
+                                    <p className="text-lg text-white/70 max-w-lg leading-relaxed font-medium">
+                                        Listen to &ldquo;Mastering the Mystery of Christ&rdquo; series on Spotify. Prepare your spirit before the event.
+                                    </p>
+                                </div>
+                                <div className="flex flex-wrap gap-4">
+                                    <a href={EXTERNAL_LINKS.SPOTIFY} target="_blank" rel="noopener noreferrer">
+                                        <Button variant="secondary" className="gap-3 rounded-2xl group bg-[#1DB954] hover:bg-[#1aa34a] text-white border-[#1DB954] shadow-none hover:shadow-none">
+                                            <Music size={20} />
+                                            Open on Spotify
+                                        </Button>
+                                    </a>
+                                    {event.registrationConfig?.enabled && (
+                                        <Link href={`/e/${eventId}/register`}>
+                                            <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 rounded-2xl">
+                                                Join Event
+                                            </Button>
+                                        </Link>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="flex justify-center">
+                                <div className="glass-dark p-6 md:p-8 rounded-3xl md:rounded-[2.5rem] border border-white/10 shadow-2xl backdrop-blur-sm">
+                                    <div className="flex flex-col items-center gap-4">
+                                        <div className="aspect-square w-52 relative group cursor-pointer overflow-hidden rounded-3xl bg-white flex items-center justify-center">
+                                            <div className="relative w-44 h-44">
+                                                <Image
+                                                    src="/graphics/Mastering_The_Misteries_of_Christ_-_Temi_Adenigba-1024.png"
+                                                    alt="Scan QR code to listen on Spotify"
+                                                    fill
+                                                    className="object-contain rounded-2xl"
+                                                    priority
+                                                />
+                                            </div>
+                                            <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors rounded-3xl pointer-events-none"></div>
+                                        </div>
+                                        <div className="text-[10px] font-bold tracking-[0.2em] text-white/90 uppercase">Scan to Listen</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* YouTube Channel Section */}
+            {EXTERNAL_LINKS.YOUTUBE !== '#' && (
+                <section className="bg-linear-to-br from-red-50 via-red-50/50 to-white py-16 md:py-24">
+                    <div className="container mx-auto container-px">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="bg-white rounded-3xl md:rounded-[3rem] p-8 md:p-12 lg:p-20 relative overflow-hidden shadow-2xl border-2 border-red-100">
+                                <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-red-500/10 blur-3xl"></div>
+                                <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-red-600/10 blur-3xl"></div>
+
+                                <div className="grid grid-cols-1 gap-12 items-center lg:grid-cols-2 relative z-10">
+                                    <div className="space-y-8">
+                                        <div className="space-y-4">
+                                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 text-red-600 font-black uppercase tracking-[0.3em] text-xs">
+                                                <Youtube size={16} />
+                                                YouTube Channel
+                                            </div>
+                                            <h2 className="text-4xl font-black md:text-6xl tracking-tighter uppercase text-gray-900">
+                                                Watch &amp; <span className="text-red-600">Learn</span>
+                                            </h2>
+                                            <p className="text-lg text-gray-600 max-w-lg leading-relaxed font-medium">
+                                                Subscribe to our YouTube channel for powerful teachings, testimonies, and event highlights. Stay connected with the community.
+                                            </p>
+                                        </div>
+                                        <div className="flex flex-wrap gap-4">
+                                            <a href={EXTERNAL_LINKS.YOUTUBE} target="_blank" rel="noopener noreferrer">
+                                                <Button variant="secondary" className="gap-3 rounded-2xl group bg-red-600 hover:bg-red-700 text-white border-red-600">
+                                                    <Youtube size={20} />
+                                                    Visit Channel
+                                                </Button>
+                                            </a>
+                                            {event.registrationConfig?.enabled && (
+                                                <Link href={`/e/${eventId}/register`}>
+                                                    <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-2xl">
+                                                        Register Now
+                                                    </Button>
+                                                </Link>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-center">
+                                        <div className="glass-dark p-6 md:p-8 rounded-3xl md:rounded-[2.5rem] border-white/5 shadow-2xl bg-linear-to-br from-red-50 to-white">
+                                            <div className="aspect-video w-full max-w-md bg-linear-to-br from-red-500 to-red-700 rounded-3xl flex items-center justify-center relative group cursor-pointer overflow-hidden">
+                                                <div className="absolute inset-0 bg-red-600/20 group-hover:bg-transparent transition-colors"></div>
+                                                <Youtube size={120} className="text-white opacity-90 drop-shadow-2xl" />
+                                                <div className="absolute bottom-4 text-[10px] font-bold tracking-[0.2em] text-white uppercase">Subscribe</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* Google Meet Live Streaming Section */}
+            <section className="bg-linear-to-br from-green-50 via-blue-50/30 to-indigo-50 py-16 md:py-24">
+                <div className="container mx-auto container-px">
+                    <div className="mx-auto">
+                        <div className="bg-white rounded-3xl md:rounded-[3rem] p-8 md:p-12 lg:p-20 relative overflow-hidden shadow-lg border-2 border-green-100">
+                            <div className="relative z-10 space-y-10">
+                                {/* Header with Icon */}
+                                <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+                                    <div className="shrink-0">
+                                        <div className="relative w-16 h-16">
+                                            <Image
+                                                src="/icons/Google_Meet_icon.svg"
+                                                alt="Google Meet"
+                                                fill
+                                                className="object-contain"
+                                                priority
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-600 font-black uppercase tracking-[0.3em] text-xs mb-4">
+                                            <Video size={16} />
+                                            Live Streaming
+                                        </div>
+                                        <h2 className="text-4xl font-black md:text-6xl tracking-tighter uppercase text-gray-900 mb-3">
+                                            Join Us <span className="text-green-600">Live</span>
+                                        </h2>
+                                        <p className="text-lg text-gray-600 leading-relaxed font-medium">
+                                            Can&apos;t make it in person? Join us live via Google Meet for an immersive online experience.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Primary Action */}
+                                <div className="flex flex-wrap gap-4">
+                                    <a
+                                        href={EXTERNAL_LINKS.GOOGLE_MEET.VIDEO_LINK}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <Button variant="secondary" className="gap-3 rounded-2xl group bg-[#00832d] hover:bg-[#006b24] text-white border-[#00832d] shadow-none hover:shadow-none">
+                                            <Video size={20} />
+                                            Join Google Meet
+                                            <ExternalLink size={18} className="opacity-70 group-hover:opacity-100 transition-opacity" />
+                                        </Button>
+                                    </a>
+                                    {event.registrationConfig?.enabled && (
+                                        <Link href={`/e/${eventId}/register`}>
+                                            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-2xl">
+                                                Register Now
+                                            </Button>
+                                        </Link>
+                                    )}
+                                </div>
+
+                                {/* Phone Access */}
+                                <div className="pt-6 border-t border-gray-200">
+                                    <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Or Join by Phone</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 hover:border-green-300 transition-colors">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <Phone size={18} className="text-green-600" />
+                                                <span className="text-sm font-bold text-gray-700">Dial In</span>
+                                            </div>
+                                            <a
+                                                href={`tel:${EXTERNAL_LINKS.GOOGLE_MEET.PHONE}`}
+                                                className="text-base text-green-600 hover:text-green-700 hover:underline font-semibold block mb-1"
+                                            >
+                                                {EXTERNAL_LINKS.GOOGLE_MEET.PHONE}
+                                            </a>
+                                            <p className="text-sm text-gray-600">
+                                                PIN: <span className="font-mono font-bold text-gray-900">{EXTERNAL_LINKS.GOOGLE_MEET.PIN}</span>
+                                            </p>
+                                        </div>
+                                        <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 hover:border-blue-300 transition-colors">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <Phone size={18} className="text-blue-600" />
+                                                <span className="text-sm font-bold text-gray-700">More Numbers</span>
+                                            </div>
+                                            <a
+                                                href={EXTERNAL_LINKS.GOOGLE_MEET.MORE_PHONE_NUMBERS}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-sm text-blue-600 hover:underline font-semibold flex items-center gap-2"
+                                            >
+                                                View all phone numbers
+                                                <ExternalLink size={14} />
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Ministers Section */}
+            {event.ministers && event.ministers.length > 0 && (
+                <section className="py-16 md:py-24 bg-white">
+                    <div className="container mx-auto container-px">
+                        <div className="max-w-6xl mx-auto space-y-10">
+                            <div className="space-y-2 text-center">
+                                <h3 className="text-xs font-black text-primary uppercase tracking-[0.3em]">Ministers</h3>
+                                <h2 className="text-4xl font-black text-gray-900 uppercase tracking-tighter">
+                                    Anointed <span className="text-primary">Voices</span>
+                                </h2>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {event.ministers.map((minister, idx) => (
+                                    <div key={idx} className="group relative bg-gray-50 rounded-[2rem] p-6 border border-gray-100 transition-all hover:bg-white hover:shadow-xl hover:border-primary/20">
+                                        <div className="flex items-center gap-6">
+                                            <div
+                                                className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl shadow-md border-2"
+                                                style={{ borderColor: `${accent}60` }}
+                                            >
+                                                {minister.photo ? (
+                                                    <Image src={minister.photo} alt={minister.name} fill className="object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full bg-primary/10 flex items-center justify-center text-primary">
+                                                        <UserPlus size={32} />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <h4
+                                                    className="text-xl font-bold text-gray-900 underline decoration-4 underline-offset-4"
+                                                    style={{ textDecorationColor: accent }}
+                                                >{minister.name}</h4>
+                                                <p className="text-sm font-bold uppercase tracking-widest mt-1" style={{ color: accent }}>{minister.position || 'Guest Minister'}</p>
+                                            </div>
+                                        </div>
+                                        {minister.bio && <p className="mt-6 text-sm text-gray-500 leading-relaxed line-clamp-3">{minister.bio}</p>}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* Final CTA */}
+            <section className="py-24 md:py-32 text-center bg-gray-50/50">
+                <div className="container mx-auto container-px space-y-10">
+                    <div className="space-y-4">
+                        <h2 className="text-4xl font-black text-primary md:text-7xl tracking-tighter uppercase">
+                            Ready for A Shift?
+                        </h2>
+                        <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto">
+                            Join us at <strong>{event.venue.name}</strong> on {format(eventDate, 'MMMM do')}. Don&apos;t miss this encounter.
+                        </p>
+                    </div>
+                    {registrationOpen && (
+                        <Link href={`/e/${eventId}/register`}>
+                            <Button size="lg" className="h-16 px-12 text-xl gap-3 rounded-4xl shadow-2xl shadow-primary/40 group btn-primary">
+                                Secure Your Seat
+                                <ArrowRight size={24} className="transition-transform group-hover:translate-x-2" />
+                            </Button>
+                        </Link>
+                    )}
+                    {registrationNotStarted && (
+                        <div className="inline-flex items-center gap-2 px-6 py-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 font-bold text-base">
+                            <Clock size={18} className="shrink-0" />
+                            Registration opens {regOpen ? format(regOpen, 'do MMM yyyy') : ''}
+                        </div>
+                    )}
+                    {registrationEnded && (
+                        <div className="inline-flex items-center gap-2 px-6 py-4 rounded-2xl bg-gray-100 border border-gray-200 text-gray-500 font-bold text-base">
+                            <Lock size={18} className="shrink-0" />
+                            Registration has ended
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* Fixed mobile CTA */}
             <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden w-[calc(100%-48px)]">
-                {event.registrationConfig?.enabled && (
+                {registrationOpen && (
                     <Link href={`/e/${eventId}/register`}>
-                        <Button className="w-full h-16 text-lg font-black uppercase tracking-widest bg-primary text-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] shadow-primary/30 active:scale-95 transition-transform">
+                        <Button className="w-full h-16 text-lg font-black uppercase tracking-widest btn-primary rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] shadow-primary/30 active:scale-95 transition-transform">
                             Register Now
                         </Button>
                     </Link>
                 )}
             </div>
+
+            <Footer />
         </div>
     );
 }
