@@ -21,7 +21,7 @@ export default async function InvitePage({ params }: { params: Promise<{ eventId
 
     return (
         <div className="min-h-screen bg-white">
-            <Banner />
+            <Banner text={event.bannerText} />
             <EventBannerHeader
                 bannerImage={eventData.branding.bannerImage}
                 title={eventData.title}
@@ -59,7 +59,7 @@ export default async function InvitePage({ params }: { params: Promise<{ eventId
                 </div>
             </main>
 
-            <Footer />
+            <Footer event={event} />
         </div>
     );
 }

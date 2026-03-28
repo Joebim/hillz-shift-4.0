@@ -1,11 +1,11 @@
-﻿import { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import {
   successResponse,
   errorResponse,
   unauthorizedResponse,
   validationErrorResponse,
 } from "@/src/lib/api/response";
-import { queryDocuments, createDocument } from "@/src/lib/firebase/firestore";
+import { queryDocuments, createDocument, queryDocumentsAdvanced, batchUpdateDocuments } from "@/src/lib/firebase/firestore";
 import { getSession } from "@/src/lib/auth/session";
 import { Event } from "@/src/types/event";
 import {
@@ -87,6 +87,22 @@ export async function POST(request: NextRequest) {
 
     if (!validated.slug) {
       validated.slug = generateSlug(validated.title);
+    }
+
+    // If this is set as membership form, unset others
+    if (validated.isMembershipForm) {
+      const currentMembershipForms = await queryDocumentsAdvanced<Event>("events", (ref) =>
+        ref.where("isMembershipForm", "==", true)
+      );
+      
+      const updates = currentMembershipForms.map((e) => ({
+        id: e.id,
+        data: { isMembershipForm: false },
+      }));
+
+      if (updates.length > 0) {
+        await batchUpdateDocuments("events", updates);
+      }
     }
 
     const eventId = await createDocument("events", {

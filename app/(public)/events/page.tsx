@@ -56,10 +56,10 @@ export default async function EventsPage() {
                         </div>
                         <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-none animate-fade-in-up">
                             EXPERIENCE <br />
-                            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 via-pink-300 to-indigo-400">THE MOMENT</span>
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 via-pink-300 to-indigo-400">THE MYSTERY</span>
                         </h1>
                         <p className="text-xl text-white/60 max-w-2xl font-medium animate-fade-in-up delay-100 italic">
-                            &quot;For where two or three gather in my name, there am I with them.&quot; — Matthew 18:20
+                            &quot;and to make all men see what is the fellowship of the mystery, which from the beginning of the world hath been hid in God, who created all things by Jesus Christ.&quot; — Ephesians 3:9
                         </p>
                     </div>
                 </div>

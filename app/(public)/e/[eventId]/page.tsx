@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { EXTERNAL_LINKS } from '@/src/constants/links';
 import {
     ArrowRight, Music, Video, Phone, ExternalLink,
-    Youtube, Calendar, Clock, MapPin, UserPlus, AlertCircle, Lock
+    Youtube, Calendar, Clock, MapPin, UserPlus, AlertCircle, Lock, Radio
 } from 'lucide-react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
@@ -42,7 +42,7 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
 
     return (
         <div className="min-h-screen selection:bg-primary/20 bg-white text-gray-900">
-            <Banner />
+            <Banner text={event.bannerText} />
             <EventBannerHeader
                 bannerImage={event.branding.bannerImage}
                 title={event.title}
@@ -271,157 +271,136 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                 </div>
             </section>
 
-            {/* YouTube Channel Section */}
-            {EXTERNAL_LINKS.YOUTUBE !== '#' && (
-                <section className="bg-linear-to-br from-red-50 via-red-50/50 to-white py-16 md:py-24">
-                    <div className="container mx-auto container-px">
-                        <div className="max-w-6xl mx-auto">
-                            <div className="bg-white rounded-3xl md:rounded-[3rem] p-8 md:p-12 lg:p-20 relative overflow-hidden shadow-2xl border-2 border-red-100">
-                                <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-red-500/10 blur-3xl"></div>
-                                <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-red-600/10 blur-3xl"></div>
+            {/* Dynamic Event Channels */}
+            {event.channels && event.channels.length > 0 && (
+                <div className="space-y-0">
+                    {event.channels.map((channel, idx) => {
+                        const channelColor = channel.color || '#7c3aed';
+                        const isYouTube = channel.name.toLowerCase().includes('youtube');
+                        const isMeet = channel.name.toLowerCase().includes('meet');
+                        const isSpotify = channel.name.toLowerCase().includes('spotify');
+                        
+                        const Icon = isYouTube ? Youtube : isMeet ? Video : isSpotify ? Music : Radio;
+                        
+                        return (
+                            <section 
+                                key={channel.id || idx} 
+                                className="py-16 md:py-24 overflow-hidden relative"
+                                style={{ 
+                                    background: `linear-gradient(135deg, color-mix(in srgb, ${channelColor} 5%, white), white 60%)` 
+                                }}
+                            >
+                                <div className="container mx-auto container-px">
+                                    <div className="max-w-6xl mx-auto">
+                                        <div 
+                                            className="bg-white rounded-3xl md:rounded-[3.5rem] p-8 md:p-12 lg:p-20 relative overflow-hidden shadow-2xl border-2"
+                                            style={{ borderColor: `color-mix(in srgb, ${channelColor} 10%, transparent)` }}
+                                        >
+                                            {/* Decorative Background Elements */}
+                                            <div 
+                                                className="absolute -top-24 -right-24 h-64 w-64 rounded-full blur-3xl opacity-10"
+                                                style={{ backgroundColor: channelColor }}
+                                            ></div>
+                                            <div 
+                                                className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full blur-3xl opacity-15"
+                                                style={{ backgroundColor: channelColor }}
+                                            ></div>
 
-                                <div className="grid grid-cols-1 gap-12 items-center lg:grid-cols-2 relative z-10">
-                                    <div className="space-y-8">
-                                        <div className="space-y-4">
-                                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 text-red-600 font-black uppercase tracking-[0.3em] text-xs">
-                                                <Youtube size={16} />
-                                                YouTube Channel
-                                            </div>
-                                            <h2 className="text-4xl font-black md:text-6xl tracking-tighter uppercase text-gray-900">
-                                                Watch &amp; <span className="text-red-600">Learn</span>
-                                            </h2>
-                                            <p className="text-lg text-gray-600 max-w-lg leading-relaxed font-medium">
-                                                Subscribe to our YouTube channel for powerful teachings, testimonies, and event highlights. Stay connected with the community.
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-wrap gap-4">
-                                            <a href={EXTERNAL_LINKS.YOUTUBE} target="_blank" rel="noopener noreferrer">
-                                                <Button variant="secondary" className="gap-3 rounded-2xl group bg-red-600 hover:bg-red-700 text-white border-red-600">
-                                                    <Youtube size={20} />
-                                                    Visit Channel
-                                                </Button>
-                                            </a>
-                                            {event.registrationConfig?.enabled && (
-                                                <Link href={`/e/${eventId}/register`}>
-                                                    <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-2xl">
-                                                        Register Now
-                                                    </Button>
-                                                </Link>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-center">
-                                        <div className="glass-dark p-6 md:p-8 rounded-3xl md:rounded-[2.5rem] border-white/5 shadow-2xl bg-linear-to-br from-red-50 to-white">
-                                            <div className="aspect-video w-full max-w-md bg-linear-to-br from-red-500 to-red-700 rounded-3xl flex items-center justify-center relative group cursor-pointer overflow-hidden">
-                                                <div className="absolute inset-0 bg-red-600/20 group-hover:bg-transparent transition-colors"></div>
-                                                <Youtube size={120} className="text-white opacity-90 drop-shadow-2xl" />
-                                                <div className="absolute bottom-4 text-[10px] font-bold tracking-[0.2em] text-white uppercase">Subscribe</div>
+                                            <div className="grid grid-cols-1 gap-12 items-center lg:grid-cols-2 relative z-10">
+                                                <div className="space-y-8">
+                                                    <div className="space-y-4">
+                                                        <div 
+                                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full font-black uppercase tracking-[0.3em] text-[10px] md:text-xs"
+                                                            style={{ 
+                                                                backgroundColor: `color-mix(in srgb, ${channelColor} 10%, transparent)`,
+                                                                color: channelColor
+                                                            }}
+                                                        >
+                                                            <Icon size={16} />
+                                                            {channel.name}
+                                                        </div>
+                                                        <h2 className="text-4xl font-black md:text-6xl tracking-tighter uppercase text-gray-900 leading-none">
+                                                            {channel.title?.split(' ').map((word, i, arr) => (
+                                                                <span key={i}>
+                                                                    {i === arr.length - 1 ? <span style={{ color: channelColor }}>{word}</span> : word + ' '}
+                                                                </span>
+                                                            )) || (
+                                                                <>Join <span style={{ color: channelColor }}>{channel.name}</span></>
+                                                            )}
+                                                        </h2>
+                                                        <p className="text-lg text-gray-600 max-w-lg leading-relaxed font-medium">
+                                                            {channel.description || `Stay connected with us on ${channel.name} for the latest updates and sessions.`}
+                                                        </p>
+                                                    </div>
+
+                                                    <div className="flex flex-wrap gap-4">
+                                                        <a href={channel.link} target="_blank" rel="noopener noreferrer">
+                                                            <Button 
+                                                                variant="secondary" 
+                                                                className="gap-3 rounded-2xl group shadow-lg transition-all hover:-translate-y-1 h-14 px-8"
+                                                                style={{ backgroundColor: channelColor, borderColor: channelColor, color: '#fff' }}
+                                                            >
+                                                                <Icon size={20} />
+                                                                {isYouTube ? 'Visit Channel' : isMeet ? 'Join Meeting' : 'Open Link'}
+                                                                <ExternalLink size={18} className="opacity-70 group-hover:opacity-100 transition-opacity" />
+                                                            </Button>
+                                                        </a>
+                                                        {event.registrationConfig?.enabled && (
+                                                            <Link href={`/e/${eventId}/register`}>
+                                                                <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-2xl h-14 px-8">
+                                                                    Register Now
+                                                                </Button>
+                                                            </Link>
+                                                        )}
+                                                    </div>
+
+                                                    {channel.barcode && (
+                                                        <div className="pt-6 border-t border-gray-100">
+                                                            <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Access Code / ID</p>
+                                                            <div className="font-mono text-xl font-black tracking-widest text-gray-900">
+                                                                {channel.barcode}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <div className="flex justify-center lg:justify-end">
+                                                    <div 
+                                                        className="p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] border-white/5 shadow-2xl relative group"
+                                                        style={{ 
+                                                            background: `linear-gradient(135deg, color-mix(in srgb, ${channelColor} 10%, white), white)` 
+                                                        }}
+                                                    >
+                                                        <div 
+                                                            className="aspect-square w-48 md:w-64 lg:w-72 rounded-3xl md:rounded-[2.5rem] flex items-center justify-center relative overflow-hidden transition-transform duration-500 group-hover:scale-105"
+                                                            style={{ background: channelColor }}
+                                                        >
+                                                            <div className="absolute inset-0 bg-white/10 group-hover:bg-transparent transition-colors"></div>
+                                                            <Icon size={140} className="text-white opacity-90 drop-shadow-2xl md:scale-100 scale-75" />
+                                                            <div className="absolute bottom-6 text-[10px] font-black tracking-[0.3em] text-white uppercase opacity-80">
+                                                                {isYouTube ? 'Subscribe' : 'Connect'}
+                                                            </div>
+                                                        </div>
+                                                        {isMeet && (
+                                                            <div className="absolute -top-4 -left-4 bg-white p-4 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-3 animate-bounce-slow">
+                                                                <div className="w-8 h-8 relative">
+                                                                    <Image src="/icons/Google_Meet_icon.svg" alt="Meet" fill className="object-contain" />
+                                                                </div>
+                                                                <span className="text-xs font-black text-gray-900 uppercase">Live Stream</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                            </section>
+                        );
+                    })}
+                </div>
             )}
 
-            {/* Google Meet Live Streaming Section */}
-            <section className="bg-linear-to-br from-green-50 via-blue-50/30 to-indigo-50 py-16 md:py-24">
-                <div className="container mx-auto container-px">
-                    <div className="mx-auto">
-                        <div className="bg-white rounded-3xl md:rounded-[3rem] p-8 md:p-12 lg:p-20 relative overflow-hidden shadow-lg border-2 border-green-100">
-                            <div className="relative z-10 space-y-10">
-                                {/* Header with Icon */}
-                                <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-                                    <div className="shrink-0">
-                                        <div className="relative w-16 h-16">
-                                            <Image
-                                                src="/icons/Google_Meet_icon.svg"
-                                                alt="Google Meet"
-                                                fill
-                                                className="object-contain"
-                                                priority
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-600 font-black uppercase tracking-[0.3em] text-xs mb-4">
-                                            <Video size={16} />
-                                            Live Streaming
-                                        </div>
-                                        <h2 className="text-4xl font-black md:text-6xl tracking-tighter uppercase text-gray-900 mb-3">
-                                            Join Us <span className="text-green-600">Live</span>
-                                        </h2>
-                                        <p className="text-lg text-gray-600 leading-relaxed font-medium">
-                                            Can&apos;t make it in person? Join us live via Google Meet for an immersive online experience.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Primary Action */}
-                                <div className="flex flex-wrap gap-4">
-                                    <a
-                                        href={EXTERNAL_LINKS.GOOGLE_MEET.VIDEO_LINK}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <Button variant="secondary" className="gap-3 rounded-2xl group bg-[#00832d] hover:bg-[#006b24] text-white border-[#00832d] shadow-none hover:shadow-none">
-                                            <Video size={20} />
-                                            Join Google Meet
-                                            <ExternalLink size={18} className="opacity-70 group-hover:opacity-100 transition-opacity" />
-                                        </Button>
-                                    </a>
-                                    {event.registrationConfig?.enabled && (
-                                        <Link href={`/e/${eventId}/register`}>
-                                            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-2xl">
-                                                Register Now
-                                            </Button>
-                                        </Link>
-                                    )}
-                                </div>
-
-                                {/* Phone Access */}
-                                <div className="pt-6 border-t border-gray-200">
-                                    <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Or Join by Phone</h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 hover:border-green-300 transition-colors">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <Phone size={18} className="text-green-600" />
-                                                <span className="text-sm font-bold text-gray-700">Dial In</span>
-                                            </div>
-                                            <a
-                                                href={`tel:${EXTERNAL_LINKS.GOOGLE_MEET.PHONE}`}
-                                                className="text-base text-green-600 hover:text-green-700 hover:underline font-semibold block mb-1"
-                                            >
-                                                {EXTERNAL_LINKS.GOOGLE_MEET.PHONE}
-                                            </a>
-                                            <p className="text-sm text-gray-600">
-                                                PIN: <span className="font-mono font-bold text-gray-900">{EXTERNAL_LINKS.GOOGLE_MEET.PIN}</span>
-                                            </p>
-                                        </div>
-                                        <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 hover:border-blue-300 transition-colors">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <Phone size={18} className="text-blue-600" />
-                                                <span className="text-sm font-bold text-gray-700">More Numbers</span>
-                                            </div>
-                                            <a
-                                                href={EXTERNAL_LINKS.GOOGLE_MEET.MORE_PHONE_NUMBERS}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-sm text-blue-600 hover:underline font-semibold flex items-center gap-2"
-                                            >
-                                                View all phone numbers
-                                                <ExternalLink size={14} />
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* Ministers Section */}
             {event.ministers && event.ministers.length > 0 && (
@@ -472,7 +451,7 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                 <div className="container mx-auto container-px space-y-10">
                     <div className="space-y-4">
                         <h2 className="text-4xl font-black text-primary md:text-7xl tracking-tighter uppercase">
-                            Ready for A Shift?
+                            Ready for the Encounter?
                         </h2>
                         <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto">
                             Join us at <strong>{event.venue.name}</strong> on {format(eventDate, 'MMMM do')}. Don&apos;t miss this encounter.
@@ -512,7 +491,7 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                 )}
             </div>
 
-            <Footer />
+            <Footer event={event} />
         </div>
     );
 }

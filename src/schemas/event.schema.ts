@@ -1,4 +1,4 @@
-﻿import { z } from "zod";
+import { z } from "zod";
 
 export const eventVenueSchema = z.object({
   name: z.string().min(1, "Venue name is required"),
@@ -148,6 +148,8 @@ export const eventBaseSchema = z.object({
   eventBibleVerse: z.string().optional(),
   theme: z.string().optional(),
   themeBibleVerse: z.string().optional(),
+  footerText: z.string().optional(),
+  bannerText: z.string().optional(),
   contacts: z.array(z.string()).optional(),
   links: z.array(z.string()).optional(),
   ministers: z.array(eventMinisterSchema).optional(),
@@ -161,6 +163,7 @@ export const eventBaseSchema = z.object({
         link: z.string().url("Invalid channel link").optional(),
         title: z.string().optional(),
         description: z.string().optional(),
+        color: z.string().optional(),
         otherContacts: z.array(z.string()).optional(),
       }),
     )
@@ -183,6 +186,7 @@ export const eventBaseSchema = z.object({
 
   branding: eventBrandingSchema,
 
+  isMembershipForm: z.boolean().optional(),
   category: z.enum([
     "conference",
     "workshop",

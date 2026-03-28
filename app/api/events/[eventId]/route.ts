@@ -10,6 +10,8 @@ import {
   getDocument,
   updateDocument,
   deleteDocument,
+  queryDocumentsAdvanced,
+  batchUpdateDocuments
 } from "@/src/lib/firebase/firestore";
 import { getSession } from "@/src/lib/auth/session";
 import { Event } from "@/src/types/event";
@@ -65,6 +67,24 @@ export async function PATCH(
     const event = await getDocument<Event>("events", eventId);
     if (!event) {
       return notFoundResponse("Event not found");
+    }
+
+    // If this is set as membership form, unset others (excluding the current event)
+    if (validated.isMembershipForm) {
+      const currentMembershipForms = await queryDocumentsAdvanced<Event>("events", (ref) =>
+        ref.where("isMembershipForm", "==", true)
+      );
+      
+      const updates = currentMembershipForms
+        .filter((e) => e.id !== eventId)
+        .map((e) => ({
+          id: e.id,
+          data: { isMembershipForm: false },
+        }));
+
+      if (updates.length > 0) {
+        await batchUpdateDocuments("events", updates);
+      }
     }
 
     await updateDocument("events", eventId, validated);

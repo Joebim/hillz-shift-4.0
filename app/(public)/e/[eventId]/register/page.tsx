@@ -21,7 +21,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ event
 
     return (
         <div className="min-h-screen bg-white">
-            <Banner />
+            <Banner text={event.bannerText} />
             <EventBannerHeader
                 bannerImage={eventData.branding.bannerImage}
                 title={eventData.title}
@@ -59,7 +59,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ event
                 </div>
             </main>
 
-            <Footer />
+            <Footer event={event} />
         </div>
     );
 }

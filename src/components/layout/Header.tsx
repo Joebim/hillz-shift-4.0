@@ -60,28 +60,15 @@ export const Header = () => {
             <nav className="container mx-auto px-6 h-full">
                 <div className="flex items-center justify-between h-full">
                     {}
-                    <Link href="/" className="flex items-center gap-3 group">
+                    <Link href="/" className="flex items-center group">
                         <img 
-                            src="https://res.cloudinary.com/dr1decnfd/image/upload/v1773612049/Hillz_Logo_csgnms.svg" 
+                            src={isScrolled ? "/icons/hillz-logo-light-transparent.svg" : "/icons/hillz-logo-dark-transparent.svg"}
                             alt="The Hillz Logo" 
-                            className="w-10 h-10 object-contain group-hover:scale-110 transition-transform duration-300" 
+                            className={cn(
+                                "w-auto object-contain transition-all duration-300 group-hover:scale-105",
+                                isScrolled ? "h-12" : "h-16"
+                            )}
                         />
-                        <div className="flex flex-col">
-                            <span
-                                className={cn(
-                                    'text-lg font-black tracking-tighter transition-colors duration-300 leading-none',
-                                    isScrolled ? 'text-gray-900' : 'text-white'
-                                )}
-                            >
-                                THE HILLZ
-                            </span>
-                            <span className={cn(
-                                'text-[10px] font-black tracking-[0.2em] transition-colors duration-300',
-                                isScrolled ? 'text-purple-600' : 'text-purple-300'
-                            )}>
-                                CHURCH
-                            </span>
-                        </div>
                     </Link>
 
                     {}

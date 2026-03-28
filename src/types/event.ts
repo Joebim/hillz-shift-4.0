@@ -1,4 +1,4 @@
-﻿import { Timestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 
 export type EventStatus =
   | "draft"
@@ -129,6 +129,7 @@ export interface EventChannel {
   link?: string;
   title?: string;
   description?: string;
+  color?: string;
   otherContacts?: string[];
 }
 
@@ -158,6 +159,8 @@ export interface Event {
   themeBibleVerse?: string;
   contacts?: string[];
   links?: string[];
+  footerText?: string;
+  bannerText?: string;
   channels?: EventChannel[];
   ministers?: EventMinister[];
 
@@ -172,6 +175,7 @@ export interface Event {
   branding: EventBranding;
 
   category: EventCategory;
+  isMembershipForm?: boolean;
   tags: string[];
   speakers: EventSpeaker[];
   schedule: EventScheduleItem[];

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { queryDocuments } from '@/src/lib/firebase/firestore';
+import { queryDocuments, countDocuments } from '@/src/lib/firebase/firestore';
 import { toJsDate } from '@/src/lib/utils';
 import { Event } from '@/src/types/event';
 import { Sermon } from '@/src/types/sermon';
@@ -14,7 +14,7 @@ import { EventCard } from '@/src/components/events/EventCard';
 import { SermonCard } from '@/src/components/sermons/SermonCard';
 import { MinistryCard } from '@/src/components/ministries/MinistryCard';
 import { Button } from '@/src/components/ui/Button';
-import { ArrowRight, Quote, Clock, CheckCircle2, Sparkles, Users } from 'lucide-react';
+import { ArrowRight, Quote, Clock, CheckCircle2, Sparkles, Users, Calendar } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,13 +24,15 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-    const [rawEvents, rawSermons, rawMinistries] = await Promise.all([
+    const [rawEvents, rawSermons, rawMinistries, membershipEvent, totalEventsCount] = await Promise.all([
         queryDocuments<Event>('events', { status: 'published', featured: true }, 'startDate', 3),
         queryDocuments<Sermon>('sermons', {}, 'date', 3),
         queryDocuments<Ministry>('ministries', { active: true }, 'order', 4),
+        queryDocuments<Event>('events', { isMembershipForm: true }, 'createdAt', 1),
+        countDocuments('events', { status: 'published' }),
     ]);
 
-    const featuredEvents = rawEvents.map(event => ({
+    const processEvent = (event: Event) => ({
         ...event,
         startDate: toJsDate(event.startDate),
         endDate: toJsDate(event.endDate),
@@ -38,7 +40,9 @@ export default async function HomePage() {
         registrationCloseDate: toJsDate(event.registrationCloseDate),
         createdAt: toJsDate(event.createdAt),
         updatedAt: toJsDate(event.updatedAt),
-    }));
+    });
+
+    const featuredEvents = rawEvents.map(processEvent);
 
     const latestSermons = rawSermons.map(sermon => ({
         ...sermon,
@@ -53,11 +57,14 @@ export default async function HomePage() {
         updatedAt: toJsDate(ministry.updatedAt),
     }));
 
+    const rawHeroEvent = membershipEvent?.[0] || rawEvents[0];
+    const processedHeroEvent = rawHeroEvent ? processEvent(rawHeroEvent) : null;
+    
     return (
         <div className="min-h-screen bg-white selection:bg-purple-100 selection:text-purple-900 font-medium">
             <Header />
 
-            <Hero upcomingEvent={featuredEvents[0]} />
+            <Hero upcomingEvent={processedHeroEvent as Event} />
 
             {}
             <Section bg="none" className="py-32 relative overflow-hidden">
@@ -71,11 +78,10 @@ export default async function HomePage() {
                             Weekly Gatherings
                         </div>
                         <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter leading-none">
-                            Join Us This Sunday
+                            Join our sessions
                         </h2>
-                        <p className="text-xl text-slate-500 font-medium">
-                            Experience The Hillz in person. We have multiple service times <br className="hidden md:block" />
-                            designed to fit your schedule and spiritual needs.
+                        <p className="text-xl text-slate-500 font-medium max-w-2xl mx-auto">
+                            To experience the unsearchable riches of Christ and the effectual working of His power.
                         </p>
                     </div>
 
@@ -85,13 +91,13 @@ export default async function HomePage() {
                             <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-purple-600 group-hover:text-white transition-all duration-500 mb-8">
                                 <Clock className="w-8 h-8" />
                             </div>
-                            <h3 className="text-4xl font-black text-slate-900 mb-2">7:30 AM</h3>
-                            <p className="text-xl font-bold text-slate-600 mb-6">Morning Prayer</p>
+                            <h3 className="text-4xl font-black text-slate-900 mb-2">10:15 PM</h3>
+                            <p className="text-xl font-bold text-slate-600 mb-6">Monday Prayer Connect</p>
                             <p className="text-slate-400 font-medium mb-10 leading-relaxed">
-                                A quiet, reflective start to your Sunday with liturgical prayer and meditation.
+                                Join a thriving community of believers connected by one purpose: Maximizing their dominion inheritance in Christ via a thriving prayer life
                             </p>
                             <Button variant="outline" className="w-full rounded-2xl h-14 border-slate-200 group-hover:border-purple-600 group-hover:text-purple-600 font-bold transition-all">
-                                Plan a Visit
+                                Register to join
                             </Button>
                         </div>
 
@@ -102,13 +108,13 @@ export default async function HomePage() {
                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500 text-white text-[10px] font-black uppercase tracking-widest mb-8">
                                     <Sparkles className="w-3 h-3" /> Popular
                                 </div>
-                                <h3 className="text-4xl font-black text-white mb-2">9:00 AM</h3>
-                                <p className="text-xl font-bold text-purple-300 mb-6">The Grand Shift</p>
+                                <h3 className="text-4xl font-black text-white mb-2">5:00 PM</h3>
+                                <p className="text-xl font-bold text-purple-300 mb-6">Mastering the Mystery of Christ</p>
                                 <p className="text-slate-300 font-medium mb-10 leading-relaxed">
-                                    Our main celebration with full choir, powerful teaching, and children&apos;s ministry.
+                                    An hour of scriptural exposition. Together we search, find, receive and ingest the truth of the word of God with evidence of the life of God.
                                 </p>
                                 <Button className="w-full rounded-2xl h-14 bg-purple-600 hover:bg-purple-700 text-white font-black shadow-lg shadow-purple-900/20">
-                                    Join Main Service
+                                    Join online
                                 </Button>
                             </div>
                         </div>
@@ -118,13 +124,13 @@ export default async function HomePage() {
                             <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-purple-600 group-hover:text-white transition-all duration-500 mb-8">
                                 <Clock className="w-8 h-8" />
                             </div>
-                            <h3 className="text-4xl font-black text-slate-900 mb-2">11:30 AM</h3>
-                            <p className="text-xl font-bold text-slate-600 mb-6">Mid-Day Worship</p>
+                            <h3 className="text-4xl font-black text-slate-900 mb-2">10:15 PM</h3>
+                            <p className="text-xl font-bold text-slate-600 mb-6">Thursday Prayer Connect</p>
                             <p className="text-slate-400 font-medium mb-10 leading-relaxed">
-                                An energetic, contemporary worship experience designed for the whole family.
+                                Join a thriving community of believers connected by one purpose: Maximizing their dominion inheritance in Christ via a thriving prayer life
                             </p>
                             <Button variant="outline" className="w-full rounded-2xl h-14 border-slate-200 group-hover:border-purple-600 group-hover:text-purple-600 font-bold transition-all">
-                                Get Directions
+                                Learn more
                             </Button>
                         </div>
                     </div>
@@ -141,13 +147,13 @@ export default async function HomePage() {
                             <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-indigo-600">THE HILLZ</span>
                         </h2>
                         <p className="text-xl text-slate-500 font-medium leading-relaxed mb-10">
-                            We are more than just a church; we are a community focused on spiritual renewal, personal growth, and collective impact. Join a movement that is transforming the culture through founded faith.
+                            Hillz is a global movement of people whose dwelling place is with the King on His Holy Hill of Zion. Men and women, young and old who identifies with Christ dominion mandate and recognizes their place as the people of His presence. Our mandate is to be a nation of priests and kings positioned to radiate the glory of God to the ends of the earth, a people revealing the manifest presence of Jesus in every situation to every people in every place.
                         </p>
                         <div className="space-y-4 mb-10">
                             {[
-                                'Transformative Worship Experiences',
-                                'Biblical Wisdom for Modern Living',
-                                'Thriving Community of Believers'
+                                'A life of righteousness powered by the word',
+                                'Steadfastness in fasting and prayer enabled by Grace',
+                                'Everyday dominion by the activities of the spirit'
                             ].map((item) => (
                                 <div key={item} className="flex items-center gap-3">
                                     <div className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
@@ -175,14 +181,14 @@ export default async function HomePage() {
                         <div className="absolute -bottom-10 -left-10 bg-white p-8 rounded-[32px] shadow-2xl border border-slate-50 max-w-xs hidden md:block animate-bounce-slow">
                             <div className="flex items-center gap-4 mb-4">
                                 <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center">
-                                    <Users className="w-6 h-6" />
+                                    <Calendar className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <p className="text-2xl font-black text-slate-900 leading-none">2.5k+</p>
-                                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Members</p>
+                                    <p className="text-2xl font-black text-slate-900 leading-none">+{totalEventsCount}</p>
+                                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Events Hosted</p>
                                 </div>
                             </div>
-                            <p className="text-sm text-slate-500 font-bold italic leading-none">&quot;A place where everyone belongs.&quot;</p>
+                            <p className="text-sm text-slate-500 font-bold italic leading-none">&quot;Transforming lives, one experience at a time.&quot;</p>
                         </div>
                     </div>
                 </div>
@@ -253,10 +259,10 @@ export default async function HomePage() {
                             <div className="w-12 h-1.5 bg-[#D4AF37] rounded-full mb-8" />
                             <h2 className="text-5xl md:text-7xl font-black text-slate-900 mb-6 tracking-tighter leading-none">
                                 DON&apos;T MISS <br />
-                                <span className="text-[#D4AF37]">THE MOMENT</span>
+                                <span className="text-[#D4AF37]">THE EXPERIENCE</span>
                             </h2>
                             <p className="text-xl text-slate-500 font-medium max-w-xl">
-                                Our upcoming gatherings are carefully curated experiences designed to spark transformation.
+                                Our monthly and quarterly gatherings are opportunities for in-depth immersion in prayer and in the word of God creating transformative experiences.
                             </p>
                         </div>
                         <Link href="/events">
@@ -306,7 +312,7 @@ export default async function HomePage() {
                         Find Your Tribe
                     </h2>
                     <p className="text-xl text-slate-500 font-medium leading-relaxed">
-                        Growth happens in circles, not just rows. Connect with a ministry group that speaks to your stage of life.
+                        Growth happens in circles | Don&apos;t do life alone | You need a community | You are welcome to join the Hillz
                     </p>
                 </div>
 
@@ -319,7 +325,7 @@ export default async function HomePage() {
                 <div className="text-center">
                     <Link href="/ministries">
                         <Button size="lg" className="rounded-2xl h-16 px-12 bg-purple-600 hover:bg-purple-700 text-white font-black text-lg shadow-2xl shadow-purple-200">
-                            Explore All Ministries
+                            Explore Membership
                         </Button>
                     </Link>
                 </div>

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { queryDocuments } from '@/src/lib/firebase/firestore';
 import { Event } from '@/src/types/event';
 import { Header } from '@/src/components/layout/Header';
-import { Footer } from '@/src/components/layout/Footer';
+import { Footer } from '@/src/components/shared/Footer';
 import { Section } from '@/src/components/shared/Section';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
@@ -23,7 +23,7 @@ import {
     Users
 } from 'lucide-react';
 import { formatDate, formatTime, daysUntil, toJsDate } from '@/src/lib/utils';
-import { GoogleMapViewer } from '@/src/components/events/GoogleMapViewer';
+import { MapboxViewer } from '@/src/components/events/MapboxViewer';
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -77,7 +77,7 @@ export default async function EventDetailPage({
                         src={event.branding.bannerImage || 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2069&auto=format&fit=crop'}
                         alt={event.title}
                         fill
-                        className="object-cover opacity-60 animate-slow-zoom"
+                        className="object-cover opacity-60"
                         priority
                     />
                 </div>
@@ -318,8 +318,8 @@ export default async function EventDetailPage({
                                 </div>
 
                                 {event.venue.coordinates?.lat && event.venue.coordinates?.lng && (
-                                    <div className="mb-6 rounded-2xl overflow-hidden border border-slate-100">
-                                        <GoogleMapViewer lat={event.venue.coordinates.lat} lng={event.venue.coordinates.lng} />
+                                    <div className="mb-6 rounded-2xl overflow-hidden border border-slate-100 h-[300px]">
+                                        <MapboxViewer lat={event.venue.coordinates.lat} lng={event.venue.coordinates.lng} />
                                     </div>
                                 )}
 
@@ -366,7 +366,7 @@ export default async function EventDetailPage({
                 </div>
             </Section>
 
-            <Footer />
+            <Footer event={event} />
         </div>
     );
 }

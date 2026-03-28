@@ -21,7 +21,7 @@ export default async function SuccessPage({ params }: { params: Promise<{ eventI
 
     return (
         <div className="flex min-h-screen flex-col bg-gray-50">
-            <Banner />
+            <Banner text={event.bannerText} />
 
             <main className="flex flex-1 items-center justify-center p-4">
                 <div className="w-full max-w-md rounded-2xl md:rounded-3xl bg-white p-6 md:p-8 lg:p-12 text-center shadow-xl">
@@ -49,7 +49,7 @@ export default async function SuccessPage({ params }: { params: Promise<{ eventI
                 </div>
             </main>
 
-            <Footer />
+            <Footer event={event} />
         </div>
     );
 }

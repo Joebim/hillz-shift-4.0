@@ -17,7 +17,7 @@ import {
     Hash, MapPin, Save, X, Check, Mail, BookOpen
 } from 'lucide-react';
 import { DynamicFormBuilder } from './DynamicFormBuilder';
-import { GoogleMapSelector } from './GoogleMapSelector';
+import { MapboxSelector } from './MapboxSelector';
 
 type EventFormData = z.infer<typeof createEventSchema>;
 
@@ -182,6 +182,8 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
             title: '',
             shortDescription: '',
             description: '',
+            footerText: '',
+            bannerText: '',
             startDate: '',
             endDate: '',
             registrationConfig: { enabled: false },
@@ -266,7 +268,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
             case 'visuals':
                 return !!(errors.branding);
             case 'details':
-                return !!(errors.title || errors.status || errors.category || errors.shortDescription || errors.description || errors.theme || errors.themeBibleVerse || errors.eventBibleVerse || errors.tags || errors.featured || errors.contacts || errors.links);
+                return !!(errors.title || errors.status || errors.category || errors.shortDescription || errors.description || errors.footerText || errors.bannerText || errors.theme || errors.themeBibleVerse || errors.eventBibleVerse || errors.tags || errors.featured || errors.contacts || errors.links);
             case 'schedule':
                 return !!(errors.startDate || errors.endDate || errors.venue);
             case 'ministers':
@@ -430,6 +432,14 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                         />
 
                         {}
+                        <FormInput
+                            label="Banner Text"
+                            placeholder="A very short message for the top page banner…"
+                            error={errors.bannerText?.message}
+                            {...register('bannerText')}
+                        />
+
+                        {}
                         <FormTextarea
                             label="Full Description"
                             required
@@ -437,6 +447,13 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                             placeholder="Detailed information about this event…"
                             error={errors.description?.message}
                             {...register('description')}
+                        />
+                        <FormTextarea
+                            label="Footer Text"
+                            rows={3}
+                            placeholder="A short message shown in the page footer for this event…"
+                            error={errors.footerText?.message}
+                            {...register('footerText')}
                         />
 
                         {}
@@ -483,6 +500,19 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                         }
                                     }
                                 }}
+                            />
+                        </div>
+
+                        {}
+                        <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+                            <div>
+                                <p className="text-sm font-semibold text-gray-700">Membership Form</p>
+                                <p className="text-xs text-gray-400 mt-0.5">Use this event as the primary &quot;JOIN US&quot; registration</p>
+                            </div>
+                            <Toggle
+                                checked={watch('isMembershipForm') || false}
+                                onChange={v => setValue('isMembershipForm', v)}
+                                label=""
                             />
                         </div>
 
@@ -612,7 +642,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                         </button>
                                     </div>
                                     <div className="p-5">
-                                        <GoogleMapSelector
+                                        <MapboxSelector
                                             initialLat={watch('venue.coordinates.lat')}
                                             initialLng={watch('venue.coordinates.lng')}
                                             onSelect={(lat, lng) => {
@@ -747,7 +777,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                         action={
                             <button
                                 type="button"
-                                onClick={() => appendChannel({ name: '', id: crypto.randomUUID() })}
+                                onClick={() => appendChannel({ name: '', id: crypto.randomUUID(), color: '#7c3aed' })}
                                 className="flex items-center gap-1.5 text-xs font-semibold text-violet-600 bg-violet-50 hover:bg-violet-100 border border-violet-200 px-3 py-1.5 rounded-lg transition-colors"
                             >
                                 <Plus className="w-3.5 h-3.5" />Add Channel
@@ -806,6 +836,11 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                                         placeholder="Optional ID"
                                                         error={errors.channels?.[index]?.barcode?.message}
                                                         {...register(`channels.${index}.barcode`)}
+                                                    />
+                                                    <ColorField 
+                                                        label="Theme Color" 
+                                                        value={watch(`channels.${index}.color`) || '#7c3aed'} 
+                                                        onChange={v => setValue(`channels.${index}.color`, v)} 
                                                     />
                                                 </div>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

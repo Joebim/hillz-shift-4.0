@@ -31,7 +31,7 @@ export const Hero = ({ upcomingEvent }: HeroProps) => {
                 <h1
                     className="text-white font-black uppercase tracking-[0.06em] text-2xl sm:text-3xl md:text-4xl leading-tight opacity-0 animate-[fadeUp_0.6s_0.2s_ease_forwards]"
                 >
-                    The Hillz Church
+                    The Hillz
                 </h1>
 
                 {/* Actions Row */}
@@ -51,23 +51,19 @@ export const Hero = ({ upcomingEvent }: HeroProps) => {
                         Listen to Latest Sermon
                     </Link>
 
-                    {/* Register Button (Conditional) */}
+                    {/* JOIN US Button (Membership / Primary Event) */}
                     {upcomingEvent && (
                         <Link
                             href={`/e/${upcomingEvent.slug || upcomingEvent.id}/register`}
                             className="
-                                inline-flex flex-col items-start px-5 py-2.5 rounded-full
-                                bg-black/60 hover:bg-black/80 border border-white/20
-                                backdrop-blur-sm transition-all duration-200
+                                inline-flex items-center px-8 py-2.5 rounded-full
+                                bg-white text-black hover:bg-white/90 
+                                transition-all duration-300 font-black text-sm tracking-[0.2em]
+                                shadow-2xl shadow-white/10 hover:-translate-y-1
                             "
                         >
-                            <span className="text-white/60 text-[9px] font-bold uppercase tracking-[0.18em] leading-none mb-0.5 flex items-center gap-1">
-                                <UserPlus className="w-2.5 h-2.5" />
-                                REGISTER NOW
-                            </span>
-                            <span className="text-white text-sm font-bold leading-none">
-                                {upcomingEvent.title}
-                            </span>
+                            <UserPlus className="w-4 h-4 mr-3" />
+                            JOIN US
                         </Link>
                     )}
                 </div>

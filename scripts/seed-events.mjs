@@ -107,13 +107,19 @@ const events = [
     channels: [
       {
         id: "ch_youtube",
-        name: "YouTube",
-        title: "Sunday Live Stream",
-        description: "Join us live on YouTube for high quality streaming.",
-        image: "https://img.icons8.com/color/48/youtube-play.png",
-        link: "https://youtube.com/hillz",
-        barcode: "YT-123456",
-        otherContacts: ["tech@hillz.com"],
+        name: "YouTube Live",
+        title: "Sunday Service Live Stream",
+        link: "https://www.youtube.com/@TheHillzChannel",
+        description: "Join our global community for a powerful time of worship and the word.",
+        color: "#FF0000"
+      },
+      {
+        id: "ch_google_meet",
+        name: "Google Meet",
+        title: "Interactive Prayer Room",
+        link: "https://meet.google.com/abc-defg-hij",
+        description: "Connect personally with our prayer ministers during and after the service.",
+        color: "#00A82D"
       },
       {
         id: "ch_spotify",
@@ -147,6 +153,8 @@ const events = [
           "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
       },
     ],
+    footerText: "Come as you are, leave changed by the presence of God.",
+    bannerText: "Your breakthrough begins here",
     createdAt: new Date(),
     updatedAt: new Date(),
     createdBy: "system_admin",
@@ -214,13 +222,18 @@ const events = [
     links: ["https://hillz.com/conference/2025"],
     channels: [
       {
-        id: "ch_zoom",
+        name: "YouTube Live",
+        title: "Conference Main Stage Stream",
+        link: "https://www.youtube.com/@TheHillzChannel/live",
+        description: "Experience all keynote sessions live from wherever you are.",
+        color: "#FF0000"
+      },
+      {
         name: "Zoom",
-        title: "Virtual Access",
-        description: "Join the conference sessions remotely.",
-        image: "https://img.icons8.com/color/48/zoom.png",
+        title: "Leadership Q&A Workshop",
         link: "https://zoom.us/j/123456789",
-        otherContacts: ["zoom-support@hillz.com"],
+        description: "Exclusive interactive workshops for registered delegates.",
+        color: "#0B5CFF"
       },
     ],
     ministers: [
@@ -234,6 +247,8 @@ const events = [
         bio: "Renowned leadership expert and author.",
       },
     ],
+    footerText: "Equipping the next generation of visionary leaders for global impact.",
+    bannerText: "Equipping you for excellence",
     createdAt: new Date(),
     updatedAt: new Date(),
     createdBy: "system_admin",
@@ -327,9 +342,20 @@ const events = [
         description:
           "Can't make it in person? Join us live via Google Meet for an immersive online experience.",
         link: "https://meet.google.com",
+        color: "#00A82D"
+      },
+      {
+        id: "ch_youtube",
+        name: "YouTube",
+        title: "Watch on YouTube",
+        description: "Watch the recorded sessions later.",
+        link: "https://youtube.com/@TheHillzChannel",
+        color: "#FF0000"
       },
     ],
     ministers: [],
+    footerText: "Empowering a generation for spiritual excellence and purposeful living. Join the movement.",
+    bannerText: "Join us for a life-transforming encounter",
     createdAt: new Date(),
     updatedAt: new Date(),
     createdBy: "system_admin",
