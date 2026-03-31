@@ -107,7 +107,8 @@ export default function EditEventPage() {
                         {event.status}
                     </span>
                     <Link
-                        href={`/admin/events/${eventId}`}
+                        href={`/events/${event.slug || eventId}`}
+                        target="_blank"
                         className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-violet-600 bg-gray-100 hover:bg-violet-50 border border-gray-200 hover:border-violet-200 px-3 py-2 rounded-xl transition-all font-medium"
                     >
                         <Eye className="w-3.5 h-3.5" />

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { useConfirmModal } from '@/src/hooks/useConfirmModal';
+import { AdminTopNav } from '@/src/components/admin/AdminTopNav';
 
 export default function AdminSermonsPage() {
     const queryClient = useQueryClient();
@@ -64,38 +65,19 @@ export default function AdminSermonsPage() {
 
     return (
         <div className="min-h-screen bg-gray-50/50 font-sans">
-            {}
-            <div className="sticky top-0 z-20 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center">
-                        <Mic className="w-5 h-5" />
-                    </div>
-                    <div>
-                        <h1 className="text-xl font-bold text-gray-900 tracking-tight">Sermons</h1>
-                        <p className="text-xs text-gray-500 font-medium">Manage your media library</p>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-3 flex-1 justify-end max-w-xl">
-                    <div className="relative flex-1 max-w-sm hidden sm:block">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search sermons..."
-                            className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-violet-500/20 focus:bg-white transition-all placeholder:text-gray-400"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
-                    <Link
-                        href="/admin/sermons/new"
-                        className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-lg shadow-violet-200 hover:shadow-violet-300 hover:-translate-y-0.5 active:translate-y-0"
-                    >
-                        <Plus className="w-4 h-4" />
-                        <span className="hidden sm:inline">Upload Sermon</span>
-                    </Link>
-                </div>
-            </div>
+            <AdminTopNav 
+                title="Sermons"
+                subtitle="Manage your media library"
+                titleIcon={<Mic className="w-5 h-5" />}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                searchPlaceholder="Search sermons..."
+                action={{
+                    label: "Upload Sermon",
+                    href: "/admin/sermons/new",
+                    icon: <Plus className="w-4 h-4" />
+                }}
+            />
 
             <main className="p-6 max-w-[1600px] mx-auto space-y-8">
                 {}

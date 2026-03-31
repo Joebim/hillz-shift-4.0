@@ -28,9 +28,9 @@ import { Registration } from '@/src/types/registration';
 import { Invitation, InvitationWithEvent } from '@/src/types/invitation';
 
 import { SkeletonDashboard } from '@/src/components/skeletons/SkeletonDashboard';
-import { UserDropdown } from '@/src/components/admin/UserDropdown';
 import { AdminTable } from '@/src/components/admin/AdminTable';
 import { StatusBadge } from '@/src/components/admin/AdminSharedUI';
+import { AdminTopNav } from '@/src/components/admin/AdminTopNav';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -64,116 +64,6 @@ function AvatarStack({ count }: { count: number }) {
     );
 }
 
-function NotificationsDropdown() {
-    const [isOpen, setIsOpen] = useState(false);
-    const { data: notifications, isLoading } = useQuery({
-        queryKey: ['notifications'],
-        queryFn: async () => {
-            const res = await fetch('/api/notifications');
-            if (!res.ok) throw new Error('Failed to fetch notifications');
-            const json = await res.json();
-            return json.data;
-        },
-        refetchInterval: 30000,
-    });
-
-    // Mock unread count based on available notifications (or add a 'read' field logic later)
-    const unreadCount = notifications ? notifications.filter((n: { read: boolean }) => !n.read).length : 0;
-
-    return (
-        <div className="relative">
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="relative p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors focus:ring-2 focus:ring-violet-200 outline-none"
-            >
-                <Bell className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-                {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white" />
-                )}
-            </button>
-
-            {/* Dropdown Panel */}
-            {isOpen && (
-                <>
-                    <div className="fixed inset-0 z-30" onClick={() => setIsOpen(false)} />
-                    <div className="absolute right-0 left-auto mt-2 !mr-[-130px] !sm:mr-0 w-80 md:w-96 max-w-[calc(100vw-4rem)] bg-white rounded-2xl shadow-xl border border-gray-100 z-40 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50/50">
-                            <h3 className="font-bold text-gray-900 text-sm">Notifications</h3>
-                            <Link href="#" className="text-xs text-violet-600 font-medium hover:underline">Mark all as read</Link>
-                        </div>
-                        <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
-                            {isLoading ? (
-                                <div className="p-4 space-y-4">
-                                    {[1, 2, 3].map(i => (
-                                        <div key={i} className="flex gap-3 animate-pulse">
-                                            <div className="w-8 h-8 rounded-full bg-gray-200 shrink-0" />
-                                            <div className="flex-1 space-y-2 py-1">
-                                                <div className="h-2 bg-gray-200 rounded w-3/4" />
-                                                <div className="h-2 bg-gray-200 rounded w-1/2" />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : notifications && notifications.length > 0 ? (
-                                <div className="py-2">
-                                    {notifications.map((notif: {
-                                        id: string;
-                                        read: boolean;
-                                        type: string;
-                                        actorName?: string;
-                                        action: string;
-                                        highlightColor?: string;
-                                        highlight: string;
-                                        eventTitle?: string;
-                                        suffix?: string;
-                                        time: string;
-                                    }) => (
-                                        <div key={notif.id} className="flex gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-none relative group">
-                                            {!notif.read && (
-                                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 bg-violet-500 rounded-r" />
-                                            )}
-                                            <div className={cn(
-                                                "w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-white font-bold text-[10px] shadow-sm",
-                                                notif.type === 'registration' ? "bg-linear-to-br from-violet-400 to-purple-600" :
-                                                    notif.type === 'invitation' ? "bg-linear-to-br from-blue-400 to-cyan-600" :
-                                                        "bg-linear-to-br from-orange-400 to-pink-500"
-                                            )}>
-                                                {notif.actorName ? notif.actorName.charAt(0).toUpperCase() : 'S'}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-gray-700 text-xs leading-snug">
-                                                    <span className="font-semibold text-gray-900">{notif.actorName}</span>{' '}
-                                                    <span className="text-gray-500">{notif.action}</span>{' '}
-                                                    <span className={cn(notif.highlightColor || 'font-semibold', "wrap-break-word")}>{notif.highlight}</span>
-                                                </p>
-                                                {(notif.eventTitle || notif.suffix) && (
-                                                    <p className="text-[10px] text-gray-400 mt-0.5 truncate italic">
-                                                        {notif.suffix} {notif.eventTitle ? `on ${notif.eventTitle}` : ''}
-                                                    </p>
-                                                )}
-                                                <p className="text-[10px] text-gray-400 mt-1 font-medium">{notif.time}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="p-8 text-center text-gray-400 text-xs flex flex-col items-center gap-2">
-                                    <Bell className="w-8 h-8 text-gray-200" />
-                                    <p>No notifications yet</p>
-                                </div>
-                            )}
-                        </div>
-                        <div className="p-2 border-t border-gray-100 bg-gray-50/50 text-center">
-                            <Link href="/admin/notifications" className="text-xs text-gray-500 hover:text-gray-900 font-medium transition-colors">
-                                View All Notifications
-                            </Link>
-                        </div>
-                    </div>
-                </>
-            )}
-        </div>
-    );
-}
 
 
 function AnalyticsCharts() {
@@ -382,10 +272,6 @@ export default function EventsDashboardPage() {
     const [showAllPast, setShowAllPast] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
-    const [isSearchFocused, setIsSearchFocused] = useState(false);
-    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-    const searchRef = useRef<HTMLDivElement>(null);
-
     // Debounce search input
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -394,18 +280,7 @@ export default function EventsDashboardPage() {
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
-    // Handle click outside to close search results
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-                setIsSearchFocused(false);
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
+
 
     // Search Query
     const { data: searchResults, isLoading: isSearchLoading } = useQuery({
@@ -496,237 +371,86 @@ export default function EventsDashboardPage() {
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
 
-            {/* ── Top Nav ──────────────────────────────────────────────────── */}
-            <header className="bg-white border-b border-gray-100 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3 sticky top-0 z-20">
-                <h1 className="text-xl md:text-2xl font-bold text-gray-900 shrink-0">Dashboard</h1>
-
-                <div className="relative flex-1 max-w-sm hidden md:block" ref={searchRef}>
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search event or anything"
-                            className="w-full pl-10 pr-4 py-2.5 rounded-full bg-gray-100 text-sm text-gray-700 placeholder-gray-400 border-none outline-none focus:ring-2 focus:ring-violet-200"
-                            value={searchQuery}
-                            onChange={(e) => {
-                                setSearchQuery(e.target.value);
-                                setIsSearchFocused(true);
-                            }}
-                            onFocus={() => setIsSearchFocused(true)}
-                        />
-                    </div>
-
-                    {/* Search Results Dropdown */}
-                    {isSearchFocused && debouncedQuery && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden max-h-[400px] overflow-y-auto">
-                            {isSearchLoading ? (
-                                <div className="p-4 text-center text-gray-400 text-sm">Searching...</div>
-                            ) : searchResults && searchResults.data && (
-                                <>
-                                    {/* Events */}
-                                    {searchResults.data.events?.length > 0 && (
-                                        <div className="p-2">
-                                            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-1">Events</h4>
-                                            {searchResults.data.events.map((e: Event) => (
-                                                <Link key={e.id} href={`/admin/events/${e.id}`} className="block px-2 py-2 hover:bg-gray-50 rounded-lg group">
-                                                    <p className="text-sm font-medium text-gray-900 group-hover:text-violet-600">{e.title}</p>
-                                                    <p className="text-xs text-gray-500 truncate">{e.shortDescription || e.description}</p>
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {/* Registrations */}
-                                    {searchResults.data.registrations?.length > 0 && (
-                                        <div className="p-2 border-t border-gray-50">
-                                            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-1">Registrations</h4>
-                                            {searchResults.data.registrations.map((r: Registration) => (
-                                                <div key={r.id} className="px-2 py-2 hover:bg-gray-50 rounded-lg cursor-default">
-                                                    <p className="text-sm font-medium text-gray-900">{r.name}</p>
-                                                    <p className="text-xs text-gray-500">{r.email}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {/* Invitations */}
-                                    {searchResults.data.invitations?.length > 0 && (
-                                        <div className="p-2 border-t border-gray-50">
-                                            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-1">Invitations</h4>
-                                            {searchResults.data.invitations.map((inv: Invitation) => (
-                                                <Link
-                                                    key={inv.id}
-                                                    href={`/admin/events/${inv.eventId}`}
-                                                    className="block px-2 py-2 hover:bg-gray-50 rounded-lg group transition-colors"
-                                                >
-                                                    <div className="flex justify-between items-start">
-                                                        <div>
-                                                            <p className="text-sm font-medium text-gray-900 group-hover:text-violet-600">Invitee: {inv.inviteeName}</p>
-                                                            <p className="text-xs text-gray-500">By: {inv.inviterName}</p>
-                                                        </div>
-                                                        {(inv as InvitationWithEvent).eventTitle && (
-                                                            <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap">
-                                                                {(inv as InvitationWithEvent).eventTitle}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {/* No results */}
-                                    {(!searchResults.data.events?.length && !searchResults.data.registrations?.length && !searchResults.data.invitations?.length) && (
-                                        <div className="p-8 text-center text-gray-400 text-sm">
-                                            No results found for &quot;{debouncedQuery}&quot;
-                                        </div>
-                                    )}
-                                </>
-                            )}
-                        </div>
-                    )}
-                </div>
-
-                <div className="flex items-center gap-2 md:gap-3 shrink-0">
-                    {/* Mobile search icon — opens overlay */}
-                    <button
-                        className="md:hidden p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-                        onClick={() => setMobileSearchOpen(true)}
-                        aria-label="Search"
-                    >
-                        <Search className="w-4 h-4 text-gray-600" />
-                    </button>
-                    <NotificationsDropdown />
-                    <Link href="/admin/events/new"
-                        className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700 text-white px-3 md:px-5 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-semibold transition-colors shadow-md shadow-violet-200">
-                        <Plus className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                        <span className="hidden sm:inline">Add Event</span>
-                    </Link>
-
-                    <div className="hidden lg:block h-8 w-px bg-gray-100 mx-1" />
-                    <UserDropdown session={session} />
-
-                    {/* Hamburger – shows sidebar drawer on <lg */}
-                    <button onClick={() => setDrawerOpen(true)}
-                        className="lg:hidden p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
-                        <Menu className="w-4 h-4 text-gray-600" />
-                    </button>
-                </div>
-            </header>
-
-            {/* ── Mobile Search Overlay ──────────────────────────────────────── */}
-            {mobileSearchOpen && (
-                <div className="fixed inset-0 z-50 flex flex-col bg-white md:hidden" onClick={(e) => { if (e.target === e.currentTarget) setMobileSearchOpen(false); }}>
-                    {/* Header */}
-                    <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 shrink-0">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Search events, registrations…"
-                                autoFocus
-                                className="w-full pl-10 pr-4 py-2.5 rounded-full bg-gray-100 text-sm text-gray-700 placeholder-gray-400 border-none outline-none focus:ring-2 focus:ring-violet-200"
-                                value={searchQuery}
-                                onChange={(e) => {
-                                    setSearchQuery(e.target.value);
-                                    setIsSearchFocused(true);
-                                }}
-                            />
-                        </div>
-                        <button
-                            onClick={() => { setMobileSearchOpen(false); setSearchQuery(''); }}
-                            className="shrink-0 p-2 rounded-full text-gray-500 hover:bg-gray-100 transition-colors"
-                        >
-                            <X className="w-4 h-4" />
-                        </button>
-                    </div>
-
-                    {/* Results */}
-                    <div className="flex-1 overflow-y-auto">
-                        {!debouncedQuery && (
-                            <div className="p-8 text-center text-gray-400">
-                                <Search className="w-10 h-10 mx-auto mb-3 opacity-20" />
-                                <p className="text-sm">Start typing to search events</p>
-                            </div>
-                        )}
-                        {isSearchLoading && debouncedQuery && (
+            <AdminTopNav 
+                title="Dashboard"
+                searchPlaceholder="Search event or anything"
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                onMenuClick={() => setDrawerOpen(true)}
+                action={{
+                    label: "Add Event",
+                    href: "/admin/events/new",
+                    icon: <Plus className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                }}
+                searchDropdownContent={
+                    <>
+                        {isSearchLoading ? (
                             <div className="p-4 text-center text-gray-400 text-sm">Searching...</div>
-                        )}
-                        {!isSearchLoading && searchResults && debouncedQuery && (
-                            <div className="py-2">
+                        ) : searchResults && searchResults.data ? (
+                            <>
                                 {/* Events */}
-                                {searchResults.data?.events?.length > 0 && (
+                                {searchResults.data.events?.length > 0 && (
                                     <div className="p-2">
                                         <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-1">Events</h4>
                                         {searchResults.data.events.map((e: Event) => (
-                                            <Link
-                                                key={e.id}
-                                                href={`/admin/events/${e.id}`}
-                                                onClick={() => setMobileSearchOpen(false)}
-                                                className="flex items-start gap-3 px-3 py-3 hover:bg-gray-50 rounded-xl group"
-                                            >
-                                                {e.branding?.thumbnail
-                                                    ? <img src={e.branding.thumbnail} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
-                                                    : <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center shrink-0"><Calendar className="w-5 h-5 text-violet-500" /></div>
-                                                }
-                                                <div className="min-w-0">
-                                                    <p className="text-sm font-semibold text-gray-900 group-hover:text-violet-600 truncate">{e.title}</p>
-                                                    <p className="text-xs text-gray-500 truncate">{e.shortDescription || e.description}</p>
-                                                </div>
+                                            <Link key={e.id} href={`/admin/events/${e.id}`} className="block px-2 py-2 hover:bg-gray-50 rounded-lg group">
+                                                <p className="text-sm font-medium text-gray-900 group-hover:text-violet-600">{e.title}</p>
+                                                <p className="text-xs text-gray-500 truncate">{e.shortDescription || e.description}</p>
                                             </Link>
                                         ))}
                                     </div>
                                 )}
+
                                 {/* Registrations */}
-                                {searchResults.data?.registrations?.length > 0 && (
+                                {searchResults.data.registrations?.length > 0 && (
                                     <div className="p-2 border-t border-gray-50">
                                         <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-1">Registrations</h4>
                                         {searchResults.data.registrations.map((r: Registration) => (
-                                            <div key={r.id} className="flex items-center gap-3 px-3 py-3 rounded-xl">
-                                                <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-sm shrink-0">
-                                                    {(r.name || r.attendee?.firstName || '?').charAt(0).toUpperCase()}
-                                                </div>
-                                                <div className="min-w-0">
-                                                    <p className="text-sm font-medium text-gray-900 truncate">{r.name || `${r.attendee?.firstName} ${r.attendee?.lastName}`}</p>
-                                                    <p className="text-xs text-gray-500 truncate">{r.email || r.attendee?.email}</p>
-                                                </div>
+                                            <div key={r.id} className="px-2 py-2 hover:bg-gray-50 rounded-lg cursor-default">
+                                                <p className="text-sm font-medium text-gray-900">{r.name}</p>
+                                                <p className="text-xs text-gray-500">{r.email}</p>
                                             </div>
                                         ))}
                                     </div>
                                 )}
+
                                 {/* Invitations */}
-                                {searchResults.data?.invitations?.length > 0 && (
+                                {searchResults.data.invitations?.length > 0 && (
                                     <div className="p-2 border-t border-gray-50">
                                         <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-1">Invitations</h4>
                                         {searchResults.data.invitations.map((inv: Invitation) => (
                                             <Link
                                                 key={inv.id}
                                                 href={`/admin/events/${inv.eventId}`}
-                                                onClick={() => setMobileSearchOpen(false)}
-                                                className="flex items-center gap-3 px-3 py-3 hover:bg-gray-50 rounded-xl group"
+                                                className="block px-2 py-2 hover:bg-gray-50 rounded-lg group transition-colors"
                                             >
-                                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm shrink-0">
-                                                    {(inv.recipientName || inv.inviteeName || '?').charAt(0).toUpperCase()}
-                                                </div>
-                                                <div className="min-w-0">
-                                                    <p className="text-sm font-medium text-gray-900 group-hover:text-violet-600 truncate">{inv.recipientName || inv.inviteeName || 'Unknown'}</p>
-                                                    <p className="text-xs text-gray-500 truncate">By {inv.senderName}</p>
+                                                <div className="flex justify-between items-start">
+                                                    <div>
+                                                        <p className="text-sm font-medium text-gray-900 group-hover:text-violet-600">Invitee: {inv.inviteeName}</p>
+                                                        <p className="text-xs text-gray-500">By: {inv.inviterName}</p>
+                                                    </div>
+                                                    {(inv as InvitationWithEvent).eventTitle && (
+                                                        <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap">
+                                                            {(inv as InvitationWithEvent).eventTitle}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </Link>
                                         ))}
                                     </div>
                                 )}
+
                                 {/* No results */}
-                                {!searchResults.data?.events?.length && !searchResults.data?.registrations?.length && !searchResults.data?.invitations?.length && (
+                                {(!searchResults.data.events?.length && !searchResults.data.registrations?.length && !searchResults.data.invitations?.length) && (
                                     <div className="p-8 text-center text-gray-400 text-sm">
-                                        No results for &ldquo;{debouncedQuery}&rdquo;
+                                        No results found for &quot;{debouncedQuery}&quot;
                                     </div>
                                 )}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
+                            </>
+                        ) : null}
+                    </>
+                }
+            />
 
             <div className="flex">
                 {/* ── Main ─────────────────────────────────────────────────── */}

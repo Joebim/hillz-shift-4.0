@@ -4,7 +4,7 @@ import { Facebook, Twitter, Instagram, Youtube, Phone, Mail, Music } from 'lucid
 const footerLinks = {
     ministry: [
         { name: 'About Us', href: '/about' },
-        { name: 'Our Vision', href: '/about/vision' },
+        { name: 'Our Mandate', href: '/about/mandate' },
         { name: 'Leadership', href: '/about/leadership' },
         { name: 'History', href: '/about/history' },
     ],
@@ -107,7 +107,7 @@ export const Footer = () => {
                                     <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors border border-white/5">
                                         <Mail className="w-4 h-4" />
                                     </div>
-                                    <span className="text-sm font-bold leading-relaxed pt-1 break-all">
+                                    <span className="text-sm font-bold leading-relaxed pt-1 break-all whitespace-nowrap">
                                         Convener@themysteryofchrist.org
                                     </span>
                                 </div>
@@ -115,7 +115,7 @@ export const Footer = () => {
                                     <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors border border-white/5">
                                         <Phone className="w-4 h-4" />
                                     </div>
-                                    <span className="text-sm font-bold tracking-tight">(123) 456-7890</span>
+                                    <span className="text-sm font-bold tracking-tight">+234 8143375628</span>
                                 </div>
                             </div>
                         </div>

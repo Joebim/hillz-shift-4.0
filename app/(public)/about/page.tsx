@@ -1,4 +1,4 @@
-﻿import Image from 'next/image';
+import Image from 'next/image';
 import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
 import { Section } from '@/src/components/shared/Section';
@@ -69,7 +69,7 @@ export default function AboutPage() {
                         <div className="space-y-8">
                             {[
                                 {
-                                    title: 'Our Vision',
+                                    title: 'Our Mandate',
                                     desc: 'To see a generation fully awake to their divine purpose and walking in the fullness of God&apos;s power.',
                                     icon: Sparkles
                                 },

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -8,6 +8,7 @@ import { Search, Plus, Edit, Trash2, X, Check, Send, Mail, Copy, ShieldOff } fro
 import { cn } from '@/src/lib/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { AdminTopNav } from '@/src/components/admin/AdminTopNav';
 
 const roles: { value: UserRole; label: string; color: string; ring: string; desc: string }[] = [
     { value: 'super_admin', label: 'Super Admin', color: 'bg-red-50 text-red-700', ring: 'ring-red-500/10', desc: 'Full system access' },
@@ -126,7 +127,7 @@ function UserModal({
                 onClick={e => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="bg-linear-to-r from-violet-600 to-indigo-600 p-6 text-white relative overflow-hidden sticky top-0 z-10">
+                <div className="bg-linear-to-r from-violet-600 to-indigo-600 p-6 text-white overflow-hidden sticky top-0 z-10">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none" />
                     <div className="relative z-10 flex justify-between items-center">
                         <div>
@@ -459,7 +460,13 @@ export default function SettingsPage() {
     }
 
     return (
-        <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 min-h-screen bg-gray-50/50">
+        <div className="min-h-screen bg-gray-50/50">
+            <AdminTopNav 
+                title="Settings"
+                subtitle="Manage team access and platform configuration"
+                showSearch={false}
+            />
+        <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 animate-in slide-in-from-top-2 duration-500">
                 <div>
@@ -633,6 +640,7 @@ export default function SettingsPage() {
                     onClose={() => setShowSuccess(false)}
                 />
             )}
+        </div>
         </div>
     );
 }

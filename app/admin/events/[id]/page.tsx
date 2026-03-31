@@ -750,7 +750,7 @@ export default function EventDetailsPage() {
     });
 
     const copyEventLink = async () => {
-        const url = `${window.location.origin}/e/${eventId}`;
+        const url = `${window.location.origin}/e/${event?.slug || eventId}`;
         try {
             await navigator.clipboard.writeText(url);
             setCopySuccess(true);
@@ -769,7 +769,7 @@ export default function EventDetailsPage() {
     };
 
     const shareEvent = async () => {
-        const url = `${window.location.origin}/e/${eventId}`;
+        const url = `${window.location.origin}/e/${event?.slug || eventId}`;
         if (navigator.share) {
             try {
                 await navigator.share({

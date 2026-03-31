@@ -29,7 +29,7 @@ export const Hero = ({ upcomingEvent }: HeroProps) => {
 
                 {/* Main Heading */}
                 <h1
-                    className="text-white font-black uppercase tracking-[0.06em] text-2xl sm:text-3xl md:text-4xl leading-tight opacity-0 animate-[fadeUp_0.6s_0.2s_ease_forwards]"
+                    className="text-white font-black uppercase tracking-[0.06em] text-2xl sm:text-3xl md:text-6xl leading-tight opacity-0 animate-[fadeUp_0.6s_0.2s_ease_forwards]"
                 >
                     The Hillz
                 </h1>
@@ -62,7 +62,6 @@ export const Hero = ({ upcomingEvent }: HeroProps) => {
                                 shadow-2xl shadow-white/10 hover:-translate-y-1
                             "
                         >
-                            <UserPlus className="w-4 h-4 mr-3" />
                             JOIN US
                         </Link>
                     )}

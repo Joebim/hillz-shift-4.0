@@ -1,4 +1,4 @@
-﻿import Image from 'next/image';
+import Image from 'next/image';
 import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
 import { Section } from '@/src/components/shared/Section';
@@ -6,11 +6,11 @@ import { Sparkles, Target, Compass } from 'lucide-react';
 import { Card } from '@/src/components/ui/Card';
 
 export const metadata = {
-    title: 'Vision & Mission | The Hillz',
-    description: 'Learn about our vision and mission.',
+    title: 'Mandate & Mission | The Hillz',
+    description: 'Learn about our mandate and mission.',
 };
 
-export default function VisionMissionPage() {
+export default function MandateMissionPage() {
     return (
         <div className="min-h-screen bg-slate-50">
             <Header />
@@ -21,7 +21,7 @@ export default function VisionMissionPage() {
                     <div className="absolute inset-0 bg-linear-to-b from-black/70 via-slate-900/50 to-slate-900 z-10" />
                     <Image
                         src="/vision_hero.png"
-                        alt="Vision and Mission"
+                        alt="Mandate and Mission"
                         fill
                         className="object-cover opacity-60 animate-slow-zoom"
                         unoptimized
@@ -34,7 +34,7 @@ export default function VisionMissionPage() {
                             Our Purpose
                         </div>
                         <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-none animate-fade-in-up">
-                            VISION & <br />
+                            MANDATE & <br />
                             <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 via-purple-300 to-pink-400">MISSION</span>
                         </h1>
                         <p className="text-xl text-white/60 max-w-2xl mx-auto font-medium animate-fade-in-up delay-100 italic leading-relaxed">
@@ -56,9 +56,9 @@ export default function VisionMissionPage() {
                                     <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6">
                                         <Sparkles className="w-8 h-8" />
                                     </div>
-                                    <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Our Vision</h2>
+                                    <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Our Mandate</h2>
                                     <p className="text-lg text-slate-600 leading-relaxed font-medium">
-                                        Our vision is to see a generation fully awake to their divine purpose and walking in the fullness of God&apos;s power. We long to build a Christ-centered community that shatters the mold of traditional religion to embrace real, transformative faith.
+                                        Our mandate is to see a generation fully awake to their divine purpose and walking in the fullness of God&apos;s power. We long to build a Christ-centered community that shatters the mold of traditional religion to embrace real, transformative faith.
                                     </p>
                                 </div>
 

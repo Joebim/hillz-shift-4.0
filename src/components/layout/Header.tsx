@@ -22,7 +22,7 @@ const navigation = [
         href: '/about',
         submenu: [
             { name: 'Our Ministry', href: '/about' },
-            { name: 'Vision & Mission', href: '/about/vision' },
+            { name: 'Our Mandate', href: '/about/mandate' },
             { name: 'Leadership', href: '/about/leadership' },
             { name: 'History', href: '/about/history' },
         ],

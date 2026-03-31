@@ -13,14 +13,15 @@ export default async function EventHubLayout({
     params: Promise<{ eventId: string }>;
 }) {
     const { eventId } = await params;
-    let ArrayEvents = await queryDocuments<Event>('events', { slug: eventId, status: 'published' });
+    let ArrayEvents = await queryDocuments<Event>('events', { slug: eventId });
     let event: Event | null = ArrayEvents.length > 0 ? ArrayEvents[0] : null;
 
     if (!event) {
         event = await getDocument<Event>('events', eventId);
-        if (event?.status !== 'published') {
-            event = null;
-        }
+    }
+
+    if (event && event.status !== 'published' && event.status !== 'archived') {
+        event = null;
     }
 
     if (!event) {

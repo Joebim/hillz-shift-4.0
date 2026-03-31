@@ -171,9 +171,6 @@ export const RegistrationForm = ({ eventId, eventSlug, config }: Props) => {
             {}
             {config?.fields && config.fields.length > 0 && (
                 <div className="space-y-6 pt-6 border-t border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-900 border-l-4 border-primary pl-4">
-                        Event Questions
-                    </h3>
                     <DynamicFieldRenderer
                         fields={config.fields}
                         values={form.customFields}

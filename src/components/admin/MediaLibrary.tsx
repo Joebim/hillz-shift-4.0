@@ -15,6 +15,7 @@ import { cn } from '@/src/lib/utils';
 import { useConfirmModal } from '@/src/hooks/useConfirmModal';
 import { useToast } from '@/src/contexts/ToastContext';
 import { format } from 'date-fns';
+import { AdminTopNav } from '@/src/components/admin/AdminTopNav';
 
 export interface Media {
     _id: string;
@@ -130,10 +131,55 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
     };
 
     return (
-        <div className="flex h-full bg-white transition-all overflow-hidden">
-            {}
+        <div className="flex flex-col h-full bg-white">
+            {!selectionMode && (
+                <AdminTopNav 
+                    title="Media Library"
+                    subtitle="Manage your assets and files"
+                    titleIcon={<ImageIcon className="w-5 h-5" />}
+                    searchQuery={searchQuery}
+                    onSearchChange={setSearchQuery}
+                    searchPlaceholder="Search by name or tag..."
+                    customAction={
+                        <div className="flex items-center gap-3">
+                            <div className="flex p-1 bg-gray-50 rounded-xl border border-gray-100">
+                                <button
+                                    onClick={() => setViewMode('grid')}
+                                    className={cn(
+                                        "p-1.5 rounded-lg transition-all",
+                                        viewMode === 'grid' ? "bg-white text-violet-600 shadow-sm" : "text-gray-400 hover:text-gray-600"
+                                    )}
+                                >
+                                    <Grid className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('list')}
+                                    className={cn(
+                                        "p-1.5 rounded-lg transition-all",
+                                        viewMode === 'list' ? "bg-white text-violet-600 shadow-sm" : "text-gray-400 hover:text-gray-600"
+                                    )}
+                                >
+                                    <ListIcon className="w-4 h-4" />
+                                </button>
+                            </div>
+                            <label className="cursor-pointer bg-violet-600 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-violet-200 hover:bg-violet-700 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2">
+                                <input
+                                    type="file"
+                                    multiple
+                                    className="hidden"
+                                    accept="image/*,video/*"
+                                    onChange={handleFileChange}
+                                />
+                                <Upload className="w-4 h-4" />
+                                Upload Media
+                            </label>
+                        </div>
+                    }
+                />
+            )}
+            <div className="flex flex-1 transition-all overflow-hidden relative">
             <div className="flex-1 flex flex-col h-full overflow-hidden border-r border-gray-100">
-                {}
+                {selectionMode && (
                 <div className="p-4 border-b border-gray-100 flex flex-wrap gap-4 items-center justify-between bg-white sticky top-0 z-10">
                     <div className="flex items-center gap-3 flex-1 min-w-[240px]">
                         <div className="relative flex-1">
@@ -182,6 +228,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                         </label>
                     </div>
                 </div>
+                )}
 
                 <div className="flex-1 overflow-y-auto p-6 bg-gray-50/30">
                     {isLoading ? (
@@ -386,6 +433,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                         </p>
                     </div>
                 )}
+            </div>
             </div>
         </div>
     );

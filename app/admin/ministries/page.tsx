@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -12,8 +12,8 @@ import {
     MoreHorizontal, Trash2, Edit2, MapPin,
     CheckCircle2, XCircle, User
 } from 'lucide-react';
-import { StatusBadge } from '@/src/components/admin/StatusBadge';
 import { useConfirmModal } from '@/src/hooks/useConfirmModal';
+import { AdminTopNav } from '@/src/components/admin/AdminTopNav';
 
 export default function AdminMinistriesPage() {
     const queryClient = useQueryClient();
@@ -64,38 +64,19 @@ export default function AdminMinistriesPage() {
 
     return (
         <div className="min-h-screen bg-gray-50/50 font-sans">
-            {}
-            <div className="sticky top-0 z-20 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shadow-sm">
-                        <Building className="w-5 h-5" />
-                    </div>
-                    <div>
-                        <h1 className="text-xl font-bold text-gray-900 tracking-tight">Ministries</h1>
-                        <p className="text-xs text-gray-500 font-medium">Manage your community groups</p>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-3 flex-1 justify-end max-w-xl">
-                    <div className="relative flex-1 max-w-sm hidden sm:block">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search ministries..."
-                            className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all placeholder:text-gray-400"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
-                    <Link
-                        href="/admin/ministries/new"
-                        className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-lg shadow-slate-200 hover:shadow-slate-300 hover:-translate-y-0.5 active:translate-y-0"
-                    >
-                        <Plus className="w-4 h-4" />
-                        <span className="hidden sm:inline">Add Ministry</span>
-                    </Link>
-                </div>
-            </div>
+            <AdminTopNav 
+                title="Ministries"
+                subtitle="Manage your community groups"
+                titleIcon={<Building className="w-5 h-5" />}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                searchPlaceholder="Search ministries..."
+                action={{
+                    label: "Add Ministry",
+                    href: "/admin/ministries/new",
+                    icon: <Plus className="w-4 h-4" />
+                }}
+            />
 
             <main className="p-6 max-w-[1600px] mx-auto space-y-8">
                 {}

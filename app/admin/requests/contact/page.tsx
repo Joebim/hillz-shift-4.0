@@ -4,6 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { AdminTable } from '@/src/components/admin/AdminTable';
 import { SkeletonDashboard } from '@/src/components/skeletons/SkeletonDashboard';
 import { format } from 'date-fns';
+import { useState } from 'react';
+import { AdminTopNav } from '@/src/components/admin/AdminTopNav';
+import { MessageSquare } from 'lucide-react';
 
 export default function ContactRequestsPage() {
     const { data: requests, isLoading } = useQuery({
@@ -16,15 +19,32 @@ export default function ContactRequestsPage() {
         }
     });
 
+    const [searchQuery, setSearchQuery] = useState('');
+
     if (isLoading) return <SkeletonDashboard />;
 
+    const filteredRequests = requests?.filter((req: any) => 
+        req.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        req.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        req.subject?.toLowerCase().includes(searchQuery.toLowerCase())
+    ) || [];
+
     return (
-        <div className="p-4 md:p-6 space-y-6">
-            <h1 className="text-2xl font-bold text-gray-900">Contact Requests</h1>
+        <div className="min-h-screen bg-gray-50/50">
+            <AdminTopNav 
+                title="Contact Requests"
+                subtitle="Review and manage inquiries"
+                titleIcon={<MessageSquare className="w-5 h-5" />}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                searchPlaceholder="Search messages..."
+            />
+            
+            <div className="p-4 md:p-6 space-y-6 max-w-[1600px] mx-auto">
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <AdminTable
-                    data={requests || []}
+                    data={filteredRequests}
                     columns={[
                         {
                             header: 'Name',
@@ -57,6 +77,7 @@ export default function ContactRequestsPage() {
                         }
                     ]}
                 />
+            </div>
             </div>
         </div>
     );
