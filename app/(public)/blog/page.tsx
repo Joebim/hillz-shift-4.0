@@ -1,4 +1,4 @@
-﻿import Image from 'next/image';
+import Image from 'next/image';
 import { queryDocuments } from '@/src/lib/firebase/firestore';
 import { toJsDate } from '@/src/lib/utils';
 import { BlogPost } from '@/src/types/blog';
@@ -37,7 +37,7 @@ export default async function BlogPage() {
                         src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop"
                         alt="Blog"
                         fill
-                        className="object-cover opacity-60 animate-slow-zoom"
+                        className="object-cover opacity-60"
                     />
                 </div>
                 <div className="container mx-auto px-6 relative z-10">

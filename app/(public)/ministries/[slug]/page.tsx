@@ -55,7 +55,7 @@ export default async function MinistryDetailPage({
                         src={ministry.image || 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2070&auto=format&fit=crop'}
                         alt={ministry.name}
                         fill
-                        className="object-cover opacity-60 animate-slow-zoom"
+                        className="object-cover opacity-60"
                     />
                 </div>
                 <div className="container mx-auto px-6 relative z-10 text-center">

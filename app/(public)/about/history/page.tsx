@@ -23,7 +23,7 @@ export default function HistoryPage() {
                         src="/history_hero.png"
                         alt="Our History"
                         fill
-                        className="object-cover opacity-60 animate-slow-zoom"
+                        className="object-cover opacity-60"
                         unoptimized
                     />
                 </div>

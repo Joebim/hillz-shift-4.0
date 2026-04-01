@@ -33,10 +33,11 @@ export default async function MinistriesPage() {
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
                     <Image
-                        src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?q=80&w=2070&auto=format&fit=crop"
+                        src="/ministry_hero.png"
                         alt="Ministries"
                         fill
                         className="object-cover opacity-60"
+                        unoptimized
                     />
                 </div>
                 <div className="container mx-auto px-6 relative z-10 text-center">

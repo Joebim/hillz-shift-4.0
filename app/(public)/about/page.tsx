@@ -50,10 +50,11 @@ export default function AboutPage() {
                         <div className="absolute -inset-4 bg-linear-to-tr from-purple-100 to-indigo-100 rounded-[60px] blur-2xl opacity-50" />
                         <div className="relative rounded-[60px] overflow-hidden shadow-2xl h-[600px]">
                             <Image
-                                src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=2098&auto=format&fit=crop"
+                                src="/ministry_impact_section.png"
                                 alt="Our Vision"
                                 fill
                                 className="object-cover"
+                                unoptimized
                             />
                         </div>
                     </div>
@@ -128,13 +129,16 @@ export default function AboutPage() {
             {}
             <Section bg="none" className="py-32 relative overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
-                    <div className="absolute inset-0 bg-linear-to-r from-purple-900/90 to-slate-900/90" />
                     <Image
-                        src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=2073&auto=format&fit=crop"
-                        alt="Community"
+                        src="/ministry_ready_to_talk.png"
+                        alt="Join The Hillz Family"
                         fill
                         className="object-cover"
+                        unoptimized
                     />
+                    {/* Dark Overlay for Text Readability */}
+                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]" />
+                    <div className="absolute inset-0 bg-linear-to-t from-slate-900 via-slate-900/20 to-transparent" />
                 </div>
                 <div className="container mx-auto px-6 relative z-10 text-center">
                     <h2 className="text-4xl md:text-7xl font-black text-white mb-10 tracking-tighter leading-none">

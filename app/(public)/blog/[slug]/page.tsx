@@ -66,7 +66,7 @@ export default async function BlogPostPage({
                         src={post.featuredImage}
                         alt={post.title}
                         fill
-                        className="object-cover opacity-60 animate-slow-zoom"
+                        className="object-cover opacity-60"
                     />
                 </div>
                 <div className="container mx-auto px-6 relative z-10 text-center">

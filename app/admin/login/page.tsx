@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -8,7 +8,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/src/lib/firebase/client';
 import { Card } from '@/src/components/ui/Card';
 import { useToast } from '@/src/contexts/ToastContext';
-import { Eye, EyeOff, Sparkles, Lock, Mail } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 
 export default function AdminLoginPage() {
     const router = useRouter();
@@ -64,34 +64,34 @@ export default function AdminLoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-100 via-gray-50 to-gray-50 overflow-hidden relative">
-
-            {}
-            <div className="absolute top-0 left-0 w-full h-96 bg-linear-to-b from-white/0 via-violet-500/5 to-transparent pointer-events-none" />
-            <div className="absolute -top-20 -right-20 w-64 h-64 bg-violet-400/20 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute top-40 -left-20 w-72 h-72 bg-indigo-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
-
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 overflow-hidden relative font-sans">
             <div className="max-w-md w-full px-4 relative z-10 animate-in slide-in-from-bottom-8 fade-in duration-700 ease-out">
-                <div className="text-center mb-8 space-y-2">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br from-violet-600 to-indigo-600 shadow-lg shadow-violet-200 mb-4 ring-4 ring-white">
-                        <Sparkles className="w-6 h-6 text-white" />
+                <div className="text-center mb-10 space-y-4">
+                    <div className="inline-flex items-center justify-center mb-4 cursor-default">
+                        <img 
+                            src="/icons/hillz-logo-light-transparent.svg" 
+                            alt="The Hillz Logo" 
+                            className="w-40 h-auto opacity-90 transition-opacity hover:opacity-100"
+                        />
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome Back</h1>
-                    <p className="text-gray-500 text-sm">Sign in to access your administrative dashboard</p>
+                    <div>
+                        <h1 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none mb-2">Admin Portal</h1>
+                        <p className="text-slate-400 text-sm font-bold tracking-widest uppercase opacity-60">System Authentication Required</p>
+                    </div>
                 </div>
 
-                <Card variant="elevated" padding="lg" className="border-t-4 border-t-violet-500 shadow-xl shadow-violet-100/50 backdrop-blur-sm bg-white/90">
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                <Card variant="elevated" padding="lg" className="border-none shadow-[0_32px_80px_-16px_rgba(0,0,0,0.06)] bg-white rounded-[40px] overflow-visible">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <Input
-                            label="Email Address"
+                            label="Admin Email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
                             autoFocus
-                            placeholder="admin@example.com"
-                            className="bg-gray-50 focus:bg-white"
-                            endAdornment={<Mail className="w-5 h-5 text-gray-400" />}
+                            placeholder="admin@thehillz.com"
+                            className="bg-slate-50 border-none focus:ring-2 focus:ring-slate-100 focus:bg-white h-14 rounded-2xl font-bold transition-all"
+                            endAdornment={<Mail className="w-5 h-5 text-slate-300" />}
                         />
 
                         <Input
@@ -101,45 +101,45 @@ export default function AdminLoginPage() {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             placeholder="••••••••"
-                            className="bg-gray-50 focus:bg-white"
+                            className="bg-slate-50 border-none focus:ring-2 focus:ring-slate-100 focus:bg-white h-14 rounded-2xl font-bold transition-all"
                             endAdornment={
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="focus:outline-none hover:text-violet-600 transition-colors p-1"
+                                    className="focus:outline-none hover:text-slate-900 transition-colors p-1"
                                     tabIndex={-1}
                                 >
                                     {showPassword ? (
-                                        <EyeOff className="w-5 h-5" />
+                                        <EyeOff className="w-5 h-5 text-slate-300 transition-colors hover:text-slate-400" />
                                     ) : (
-                                        <Eye className="w-5 h-5" />
+                                        <Eye className="w-5 h-5 text-slate-300 transition-colors hover:text-slate-400" />
                                     )}
                                 </button>
                             }
                         />
 
-                        <div className="pt-2">
+                        <div className="pt-4">
                             <Button
                                 type="submit"
                                 variant="primary"
-                                className="w-full h-12 text-sm font-semibold shadow-lg shadow-violet-500/20 hover:shadow-violet-500/30 transition-all active:scale-[0.98]"
+                                className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-black text-white font-black text-sm uppercase tracking-widest shadow-2xl shadow-slate-200 transition-all active:scale-[0.98] border-none"
                                 isLoading={isLoading}
                                 disabled={isLoading}
                             >
                                 {isLoading ? (
-                                    <>Sign In</>
+                                    <>Authenticating...</>
                                 ) : (
                                     <span className="flex items-center gap-2">
-                                        Sign In <Lock className="w-4 h-4 opacity-50" />
+                                        Enter Dashboard <Lock className="w-4 h-4 opacity-40 ml-1" />
                                     </span>
                                 )}
                             </Button>
                         </div>
                     </form>
 
-                    <div className="mt-6 text-center">
-                        <p className="text-xs text-gray-400">
-                            Protected by Hillz Shift Security System &copy; {new Date().getFullYear()}
+                    <div className="mt-12 text-center">
+                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-200 cursor-default">
+                            The Hillz Shift OS &copy; {new Date().getFullYear()} • Secure Environment
                         </p>
                     </div>
                 </Card>

@@ -23,7 +23,7 @@ export default function LeadershipPage() {
                         src="/leadership_hero.png"
                         alt="Our Leadership"
                         fill
-                        className="object-cover opacity-60 animate-slow-zoom"
+                        className="object-cover opacity-60"
                         unoptimized
                     />
                 </div>

@@ -23,7 +23,7 @@ export default function MandateMissionPage() {
                         src="/vision_hero.png"
                         alt="Mandate and Mission"
                         fill
-                        className="object-cover opacity-60 animate-slow-zoom"
+                        className="object-cover opacity-60"
                         unoptimized
                     />
                 </div>

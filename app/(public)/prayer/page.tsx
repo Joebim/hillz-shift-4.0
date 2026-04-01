@@ -1,4 +1,4 @@
-﻿import Image from 'next/image';
+import Image from 'next/image';
 import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
 
@@ -25,7 +25,7 @@ export default function PrayerPage() {
                         src="/prayer_hero.png"
                         alt="Prayer"
                         fill
-                        className="object-cover opacity-60 animate-slow-zoom"
+                        className="object-cover opacity-60"
                         unoptimized
                     />
                 </div>
