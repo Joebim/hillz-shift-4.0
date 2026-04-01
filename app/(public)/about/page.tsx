@@ -5,13 +5,28 @@ import { Section } from '@/src/components/shared/Section';
 import { Button } from '@/src/components/ui/Button';
 import { CheckCircle2, Heart, Shield, Star, Users, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { queryDocuments } from '@/src/lib/firebase/firestore';
+import { Event } from '@/src/types/event';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
     title: 'About Us | The Hillz',
     description: 'Learn about our vision, mission, and the history of The Hillz.',
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+    const [membershipEvents, featuredEvents] = await Promise.all([
+        queryDocuments<Event>("events", { isMembershipForm: true }, "createdAt", 1),
+        queryDocuments<Event>("events", { status: "published", featured: true }, "startDate", 1)
+    ]);
+
+    const targetEvent = membershipEvents?.[0] || featuredEvents?.[0];
+
+    const joinLink = targetEvent 
+        ? `/e/${targetEvent.slug || targetEvent.id}/register`
+        : "/events";
+
     return (
         <div className="min-h-screen bg-white font-medium">
             <Header />
@@ -146,7 +161,7 @@ export default function AboutPage() {
                         <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-300">WALK WITH US?</span>
                     </h2>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                        <Link href="/events">
+                        <Link href={joinLink}>
                             <Button size="lg" className="h-16 px-12 rounded-full bg-white text-black hover:bg-gray-100 font-black text-lg shadow-2xl">
                                 JOIN THE FAMILY
                             </Button>
