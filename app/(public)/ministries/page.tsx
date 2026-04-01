@@ -1,4 +1,4 @@
-﻿import Image from 'next/image';
+import Image from 'next/image';
 import { queryDocuments } from '@/src/lib/firebase/firestore';
 import { toJsDate } from '@/src/lib/utils';
 import { Ministry } from '@/src/types/ministry';

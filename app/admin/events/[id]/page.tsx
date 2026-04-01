@@ -274,8 +274,8 @@ function DetailsPanel({ event, attachmentsRef }: { event: Event; attachmentsRef?
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <InfoCard icon={Calendar} label="Start" value={format(startDate, 'MMM d, yyyy • h:mm a')} accent />
-                    <InfoCard icon={Calendar} label="End" value={format(endDate, 'MMM d, yyyy • h:mm a')} />
+                    <InfoCard icon={Calendar} label="Start" value={event.startDate ? format(startDate, 'MMM d, yyyy • h:mm a') : 'TBA'} accent />
+                    <InfoCard icon={Calendar} label="End" value={event.endDate ? format(endDate, 'MMM d, yyyy • h:mm a') : 'Indefinite'} />
                     <InfoCard icon={DollarSign} label="Price" value={priceDisplay} />
                     {regConfig?.capacity && <InfoCard icon={Users} label="Capacity" value={`${regConfig.capacity} attendees`} />}
                 </div>
@@ -327,13 +327,13 @@ function DetailsPanel({ event, attachmentsRef }: { event: Event; attachmentsRef?
                     <SectionLabel>Registration Window</SectionLabel>
                     <div className="grid grid-cols-2 gap-3 mt-1">
                         {[
-                            { label: 'Opens', date: regOpen },
-                            { label: 'Closes', date: regClose },
-                        ].map(({ label, date }) => (
+                            { label: 'Opens', date: regOpen, raw: event.registrationOpenDate },
+                            { label: 'Closes', date: regClose, raw: event.registrationCloseDate },
+                        ].map(({ label, date, raw }) => (
                             <div key={label} className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                                 <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-                                <p className="text-xs font-semibold text-gray-800">{format(date, 'MMM d, yyyy')}</p>
-                                <p className="text-xs text-gray-500">{format(date, 'h:mm a')}</p>
+                                <p className="text-xs font-semibold text-gray-800">{raw ? format(date, 'MMM d, yyyy') : 'No Date'}</p>
+                                <p className="text-xs text-gray-500">{raw ? format(date, 'h:mm a') : 'TBA'}</p>
                             </div>
                         ))}
                     </div>
@@ -535,8 +535,8 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
 
     return (
         <div className="flex flex-col h-full overflow-hidden">
-            <AddRegistrationModal eventId={eventId} isOpen={isRegModalOpen} onClose={() => setIsRegModalOpen(false)} />
-            <AddInvitationModal eventId={eventId} isOpen={isInvModalOpen} onClose={() => setIsInvModalOpen(false)} />
+            <AddRegistrationModal event={event} isOpen={isRegModalOpen} onClose={() => setIsRegModalOpen(false)} />
+            <AddInvitationModal event={event} isOpen={isInvModalOpen} onClose={() => setIsInvModalOpen(false)} />
 
             {}
             <div className="bg-white border-b border-gray-100 px-4 py-3 flex gap-2 shrink-0">
@@ -582,7 +582,7 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
                         {rightTab === 'registrations' ? 'Attendees' : 'Invitations'}
                     </p>
                     <h3 className="text-2xl md:text-[26px] font-bold text-white leading-tight mb-1">
-                        {format(startDate, 'd EEEE, MMMM')}
+                        {event.startDate ? format(startDate, 'd EEEE, MMMM') : 'Any Time Open Registration'}
                     </h3>
                     <p className="text-[11px] font-bold text-white/60 uppercase tracking-widest">
                         {rightTab === 'registrations'
@@ -602,6 +602,12 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
                                 className="w-full bg-white/10 border border-white/10 rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder:text-white/40 focus:outline-none focus:bg-white/20 focus:border-white/30 transition-all font-medium"
                             />
                         </div>
+                        <Link
+                            href={rightTab === 'registrations' ? `/admin/events/${eventId}/registrations` : `/admin/events/${eventId}/invitations`}
+                            className="bg-white/20 text-white text-xs font-bold py-2 px-4 rounded-lg hover:bg-white/30 transition-all shadow-md shrink-0 active:scale-95 border border-white/20 flex items-center justify-center"
+                        >
+                            View Data
+                        </Link>
                         <button
                             onClick={() => rightTab === 'registrations' ? setIsRegModalOpen(true) : setIsInvModalOpen(true)}
                             className="bg-white text-violet-700 text-xs font-bold py-2 px-4 rounded-lg hover:bg-gray-50 hover:shadow-lg transition-all shadow-md shrink-0 active:scale-95"

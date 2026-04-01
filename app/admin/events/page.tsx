@@ -198,8 +198,8 @@ function SidebarContent({ metrics, setView, router }: { metrics: EventMetrics, s
                     <div className="text-xs text-violet-800 font-medium mt-1 mb-4 flex-1">
                         {(() => {
                             const now = new Date();
-                            const start = activeEvent.startDate ? toJsDate(activeEvent.startDate) : now;
-                            const end = activeEvent.endDate ? toJsDate(activeEvent.endDate) : now;
+                            const start = activeEvent.startDate ? toJsDate(activeEvent.startDate) : new Date(0);
+                            const end = activeEvent.endDate ? toJsDate(activeEvent.endDate) : new Date(8640000000000000);
 
                             if (start > now) {
                                 return <span>Registration ongoing, event starts on {format(start, 'MMM d, yyyy')}.</span>;
@@ -207,7 +207,8 @@ function SidebarContent({ metrics, setView, router }: { metrics: EventMetrics, s
                                 const days = differenceInDays(now, end);
                                 return <span>Event ended {days === 0 ? 'today' : `${days} day${days === 1 ? '' : 's'} ago`}.</span>;
                             } else {
-                                return <span>Event ongoing from {format(start, 'MMM d')} to {format(end, 'MMM d, yyyy')}.</span>;
+                                if (!activeEvent.startDate && !activeEvent.endDate) return <span>Event is ongoing indefinitely (unlimited).</span>;
+                                return <span>Event ongoing {activeEvent.startDate ? `from ${format(start, 'MMM d')}` : ''} {activeEvent.endDate ? `to ${format(end, 'MMM d, yyyy')}` : ''}.</span>;
                             }
                         })()}
                     </div>
@@ -340,30 +341,41 @@ export default function EventsDashboardPage() {
     // Ongoing: Active and current system date is within the event start and end date
     const ongoingEvents = (events || []).filter(e => {
         if (e.status !== 'published') return false;
-        const start = toJsDate(e.startDate);
-        const end = toJsDate(e.endDate);
+        const start = e.startDate ? toJsDate(e.startDate) : new Date(0);
+        const end = e.endDate ? toJsDate(e.endDate) : new Date(8640000000000000);
         return now >= start && now <= end;
     });
 
     // Upcoming: Active and current system date is within the registration start and end date
     const upcomingEvents = (events || []).filter(e => {
         if (e.status !== 'published') return false;
+        if (ongoingEvents.some(on => on.id === e.id)) return false;
 
         if (e.registrationOpenDate && e.registrationCloseDate) {
             const regStart = toJsDate(e.registrationOpenDate);
             const regEnd = toJsDate(e.registrationCloseDate);
-            return now >= regStart && now <= regEnd;
+            if (now >= regStart && now <= regEnd) return true;
         }
 
         // Fallback for events without registration dates
-        return toJsDate(e.startDate) > now;
-    }).sort((a, b) => toJsDate(a.startDate).getTime() - toJsDate(b.startDate).getTime());
+        const start = e.startDate ? toJsDate(e.startDate) : new Date(0);
+        return start > now;
+    }).sort((a, b) => {
+        const d1 = a.startDate ? toJsDate(a.startDate).getTime() : 0;
+        const d2 = b.startDate ? toJsDate(b.startDate).getTime() : 0;
+        return d1 - d2;
+    });
 
     // Past: events whose end date has already passed, sorted newest-first
     const pastEvents = (events || []).filter(e => {
+        if (!e.endDate) return false;
         const end = toJsDate(e.endDate);
         return end < now;
-    }).sort((a, b) => toJsDate(b.endDate).getTime() - toJsDate(a.endDate).getTime());
+    }).sort((a, b) => {
+        const d1 = a.endDate ? toJsDate(a.endDate).getTime() : 0;
+        const d2 = b.endDate ? toJsDate(b.endDate).getTime() : 0;
+        return d2 - d1;
+    });
 
     const PAST_PAGE_SIZE = 5;
     const visiblePastEvents = showAllPast ? pastEvents : pastEvents.slice(0, PAST_PAGE_SIZE);
@@ -553,7 +565,7 @@ export default function EventsDashboardPage() {
                                                 </p>
                                                 <div className="flex items-center gap-1 mt-1.5 text-gray-400 text-[10px] md:text-xs">
                                                     <Clock className="w-3 h-3 shrink-0" />
-                                                    <span className="truncate">{format(toJsDate(event.startDate), 'd MMM yyyy, hh:mm aa')}</span>
+                                                    <span className="truncate">{event.startDate ? format(toJsDate(event.startDate), 'd MMM yyyy, hh:mm aa') : 'Unlimited / TBA'}</span>
                                                 </div>
                                             </div>
                                         </Link>
@@ -573,7 +585,7 @@ export default function EventsDashboardPage() {
                                         <Link key={event.id} href={`/admin/events/${event.id}`}
                                             className="rounded-2xl border border-gray-100 p-3 md:p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 cursor-pointer shrink-0 w-48 sm:w-56 md:w-auto snap-start block group">
                                             <span className="inline-block bg-violet-50 text-violet-600 text-[10px] md:text-xs font-semibold px-2.5 py-1 rounded-full mb-2.5">
-                                                {format(toJsDate(event.startDate), 'd MMM yyyy')}
+                                                {event.startDate ? format(toJsDate(event.startDate), 'd MMM yyyy') : 'TBA'}
                                             </span>
                                             <p className="font-semibold text-gray-900 text-xs md:text-sm mb-1.5 line-clamp-2 group-hover:text-violet-600 transition-colors">
                                                 {event.title}
@@ -581,7 +593,7 @@ export default function EventsDashboardPage() {
                                             <div className="flex items-center gap-1 text-gray-400 text-[10px] md:text-xs mb-3 md:mb-4">
                                                 <Clock className="w-3 h-3 shrink-0" />
                                                 <span>
-                                                    {format(toJsDate(event.startDate), 'hh:mm aa')} - {format(toJsDate(event.endDate), 'hh:mm aa')}
+                                                    {event.startDate ? format(toJsDate(event.startDate), 'hh:mm aa') : 'TBA'} - {event.endDate ? format(toJsDate(event.endDate), 'hh:mm aa') : 'Indefinite'}
                                                 </span>
                                             </div>
                                             <div className="flex items-center justify-between">
@@ -649,7 +661,7 @@ export default function EventsDashboardPage() {
                                                     <div className="flex items-center gap-2 mt-0.5">
                                                         <span className="inline-flex items-center gap-1 text-[10px] text-gray-400">
                                                             <Calendar className="w-3 h-3" />
-                                                            {format(toJsDate(event.startDate), 'MMM d')} – {format(toJsDate(event.endDate), 'MMM d, yyyy')}
+                                                            {event.startDate ? format(toJsDate(event.startDate), 'MMM d') : 'TBA'} – {event.endDate ? format(toJsDate(event.endDate), 'MMM d, yyyy') : 'Indefinite'}
                                                         </span>
                                                         {event.category && (
                                                             <span className="text-[10px] bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded capitalize">
@@ -726,8 +738,8 @@ export default function EventsDashboardPage() {
                                         header: 'Date',
                                         cell: (e: Event) => (
                                             <div>
-                                                <p className="text-sm text-gray-700 font-medium">{format(toJsDate(e.startDate), 'MMM d, yyyy')}</p>
-                                                <p className="text-xs text-gray-400">{format(toJsDate(e.startDate), 'h:mm a')}</p>
+                                                <p className="text-sm text-gray-700 font-medium">{e.startDate ? format(toJsDate(e.startDate), 'MMM d, yyyy') : 'No Date'}</p>
+                                                <p className="text-xs text-gray-400">{e.startDate ? format(toJsDate(e.startDate), 'h:mm a') : 'TBA'}</p>
                                             </div>
                                         )
                                     },

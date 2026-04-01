@@ -177,10 +177,22 @@ export const eventBaseSchema = z.object({
     "completed",
     "archived",
   ]),
-  startDate: z.coerce.date(),
-  endDate: z.coerce.date(),
-  registrationOpenDate: z.coerce.date().optional(),
-  registrationCloseDate: z.coerce.date().optional(),
+  startDate: z.preprocess((arg) => {
+    if (arg === "" || arg === null || arg === undefined) return undefined;
+    return new Date(arg as string | number | Date);
+  }, z.date().optional()),
+  endDate: z.preprocess((arg) => {
+    if (arg === "" || arg === null || arg === undefined) return undefined;
+    return new Date(arg as string | number | Date);
+  }, z.date().optional()),
+  registrationOpenDate: z.preprocess((arg) => {
+    if (arg === "" || arg === null || arg === undefined) return undefined;
+    return new Date(arg as string | number | Date);
+  }, z.date().optional()),
+  registrationCloseDate: z.preprocess((arg) => {
+    if (arg === "" || arg === null || arg === undefined) return undefined;
+    return new Date(arg as string | number | Date);
+  }, z.date().optional()),
 
   venue: eventVenueSchema,
 
@@ -215,7 +227,10 @@ export const eventBaseSchema = z.object({
 
 export const createEventSchema = eventBaseSchema
   .extend({ slug: z.string().optional() })
-  .refine((data) => data.endDate >= data.startDate, {
+  .refine((data) => {
+    if (!data.startDate || !data.endDate) return true;
+    return data.endDate >= data.startDate;
+  }, {
     message: "End date must be after start date",
     path: ["endDate"],
   })

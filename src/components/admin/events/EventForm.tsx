@@ -554,18 +554,20 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                     <Section id="schedule-inner" title="Schedule & Venue" icon={Calendar}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormInput
-                                label="Start Date & Time"
-                                required
+                                label="Start Date & Time (Leave empty for TBA)"
                                 type="datetime-local"
                                 error={errors.startDate?.message}
-                                {...register('startDate')}
+                                {...register('startDate', {
+                                    setValueAs: v => v === '' ? undefined : v
+                                })}
                             />
                             <FormInput
                                 label="End Date & Time"
-                                required
                                 type="datetime-local"
                                 error={errors.endDate?.message}
-                                {...register('endDate')}
+                                {...register('endDate', {
+                                    setValueAs: v => v === '' ? undefined : v
+                                })}
                             />
                         </div>
 

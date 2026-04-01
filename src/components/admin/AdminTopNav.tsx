@@ -12,7 +12,8 @@ export interface AdminTopNavProps {
 
     action?: {
         label: string;
-        href: string;
+        href?: string;
+        onClick?: () => void;
         icon?: React.ReactNode;
     };
 
@@ -125,12 +126,22 @@ export function AdminTopNav({
                     {customAction}
 
                     {!customAction && action && (
-                        <Link href={action.href}
-                            className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700 text-white px-3 md:px-5 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-semibold transition-colors shadow-md shadow-violet-200"
-                        >
-                            {action.icon}
-                            <span className="hidden sm:inline">{action.label}</span>
-                        </Link>
+                        action.href ? (
+                            <Link href={action.href}
+                                className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700 text-white px-3 md:px-5 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-semibold transition-colors shadow-md shadow-violet-200"
+                            >
+                                {action.icon}
+                                <span className="hidden sm:inline">{action.label}</span>
+                            </Link>
+                        ) : (
+                            <button
+                                onClick={action.onClick}
+                                className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-700 text-white px-3 md:px-5 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-semibold transition-colors shadow-md shadow-violet-200 outline-none"
+                            >
+                                {action.icon}
+                                <span className="hidden sm:inline">{action.label}</span>
+                            </button>
+                        )
                     )}
 
                     <div className="hidden lg:block h-8 w-px bg-gray-100 mx-1" />
