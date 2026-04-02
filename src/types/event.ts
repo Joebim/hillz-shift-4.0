@@ -76,7 +76,8 @@ export interface EventFormField {
     | "select"
     | "radio"
     | "textarea"
-    | "checkbox";
+    | "checkbox"
+    | "tick_check";
   required: boolean;
   options?: string[];
   placeholder?: string;

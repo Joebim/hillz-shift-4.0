@@ -66,7 +66,7 @@ export const eventFAQSchema = z.object({
 export const eventFormFieldSchema = z.object({
   id: z.string(),
   label: z.string().min(1, "Field label is required"),
-  type: z.enum(["text", "email", "phone", "select", "radio", "checkbox"]),
+  type: z.enum(["text", "email", "phone", "select", "radio", "checkbox", "tick_check"]),
   required: z.boolean(),
   options: z.array(z.string()).optional(),
   placeholder: z.string().optional(),

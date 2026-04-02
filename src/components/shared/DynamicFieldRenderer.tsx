@@ -1,10 +1,11 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { EventFormField } from '@/src/types/event';
 import { Input } from '@/src/components/ui/Input';
 import { Textarea } from '@/src/components/ui/Textarea';
 import { DbSearchSelect, DbSource } from '@/src/components/shared/DbSearchSelect';
+import { cn } from '@/src/lib/utils';
 
 interface DynamicFieldRendererProps {
     fields: EventFormField[];
@@ -129,6 +130,29 @@ export function DynamicFieldRenderer({ fields, values, onChange, errors, eventId
                                     })}
                                 </div>
                                 {error && <span className="text-xs text-red-500">{error}</span>}
+                            </div>
+                        );
+                    case 'tick_check':
+                        return (
+                            <div key={field.id} className="flex flex-col gap-2">
+                                <label className="flex items-center gap-3 p-4 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-violet-200 transition-all cursor-pointer group">
+                                    <div className="relative flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            checked={!!value}
+                                            onChange={(e) => onChange(field.label, e.target.checked)}
+                                            required={field.required}
+                                            className="w-5 h-5 rounded border-gray-300 text-violet-600 focus:ring-violet-500/20 transition-all"
+                                        />
+                                    </div>
+                                    <span className={cn(
+                                        "text-sm font-semibold transition-colors",
+                                        !!value ? "text-violet-900" : "text-gray-600 group-hover:text-gray-900"
+                                    )}>
+                                        {field.label}{field.required && <span className="text-red-500 ml-1">*</span>}
+                                    </span>
+                                </label>
+                                {error && <span className="text-xs text-red-500 ml-1">{error}</span>}
                             </div>
                         );
                     default:

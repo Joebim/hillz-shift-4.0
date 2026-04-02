@@ -207,7 +207,7 @@ export default async function HomePage() {
               Hillz is a global movement of people whose dwelling place is with
               the King on His Holy Hill of Zion. Men and women, young and old
               who identifies with Christ dominion mandate and recognizes their
-              place as the people of His presence. Our mandate is to raise <br />a nation
+              place as the people of His presence. <br />Our mandate is to raise a nation
               of priests and kings positioned to radiate the glory of God to the
               ends of the earth, a people revealing the manifest presence of
               Jesus in every situation, to every people and in every place.

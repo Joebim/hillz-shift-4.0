@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Event } from '@/src/types/event';
@@ -7,6 +5,8 @@ import { Button } from '@/src/components/ui/Button';
 import { Input } from '@/src/components/ui/Input';
 import { Card } from '@/src/components/ui/Card';
 import { CheckCircle } from 'lucide-react';
+import { DynamicFieldRenderer } from '@/src/components/shared/DynamicFieldRenderer';
+import { DbSearchSelect } from '@/src/components/shared/DbSearchSelect';
 
 export interface EventRegistrationFormProps {
     event: Event;
@@ -24,22 +24,69 @@ export const EventRegistrationForm = ({ event }: EventRegistrationFormProps) => 
         lastName: '',
         email: '',
         phone: '',
+        invitedBy: '',
     });
+
+    const [customFields, setCustomFields] = useState<Record<string, unknown>>({});
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+    const validateForm = (): boolean => {
+        const newErrors: Record<string, string> = {};
+
+        // Base fields
+        if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
+        if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+        if (!formData.email.trim()) newErrors.email = 'Email is required';
+        if (!formData.phone.trim()) newErrors.phone = 'Phone is required';
+
+        // Custom fields
+        if (event.registrationConfig.fields) {
+            event.registrationConfig.fields.forEach(field => {
+                if (field.required) {
+                    const value = customFields[field.label];
+                    const isEmpty = (
+                        value === undefined || 
+                        value === null || 
+                        value === '' || 
+                        (Array.isArray(value) && value.length === 0) ||
+                        (typeof value === 'boolean' && value === false) // For tick_check if strictly required
+                    );
+                    if (isEmpty) {
+                        newErrors[field.label] = `${field.label} is required`;
+                    }
+                }
+            });
+        }
+
+        setFieldErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) {
+            setError('Please fill in all required fields');
+            return false;
+        }
+
+        return true;
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (!validateForm()) return;
+
         setIsSubmitting(true);
         setError('');
 
         try {
+            const { invitedBy, ...attendeeBase } = formData;
             const response = await fetch(`/api/events/${event.id}/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     attendee: {
-                        ...formData,
-                        customFields: {},
+                        ...attendeeBase,
+                        customFields,
                     },
+                    invitedBy,
                     status: 'pending',
                     checkedIn: false,
                 }),
@@ -53,10 +100,21 @@ export const EventRegistrationForm = ({ event }: EventRegistrationFormProps) => 
             } else {
                 setError(data.error?.message || 'Registration failed');
             }
-        } catch (err) {
+        } catch {
             setError('An error occurred. Please try again.');
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleCustomFieldChange = (label: string, value: unknown) => {
+        setCustomFields(prev => ({ ...prev, [label]: value }));
+        if (fieldErrors[label]) {
+            setFieldErrors(prev => {
+                const next = { ...prev };
+                delete next[label];
+                return next;
+            });
         }
     };
 
@@ -112,6 +170,7 @@ export const EventRegistrationForm = ({ event }: EventRegistrationFormProps) => 
                         required
                         value={formData.firstName}
                         onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                        error={fieldErrors.firstName}
                     />
                     <Input
                         label="Last Name"
@@ -119,6 +178,7 @@ export const EventRegistrationForm = ({ event }: EventRegistrationFormProps) => 
                         required
                         value={formData.lastName}
                         onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                        error={fieldErrors.lastName}
                     />
                 </div>
 
@@ -128,6 +188,7 @@ export const EventRegistrationForm = ({ event }: EventRegistrationFormProps) => 
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    error={fieldErrors.email}
                 />
 
                 <Input
@@ -136,7 +197,32 @@ export const EventRegistrationForm = ({ event }: EventRegistrationFormProps) => 
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    error={fieldErrors.phone}
                 />
+
+                {/* Who Invited You? */}
+                <DbSearchSelect
+                    source="registrations"
+                    eventId={event.id}
+                    label="Who invited you?"
+                    placeholder="Search name..."
+                    value={formData.invitedBy}
+                    onChange={(val) => setFormData({ ...formData, invitedBy: val })}
+                />
+
+                {/* Custom Fields */}
+                {event.registrationConfig.fields && event.registrationConfig.fields.length > 0 && (
+                    <div className="pt-4 border-t border-gray-100">
+                        <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-widest">Additional Questions</h3>
+                        <DynamicFieldRenderer
+                            fields={event.registrationConfig.fields}
+                            values={customFields}
+                            onChange={handleCustomFieldChange}
+                            errors={fieldErrors}
+                            eventId={event.id}
+                        />
+                    </div>
+                )}
 
                 {error && (
                     <div className="bg-[#DC2626]/10 border border-[#DC2626] rounded-lg p-4">

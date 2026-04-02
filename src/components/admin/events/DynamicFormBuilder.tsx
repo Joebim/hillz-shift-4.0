@@ -225,7 +225,8 @@ export function DynamicFormBuilder<TFieldValues extends FieldValues = FieldValue
                                     <option value="phone">Phone</option>
                                     <option value="select">Dropdown Menu</option>
                                     <option value="radio">Radio Buttons</option>
-                                    <option value="checkbox">Checkboxes</option>
+                                    <option value="checkbox">Checkboxes List</option>
+                                    <option value="tick_check">Check Box Block (Boolean)</option>
                                 </Select>
                             </div>
 
