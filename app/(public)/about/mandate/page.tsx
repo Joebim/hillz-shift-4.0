@@ -37,8 +37,8 @@ export default function MandateMissionPage() {
                             MANDATE & <br />
                             <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 via-purple-300 to-pink-400">MISSION</span>
                         </h1>
-                        <p className="text-xl text-white/60 max-w-2xl mx-auto font-medium animate-fade-in-up delay-100 italic leading-relaxed">
-                            &quot;Where there is no vision, the people perish...&quot; — Proverbs 29:18
+                        <p className="text-xl text-white/60 max-w-2xl mx-auto font-medium animate-fade-in-up delay-100 whitespace-nowrap italic leading-relaxed">
+                            &quot;Who are these that fly along like clouds, like doves to their nests?&quot; — Isaiah 60:8
                         </p>
                     </div>
                 </div>
@@ -58,7 +58,7 @@ export default function MandateMissionPage() {
                                     </div>
                                     <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Our Mandate</h2>
                                     <p className="text-lg text-slate-600 leading-relaxed font-medium">
-                                        Our mandate is to see a generation fully awake to their divine purpose and walking in the fullness of God&apos;s power. We long to build a Christ-centered community that shatters the mold of traditional religion to embrace real, transformative faith.
+                                        Our Mandate is to raise a people fully awake to their purpose in God. A people of His presence, His kingdom and dominion positioned on the Father's Hillz (God's holy hill of Zion) with the Son and exercising Christ's absolute authority over the nations - as those who put their trust in Him — Psalm 2:1 - 12
                                     </p>
                                 </div>
 
@@ -69,13 +69,13 @@ export default function MandateMissionPage() {
                                     </div>
                                     <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Our Mission</h2>
                                     <p className="text-lg text-slate-600 leading-relaxed font-medium mb-6">
-                                        We are creating intentional spaces for radical transformation through worship, word, and community.
+                                        Our Mission is to equip Millions around the world with what it takes to ascend and remain on the Father's Hillz. Our teachings and ministries focuses on:
                                     </p>
                                     <ul className="space-y-4">
                                         {[
-                                            'Living out radical love every single day',
-                                            'Demonstrating dynamic, earth-shaking faith',
-                                            'Impacting generations globally for God\'s glory'
+                                            'Repairing foundations',
+                                            'Refocusing purpose',
+                                            'Releasing for the flight'
                                         ].map((item, i) => (
                                             <li key={i} className="flex items-start gap-4">
                                                 <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
