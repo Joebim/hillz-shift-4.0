@@ -3,7 +3,7 @@ import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
 import { Section } from '@/src/components/shared/Section';
 import { Button } from '@/src/components/ui/Button';
-import { CheckCircle2, Heart, Shield, Star, Users, ArrowRight, Sparkles } from 'lucide-react';
+import { CheckCircle2, Heart, Shield, Star, Users, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { queryDocuments } from '@/src/lib/firebase/firestore';
 import { Event } from '@/src/types/event';
@@ -53,8 +53,10 @@ export default async function AboutPage() {
                         <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 via-pink-300 to-indigo-400">TRADITIONAL</span>
                     </h1>
                     <p className="text-xl text-white/60 max-w-2xl mx-auto font-medium animate-fade-in-up delay-100 italic leading-relaxed">
-                        &quot;Then I saw a new heaven and a new earth...&quot; — Revelation 21:1
+                        &quot;But ye are come unto mount Sion, and unto the city of the living God, the heavenly Jerusalem, and to an innumerable company of angels,&quot; <br /> — Hebrews 12:22
                     </p>
+
+
                 </div>
             </section>
 
@@ -76,11 +78,12 @@ export default async function AboutPage() {
                     <div className="max-w-xl">
                         <div className="w-12 h-1.5 bg-purple-600 rounded-full mb-8" />
                         <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-8 tracking-tighter">
-                            Called to Impact
+                            Called to the Father&apos;s Hillz
                         </h2>
                         <p className="text-xl text-slate-500 mb-10 leading-relaxed font-medium">
-                            The Hillz began as a divine whisper to transform how we experience faith in the modern world. We aren&apos;t just a church; we are a catalyst for spiritual breakthrough.
+                            The Hillz began as a divine whisper to step fully into the life the blood of Jesus has bought for us. A gentle nudge to take our place in dominion with Christ
                         </p>
+
 
                         <div className="space-y-8">
                             {[
@@ -123,12 +126,12 @@ export default async function AboutPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {[
-                        { title: 'Radical Love', desc: 'Acceptance without exceptions, reflecting the heart of Christ.', icon: Heart },
-                        { title: 'Dynamic Faith', desc: 'A living, breathing relationship with God that moves mountains.', icon: Shield },
-                        { title: 'Generational Impact', desc: 'Building legacies that outlast our own lifetimes.', icon: Users },
-                        { title: 'Spiritual Excellence', desc: 'Giving God our absolute best in everything we do.', icon: Star },
-                        { title: 'Unfiltered Worship', desc: 'Authentic expression of gratitude and awe.', icon: Sparkles },
-                        { title: 'Divine Purpose', desc: 'Calling every individual into their unique God-given destiny.', icon: CheckCircle2 }
+                        { title: 'The Word', desc: <>We receive grace and truth as we behold the glory of the Lord by the word. <br /> — John 1:14</>, icon: Star },
+                        { title: 'Righteousness', desc: <>We receive capacity for righteousness via the activities of the word and the spirit, producing transformation in us. <br /> — 2 Corinthians 3:18</>, icon: Shield },
+                        { title: 'Devotion', desc: <>We continue steadfastly in prayers, fasting and communion as we receive grace to stand before God continually. <br /> — Acts 2:42</>, icon: Heart },
+                        { title: 'Holy Spirit', desc: <>We believe in, submit to and walk by the spirit, the executor-in-chief of God&apos;s purposes on earth. <br /> — Luke 1:35</>, icon: Sparkles },
+                        { title: 'Purpose', desc: <>We are committed to everlasting covenant between God and the Church to be the light of the world, as a city that is set on the hill, we will not be hidden. <br /> — Matthew 5:14</>, icon: Users },
+                        { title: 'Excellence', desc: <>We strive to do all things as unto the Lord. Always working worthy of our great calling. <br /> — Ephesians 1:4</>, icon: CheckCircle2 }
                     ].map((value, i) => (
                         <div key={i} className="bg-white p-10 rounded-[40px] shadow-xl shadow-slate-200/50 border border-slate-100 hover:-translate-y-2 transition-all duration-500">
                             <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 mb-8 transition-colors">
@@ -157,8 +160,8 @@ export default async function AboutPage() {
                 </div>
                 <div className="container mx-auto px-6 relative z-10 text-center">
                     <h2 className="text-4xl md:text-7xl font-black text-white mb-10 tracking-tighter leading-none">
-                        READY TO <br />
-                        <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-300">WALK WITH US?</span>
+                        READY FOR <br />
+                        <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-300">THE FLIGHT?</span>
                     </h2>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                         <Link href={joinLink}>
