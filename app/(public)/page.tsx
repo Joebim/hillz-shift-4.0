@@ -301,7 +301,7 @@ export default async function HomePage() {
               {
                 name: "Tosin J",
                 role: "Member",
-                text: "The shift mastering the mysteries has been a life changing experience for me with the awesome breaking down of the scriptures. It has really helped me to re-discover myself.",
+                text: "The Hillz & Mastering the mystery of Christ's teachings have been a life changing experience for me, the awesome breaking down of scriptures has really helped me to re-discover myself.",
               },
             ].map((t, i) => (
               <div
