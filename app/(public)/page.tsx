@@ -288,23 +288,23 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                name: "Sarah Jemison",
-                role: "Worship Team",
-                text: "Joining The Hillz platform has been life-changing. The warmth and support helped me grow in my faith and find true belonging.",
+                name: "Yomi Jay",
+                role: "Member",
+                text: "My understanding of scriptures has been greatly deepened over the years via the teachings, making my faith stronger and my prayer life has improved as well. Each session has been enriching, thought provoking and uplifting always.",
                 image:
                   "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop",
               },
               {
-                name: "David Thompson",
+                name: "David T",
                 role: "Youth Leader",
                 text: "The sermons are inspiring and relevant. I leave feeling uplifted and motivated. This platform truly feels like home.",
                 image:
                   "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2070&auto=format&fit=crop",
               },
               {
-                name: "Michael Chen",
-                role: "Ministry Partner",
-                text: "I found a community that challenged me to go deeper. The transformation is real, and it starts from within.",
+                name: "Tosin J",
+                role: "Member",
+                text: "The shift mastering the mysteries has been a life changing experience for me with the awesome breaking down of the scriptures. It has really helped me to re-discover myself.",
                 image:
                   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop",
               },
