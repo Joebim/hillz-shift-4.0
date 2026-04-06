@@ -22,6 +22,7 @@ import {
   Sparkles,
   Users,
   Calendar,
+  User,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -291,22 +292,16 @@ export default async function HomePage() {
                 name: "Yomi Jay",
                 role: "Member",
                 text: "My understanding of scriptures has been greatly deepened over the years via the teachings, making my faith stronger and my prayer life has improved as well. Each session has been enriching, thought provoking and uplifting always.",
-                image:
-                  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop",
               },
               {
                 name: "David T",
                 role: "Youth Leader",
                 text: "The sermons are inspiring and relevant. I leave feeling uplifted and motivated. This platform truly feels like home.",
-                image:
-                  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2070&auto=format&fit=crop",
               },
               {
                 name: "Tosin J",
                 role: "Member",
                 text: "The shift mastering the mysteries has been a life changing experience for me with the awesome breaking down of the scriptures. It has really helped me to re-discover myself.",
-                image:
-                  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop",
               },
             ].map((t, i) => (
               <div
@@ -318,13 +313,8 @@ export default async function HomePage() {
                   &quot;{t.text}&quot;
                 </p>
                 <div className="flex items-center gap-4">
-                  <div className="relative w-14 h-14 rounded-2xl overflow-hidden border-2 border-purple-500/30">
-                    <Image
-                      src={t.image}
-                      alt={t.name}
-                      fill
-                      className="object-cover"
-                    />
+                  <div className="relative w-14 h-14 rounded-2xl overflow-hidden border-2 border-purple-500/30 flex items-center justify-center bg-white/5">
+                    <User className="w-7 h-7 text-white/50" />
                   </div>
                   <div>
                     <p className="text-white font-black">{t.name}</p>
