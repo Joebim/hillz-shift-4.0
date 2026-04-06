@@ -306,13 +306,13 @@ export default async function HomePage() {
             ].map((t, i) => (
               <div
                 key={i}
-                className="bg-white/5 backdrop-blur-xl rounded-[40px] p-10 border border-white/10 hover:bg-white/10 transition-all duration-500 group"
+                className="bg-white/5 backdrop-blur-xl rounded-[40px] p-10 border border-white/10 hover:bg-white/10 transition-all duration-500 group flex flex-col h-full"
               >
                 <Quote className="w-12 h-12 text-purple-500/30 mb-8 group-hover:text-purple-400 transition-colors" />
                 <p className="text-xl text-white/80 font-medium mb-10 leading-relaxed italic">
                   &quot;{t.text}&quot;
                 </p>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 mt-auto">
                   <div className="relative w-14 h-14 rounded-2xl overflow-hidden border-2 border-purple-500/30 flex items-center justify-center bg-white/5">
                     <User className="w-7 h-7 text-white/50" />
                   </div>
