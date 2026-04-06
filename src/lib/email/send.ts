@@ -1,4 +1,4 @@
-﻿import { transporter, EMAIL_FROM } from "@/src/lib/email/transporter";
+import { transporter, EMAIL_FROM } from "@/src/lib/email/transporter";
 import {
   getRegistrationEmail,
   getInvitationEmail,
@@ -22,7 +22,7 @@ export async function sendEmail({
     });
     return info;
   } catch (error) {
-    
+    console.error("Email send error:", error);
     return null;
   }
 }
@@ -30,7 +30,7 @@ export async function sendEmail({
 export async function sendRegistrationEmail(
   to: string,
   userName: string,
-  event: { title: string; date: string },
+  event: { title: string; date: string; isMembershipForm?: boolean },
   ticketCode: string,
   ticketUrl: string,
 ) {
@@ -40,10 +40,13 @@ export async function sendRegistrationEmail(
     event.date,
     ticketCode,
     ticketUrl,
+    event.isMembershipForm,
   );
   await sendEmail({
     to,
-    subject: `You're going to ${event.title}!`,
+    subject: event.isMembershipForm
+      ? `Membership Confirmed: ${event.title}`
+      : `Registration Confirmed: ${event.title}`,
     html,
   });
 }
@@ -52,20 +55,23 @@ export async function sendInvitationEmail(
   to: string,
   inviteeName: string | undefined,
   inviterName: string,
-  eventName: string,
+  event: { title: string; isMembershipForm?: boolean },
   invitationCode: string,
   registerUrl: string,
 ) {
   const html = getInvitationEmail(
     inviteeName,
     inviterName,
-    eventName,
+    event.title,
     invitationCode,
     registerUrl,
+    event.isMembershipForm,
   );
   await sendEmail({
     to,
-    subject: `${inviterName} invited you to ${eventName}`,
+    subject: event.isMembershipForm
+      ? `${inviterName} invited you to join ${event.title}`
+      : `${inviterName} invited you to ${event.title}`,
     html,
   });
 }

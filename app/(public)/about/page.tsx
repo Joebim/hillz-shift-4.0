@@ -23,7 +23,7 @@ export default async function AboutPage() {
 
     const targetEvent = membershipEvents?.[0] || featuredEvents?.[0];
 
-    const joinLink = targetEvent 
+    const joinLink = targetEvent
         ? `/e/${targetEvent.slug || targetEvent.id}/register`
         : "/events";
 
@@ -31,7 +31,7 @@ export default async function AboutPage() {
         <div className="min-h-screen bg-white font-medium">
             <Header />
 
-            {}
+            { }
             <section className="relative pt-48 pb-32 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
@@ -53,14 +53,14 @@ export default async function AboutPage() {
                         <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 via-pink-300 to-indigo-400">TRADITIONAL</span>
                     </h1>
                     <p className="text-xl text-white/60 max-w-2xl mx-auto font-medium animate-fade-in-up delay-100 italic leading-relaxed">
-                        &quot;But ye are come unto mount Sion, and unto the city of the living God, the heavenly Jerusalem, and to an innumerable company of angels,&quot; <br /> — Hebrews 12:22
+                        &quot;But you have come to Mount Zion, to the city of the living God, the heavenly Jerusalem. You have come to thousands upon thousands of angels in joyful assembly,&quot; <br /> — Hebrews 12:22
                     </p>
 
 
                 </div>
             </section>
 
-            {}
+            { }
             <Section bg="white" className="py-32">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                     <div className="relative">
@@ -89,12 +89,12 @@ export default async function AboutPage() {
                             {[
                                 {
                                     title: 'Our Mandate',
-                                    desc: 'To see a generation fully awake to their divine purpose and walking in the fullness of God&apos;s power.',
+                                    desc: "Our Mandate is to raise a people fully awake to their purpose in God. A people of His presence, His kingdom and dominion",
                                     icon: Sparkles
                                 },
                                 {
                                     title: 'Our Mission',
-                                    desc: 'Creating intentional spaces for radical transformation through worship, word, and community.',
+                                    desc: "Our Mission is to equip Millions around the world with what it takes to ascend and remain on the Father's Hillz",
                                     icon: Heart
                                 }
                             ].map((item, i) => (
@@ -113,7 +113,7 @@ export default async function AboutPage() {
                 </div>
             </Section>
 
-            {}
+            { }
             <Section bg="gray" className="py-32">
                 <div className="text-center max-w-3xl mx-auto mb-20">
                     <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter">
@@ -126,13 +126,14 @@ export default async function AboutPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {[
-                        { title: 'The Word', desc: <>We receive grace and truth as we behold the glory of the Lord by the word. <br /> — John 1:14</>, icon: Star },
-                        { title: 'Righteousness', desc: <>We receive capacity for righteousness via the activities of the word and the spirit, producing transformation in us. <br /> — 2 Corinthians 3:18</>, icon: Shield },
-                        { title: 'Devotion', desc: <>We continue steadfastly in prayers, fasting and communion as we receive grace to stand before God continually. <br /> — Acts 2:42</>, icon: Heart },
+                        { title: 'The Word', desc: <>We receive grace and truth as we behold the glory of the Lord in meditation and obedience, shaping our everyday reality by the truth of the word of God.<br /> — John 1:14</>, icon: Star },
                         { title: 'Holy Spirit', desc: <>We believe in, submit to and walk by the spirit, the executor-in-chief of God&apos;s purposes on earth. <br /> — Luke 1:35</>, icon: Sparkles },
+                        { title: 'Righteousness', desc: <>We receive capacity for righteousness via the activities of the word and the spirit, producing transformation of our nature. <br /> — 2 Corinthians 3:18</>, icon: Shield },
+                        { title: 'Devotion', desc: <>We continue steadfastly in prayers, fasting, communion and giving as we receive grace to stand before God continually.<br /> — Acts 2:42</>, icon: Heart },
                         { title: 'Purpose', desc: <>We are committed to everlasting covenant between God and the Church to be the light of the world, as a city that is set on the hill, we will not be hidden. <br /> — Matthew 5:14</>, icon: Users },
-                        { title: 'Excellence', desc: <>We strive to do all things as unto the Lord. Always working worthy of our great calling. <br /> — Ephesians 1:4</>, icon: CheckCircle2 }
+                        { title: 'Excellence', desc: <>We strive to do all things as unto the Lord.Always working worthy of our great calling in love, diligence and excellence. <br /> — Ephesians 1:4</>, icon: CheckCircle2 }
                     ].map((value, i) => (
+
                         <div key={i} className="bg-white p-10 rounded-[40px] shadow-xl shadow-slate-200/50 border border-slate-100 hover:-translate-y-2 transition-all duration-500">
                             <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 mb-8 transition-colors">
                                 <value.icon className="w-8 h-8" />
@@ -144,7 +145,7 @@ export default async function AboutPage() {
                 </div>
             </Section>
 
-            {}
+            { }
             <Section bg="none" className="py-32 relative overflow-hidden bg-slate-900">
                 <div className="absolute inset-0 z-0">
                     <Image

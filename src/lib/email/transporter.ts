@@ -1,10 +1,10 @@
 import nodemailer from "nodemailer";
 
-const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
-const SMTP_PORT = parseInt(process.env.SMTP_PORT || "587");
+const SMTP_HOST = process.env.SMTP_HOST || "mail.thehillz.org";
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || "465");
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
-const SMTP_SECURE = process.env.SMTP_SECURE === "true";
+const SMTP_SECURE = process.env.SMTP_SECURE === "true" || SMTP_PORT === 465;
 
 if (!SMTP_USER || !SMTP_PASS) {
   console.warn(
@@ -24,4 +24,4 @@ export const transporter = nodemailer.createTransport({
 
 export const EMAIL_FROM =
   process.env.EMAIL_FROM ||
-  '"Ministry Platform" <noreply@ministryplatform.com>';
+  '"The Hillz" <noreply@thehillz.org>';

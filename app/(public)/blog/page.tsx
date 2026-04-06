@@ -44,14 +44,14 @@ export default async function BlogPage() {
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-[10px] font-black uppercase tracking-[0.3em] mb-8 animate-fade-in-up">
                             <BookOpen className="w-3 h-3" />
-                            Wisdom & Stories
+                            Explore the Mind of God
                         </div>
                         <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-none animate-fade-in-up">
                             WORDS THAT <br />
                             <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 via-teal-300 to-indigo-400">IGNITE CHANGE</span>
                         </h1>
                         <p className="text-xl text-white/60 max-w-2xl font-medium animate-fade-in-up delay-100 italic">
-                            &quot;Your word is a lamp to my feet and a light to my path.&quot; — Psalm 119:105
+                            &quot;As he spoke, the Spirit came into me and raised me to my feet, and I heard him speaking to me&quot; — Ezekiel 2 vs 2
                         </p>
                     </div>
                 </div>

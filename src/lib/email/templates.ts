@@ -48,22 +48,28 @@ export const getRegistrationEmail = (
   eventDate: string,
   ticketCode: string,
   ticketUrl: string,
+  isMembership?: boolean,
 ) => {
   return baseTemplate({
-    title: "Registration Confirmed! 🎉",
+    title: isMembership ? "Membership Form Received! 📋" : "Registration Confirmed! 🎉",
     body: `
       <p>Hi ${userName},</p>
-      <p>You are officially registered for <strong>${eventName}</strong>.</p>
+      <p>${isMembership 
+        ? `We have successfully received your membership form for <strong>${eventName}</strong>.` 
+        : `You are officially registered for <strong>${eventName}</strong>.`}</p>
       <p><strong>Date:</strong> ${eventDate}</p>
-      <p><strong>Your Ticket Code:</strong> <code style="background: #eee; padding: 4px 8px; border-radius: 4px; font-size: 1.2em;">${ticketCode}</code></p>
-      <p>Please present this code or the QR code at the entrance.</p>
+      <p><strong>Your ${isMembership ? "Reference" : "Ticket"} Code:</strong> <code style="background: #eee; padding: 4px 8px; border-radius: 4px; font-size: 1.2em;">${ticketCode}</code></p>
+      <p>${isMembership 
+        ? "We look forward to having you as part of our community. Please keep this code for your records."
+        : "Please present this code or the QR code at the entrance."}</p>
     `,
     action: {
-      label: "View My Ticket",
+      label: isMembership ? "View My Details" : "View My Ticket",
       url: ticketUrl,
     },
-    footer:
-      "Can't make it? Please let us know so we can give your spot to someone else.",
+    footer: isMembership
+      ? "If you have any questions, please reach out to us."
+      : "Can't make it? Please let us know so we can give your spot to someone else.",
   });
 };
 
@@ -73,17 +79,20 @@ export const getInvitationEmail = (
   eventName: string,
   invitationCode: string,
   registerUrl: string,
+  isMembership?: boolean,
 ) => {
   return baseTemplate({
-    title: "You're Invited! 🌟",
+    title: isMembership ? "Join Our Community! 🤝" : "You're Invited! 🌟",
     body: `
       <p>Hi ${inviteeName || "Friend"},</p>
-      <p><strong>${inviterName}</strong> has invited you to join them at <strong>${eventName}</strong>.</p>
-      <p>We would love to see you there! Use the code below to secure your spot.</p>
-      <p><strong>Invitation Code:</strong> <code style="background: #eee; padding: 4px 8px; border-radius: 4px; font-size: 1.2em;">${invitationCode}</code></p>
+      <p><strong>${inviterName}</strong> has invited you to ${isMembership ? "become a member of" : "join them at"} <strong>${eventName}</strong>.</p>
+      <p>${isMembership 
+        ? "We would be honored to have you as part of our growing community! Use the link below to fill out the form." 
+        : "We would love to see you there! Use the code below to secure your spot."}</p>
+      <p><strong>${isMembership ? "Reference" : "Invitation"} Code:</strong> <code style="background: #eee; padding: 4px 8px; border-radius: 4px; font-size: 1.2em;">${invitationCode}</code></p>
     `,
     action: {
-      label: "Register Now",
+      label: isMembership ? "Complete Membership Form" : "Register Now",
       url: `${registerUrl}?code=${invitationCode}`,
     },
   });

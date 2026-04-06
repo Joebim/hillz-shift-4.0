@@ -38,7 +38,7 @@ export default function LeadershipPage() {
                             <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 via-purple-300 to-pink-400">LEADERS</span>
                         </h1>
                         <p className="text-xl text-white/60 max-w-2xl mx-auto font-medium animate-fade-in-up delay-100 italic leading-relaxed">
-                            Guided by faith, grounded in truth, and dedicated to serving the congregation with vision and love.
+                            And he gave some, apostles; and some, prophets; and some, evangelists; and some, pastors and teachers; - <br />Ephesians 4:11
                         </p>
                     </div>
                 </div>
@@ -53,15 +53,15 @@ export default function LeadershipPage() {
                             <div className="w-16 h-16 bg-pink-50 text-pink-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                                 <HeartHandshake className="w-8 h-8" />
                             </div>
-                            <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Servant Leadership</h2>
+                            <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Raising Leaders</h2>
                             <p className="text-lg text-slate-600 leading-relaxed font-medium mb-8 max-w-2xl mx-auto">
-                                Our pastors, elders, and ministry directors believe that true leadership starts with a servant&apos;s heart. We are committed to fostering an atmosphere of authentic connection and spiritual growth for every member of The Hillz.
+                                At the Hillz, we are committed to raising leaders from disciples, helping everyone discover, step into and mature in their unique callings, giftings and assignments. We believe that the spirit is generous with graces and every member has a destiny in God and a role in the Church, hence our plurality and rotational approach to leadership.
                             </p>
 
                             <div className="p-6 rounded-3xl bg-indigo-50 border border-indigo-100 max-w-2xl mx-auto">
                                 <p className="text-indigo-900 font-bold italic">
-                                    &quot;Be shepherds of God&apos;s flock that is under your care, watching over them... not lording it over those entrusted to you, but being examples to the flock.&quot; <br /><br />
-                                    <span className="text-sm opacity-60 mt-2 block">&mdash; 1 Peter 5:2-3</span>
+                                    &quot;For the perfecting of the saints, for the work of the ministry, for the edifying of the body of Christ: Till we all come in the unity of the faith, and of the knowledge of the Son of God, unto a perfect man, unto the measure of the stature of the fulness of Christ:&quot; <br /><br />
+                                    <span className="text-sm opacity-60 mt-2 block">&mdash; Ephesians 4 vs 12 & 13</span>
                                 </p>
                             </div>
                         </div>

@@ -1,4 +1,4 @@
-﻿import Image from 'next/image';
+import Image from 'next/image';
 import { queryDocuments } from '@/src/lib/firebase/firestore';
 import { toJsDate } from '@/src/lib/utils';
 import { Sermon } from '@/src/types/sermon';
@@ -34,24 +34,25 @@ export default async function SermonsPage() {
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
                     <Image
-                        src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2070&auto=format&fit=crop"
+                        src="/sermon_hero.png"
                         alt="Sermons"
                         fill
                         className="object-cover opacity-60"
+                        unoptimized
                     />
                 </div>
                 <div className="container mx-auto px-6 relative z-10">
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-[10px] font-black uppercase tracking-[0.3em] mb-8 animate-fade-in-up">
                             <PlayCircle className="w-3 h-3" />
-                            Digital Worship Library
+                            Digital Teaching Library
                         </div>
                         <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-none animate-fade-in-up">
-                            WORDS FOR THE <br />
-                            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 via-pink-300 to-indigo-400">SHIFTED SOUL</span>
+                            MASTERING THE <br />
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 via-pink-300 to-indigo-400">MYSTERY OF CHRIST</span>
                         </h1>
                         <p className="text-xl text-white/60 max-w-2xl font-medium animate-fade-in-up delay-100 italic leading-relaxed">
-                            &quot;Faith comes from hearing, and hearing through the word of Christ.&quot; — Romans 10:17
+                            &quot;and to make all men see what is the fellowship of the mystery, which from the beginning of the world hath been hid in God, who created all things by Jesus Christ:&quot; — Ephesians 3:9
                         </p>
                     </div>
                 </div>

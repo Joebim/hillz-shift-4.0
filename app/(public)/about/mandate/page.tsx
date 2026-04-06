@@ -58,7 +58,7 @@ export default function MandateMissionPage() {
                                     </div>
                                     <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Our Mandate</h2>
                                     <p className="text-lg text-slate-600 leading-relaxed font-medium">
-                                        Our Mandate is to raise a people fully awake to their purpose in God. A people of His presence, His kingdom and dominion positioned on the Father's Hillz (God's holy hill of Zion) with the Son and exercising Christ's absolute authority over the nations - as those who put their trust in Him — Psalm 2:1 - 12
+                                        Our Mandate is to raise a people fully awake to their purpose in God. A people of His presence, His kingdom and dominion. Positioned on the Father&apos;s Hillz (God&apos;s holy hill of Zion) with the Son and exercising Christ&apos;s absolute authority over the nations - as those who put their trust in Him — Psalm 2:1 - 12
                                     </p>
                                 </div>
 
@@ -69,7 +69,7 @@ export default function MandateMissionPage() {
                                     </div>
                                     <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Our Mission</h2>
                                     <p className="text-lg text-slate-600 leading-relaxed font-medium mb-6">
-                                        Our Mission is to equip Millions around the world with what it takes to ascend and remain on the Father's Hillz. Our teachings and ministries focuses on:
+                                        Our Mission is to equip millions around the world with what it takes to ascend and remain on the Father&apos;s Hillz. Our teachings and ministries focuses on:
                                     </p>
                                     <ul className="space-y-4">
                                         {[

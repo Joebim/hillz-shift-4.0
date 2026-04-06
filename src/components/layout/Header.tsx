@@ -66,7 +66,7 @@ export const Header = () => {
                             alt="The Hillz Logo" 
                             className={cn(
                                 "w-auto object-contain transition-all duration-300 group-hover:scale-105",
-                                isScrolled ? "h-12" : "h-16"
+                                isScrolled ? "h-14" : "h-16"
                             )}
                         />
                     </Link>

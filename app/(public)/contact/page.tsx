@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Image from 'next/image';
 import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
@@ -59,15 +60,14 @@ export default function ContactPage() {
                         <div className="mb-12">
                             <h2 className="text-4xl font-black text-slate-900 mb-6 tracking-tight">Connect with Us</h2>
                             <p className="text-lg text-slate-500 font-medium leading-relaxed">
-                                Our team is dedicated to providing support and spiritual guidance. Reach out through any of these channels.
+                                We will be happy to provide support and spiritual guidance. Reach out through any of these channels
                             </p>
                         </div>
 
                         <div className="space-y-6">
                             {[
-                                { icon: MapPin, title: 'Our Location', content: '123 Ministry Lane, City of Grace, ST 12345' },
-                                { icon: Phone, title: 'Call Center', content: '+1 (555) 123-4567', sub: 'Mon-Fri, 9am - 5pm' },
-                                { icon: Mail, title: 'Email Support', content: 'info@shiftplatform.com', sub: 'We reply within 24 hours' }
+                                { icon: Phone, title: 'Phone Number', content: '+234 8143375628', sub: 'WhatsApp messages only' },
+                                { icon: Mail, title: 'Email Support', content: 'Convener@themysteryofchrist.org', sub: 'We reply within 24 hours' }
                             ].map((item, i) => (
                                 <div key={i} className="group flex items-center gap-6 p-6 rounded-3xl bg-white border border-slate-100 hover:border-purple-200 hover:shadow-xl hover:shadow-purple-900/5 transition-all duration-300">
                                     <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300 shrink-0">
@@ -101,7 +101,13 @@ export default function ContactPage() {
                         </div>
                         <h3 className="text-2xl font-black text-slate-900 mb-2">Find Us</h3>
                         <p className="text-slate-500 font-bold mb-6">Come experience the shift in person this Sunday.</p>
-                        <Button variant="outline" className="rounded-full font-bold px-8">OPEN IN MAPS</Button>
+                        <Link 
+                            href="https://maps.app.goo.gl/RcFAHpH192Dtuy9r8" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                        >
+                            <Button variant="outline" className="rounded-full font-bold px-8">OPEN IN MAPS</Button>
+                        </Link>
                     </div>
                 </div>
             </section>

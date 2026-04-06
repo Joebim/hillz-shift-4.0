@@ -45,8 +45,14 @@ export const Footer = () => {
                             />
                         </Link>
                         <p className="text-slate-400 mb-10 text-base leading-relaxed max-w-sm font-medium italic">
-                            &quot;and to make all men see what is the fellowship of the mystery, which from the beginning of the world hath been hid in God, who created all things by Jesus Christ:&quot; Ephesians 3:9
+                            &quot;Yet I have set My King on My holy hill of Zion.&quot; <br />
+                            &quot;I will declare the decree: The Lord has said to me, <br />
+                            &apos;You are My Son, Today I have begotten You. <br />
+                            Ask of Me, and I will give You The nations for Your inheritance, <br />
+                            And the ends of the earth for Your possession.&apos;&quot; <br />
+                            — Psalm 2:6-8
                         </p>
+
 
                         {}
                         <div className="flex gap-4">
@@ -126,7 +132,7 @@ export const Footer = () => {
                 <div className="pt-12 border-t border-white/5">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                         <p className="text-slate-500 text-xs font-bold tracking-widest uppercase">
-                            © {new Date().getFullYear()} THE HILLZ • THE PEOPLE OF HIS DOMINION
+                            © {new Date().getFullYear()} THE HILLZ • THE PEOPLE OF HIS PRESENCE AND DOMINION
                         </p>
                         <div className="flex gap-10 text-[10px] font-black uppercase tracking-[0.2em]">
                             <Link href="/privacy" className="text-slate-500 hover:text-white transition-colors">

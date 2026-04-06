@@ -107,7 +107,10 @@ export async function POST(
         validated.recipientEmail,
         validated.recipientName,
         validated.senderName,
-        event.title,
+        {
+          title: event.title,
+          isMembershipForm: event.isMembershipForm,
+        },
         invitationCode,
         `${baseUrl}/events/${eventId}`,
       ).catch((err) => console.error("Failed to send invitation email:", err));

@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getFirestore } from "firebase-admin/firestore";
 import { getSession } from "@/src/lib/auth/session";
 import { User, UserRole } from "@/src/types/user";
@@ -40,9 +40,9 @@ async function sendInviteEmail(
   role: string,
 ) {
   const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.gmail.com",
-    port: parseInt(process.env.SMTP_PORT || "587"),
-    secure: process.env.SMTP_SECURE === "true",
+    host: process.env.SMTP_HOST || "mail.thehillz.org",
+    port: parseInt(process.env.SMTP_PORT || "465"),
+    secure: process.env.SMTP_SECURE === "true" || (process.env.SMTP_PORT === "465" || (!process.env.SMTP_PORT && true)),
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
@@ -52,7 +52,7 @@ async function sendInviteEmail(
   const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/admin/login`;
 
   const info = await transporter.sendMail({
-    from: process.env.EMAIL_FROM || '"Admin System" <noreply@example.com>',
+    from: process.env.EMAIL_FROM || '"The Hillz" <noreply@thehillz.org>',
     to: email,
     subject: "You have been invited to the Admin Dashboard",
     html: `

@@ -99,6 +99,7 @@ export async function POST(
       validated.attendee.firstName,
       {
         title: event.title,
+        isMembershipForm: event.isMembershipForm,
         date: toDate(event.startDate).toLocaleDateString("en-US", {
           weekday: "long",
           year: "numeric",
