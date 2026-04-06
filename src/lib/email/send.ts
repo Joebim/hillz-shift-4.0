@@ -14,15 +14,22 @@ export async function sendEmail({
   html: string;
 }) {
   try {
+    console.log(`📧 Attempting to send email to: ${to} | Subject: ${subject}`);
     const info = await transporter.sendMail({
       from: EMAIL_FROM,
       to,
       subject,
       html,
     });
+    console.log(`✅ Email sent successfully to: ${to}. MessageId: ${info.messageId}`);
     return info;
   } catch (error) {
-    console.error("Email send error:", error);
+    console.error("❌ Email send error details:", {
+      to,
+      subject,
+      error: error instanceof Error ? error.message : error,
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return null;
   }
 }

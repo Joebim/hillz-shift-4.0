@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getFirestore } from "firebase-admin/firestore";
 import { getSession } from "@/src/lib/auth/session";
-import { User, UserRole } from "@/src/types/user";
+import { User } from "@/src/types/user";
 import admin from "firebase-admin";
-import nodemailer from "nodemailer";
+import { transporter, EMAIL_FROM } from "@/src/lib/email/transporter";
 import crypto from "crypto";
 
 if (admin.apps.length === 0) {
@@ -39,20 +39,10 @@ async function sendInviteEmail(
   password: string,
   role: string,
 ) {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "mail.thehillz.org",
-    port: parseInt(process.env.SMTP_PORT || "465"),
-    secure: process.env.SMTP_SECURE === "true" || (process.env.SMTP_PORT === "465" || (!process.env.SMTP_PORT && true)),
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-
   const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/admin/login`;
 
   const info = await transporter.sendMail({
-    from: process.env.EMAIL_FROM || '"The Hillz" <noreply@thehillz.org>',
+    from: EMAIL_FROM,
     to: email,
     subject: "You have been invited to the Admin Dashboard",
     html: `
@@ -156,11 +146,15 @@ export async function POST(request: NextRequest) {
         process.env.SMTP_USER &&
         !process.env.SMTP_USER.includes("example.com")
       ) {
+        console.log(`📨 Attempting admin invitation email to: ${email}`);
         await sendInviteEmail(email, displayName, password, role);
         emailSent = true;
+        console.log(`✅ Admin invitation email sent successfully to: ${email}`);
+      } else {
+        console.warn("⚠️ SMTP_USER is missing or set to example.com, skipping invite email.");
       }
-    } catch (emailError) {
-      // Email sending is best-effort; don't fail the whole request
+    } catch (err) {
+      console.error("❌ Admin invitation email failed:", err);
     }
 
     return NextResponse.json({
@@ -169,7 +163,7 @@ export async function POST(request: NextRequest) {
       emailSent,
       tempPassword: emailSent ? undefined : password,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

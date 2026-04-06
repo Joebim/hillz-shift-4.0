@@ -20,6 +20,16 @@ export const transporter = nodemailer.createTransport({
     user: SMTP_USER,
     pass: SMTP_PASS,
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
+
+console.log("📨 SMTP Transporter Initialized:", {
+  host: SMTP_HOST,
+  port: SMTP_PORT,
+  secure: SMTP_SECURE,
+  user: SMTP_USER ? `${SMTP_USER.substring(0, 3)}***` : "None",
 });
 
 export const EMAIL_FROM =
