@@ -3,7 +3,7 @@ import { getFirestore } from "firebase-admin/firestore";
 import { getSession } from "@/src/lib/auth/session";
 import { User } from "@/src/types/user";
 import admin from "firebase-admin";
-import { transporter, EMAIL_FROM } from "@/src/lib/email/transporter";
+import { resend, EMAIL_FROM } from "@/src/lib/email/transporter";
 import crypto from "crypto";
 
 if (admin.apps.length === 0) {
@@ -41,7 +41,7 @@ async function sendInviteEmail(
 ) {
   const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/admin/login`;
 
-  const info = await transporter.sendMail({
+  const { data, error } = await resend.emails.send({
     from: EMAIL_FROM,
     to: email,
     subject: "You have been invited to the Admin Dashboard",
@@ -59,7 +59,12 @@ async function sendInviteEmail(
             </div>
         `,
   });
-  return info;
+  
+  if (error) {
+    throw new Error(error.message);
+  }
+  
+  return data;
 }
 
 export async function POST(request: NextRequest) {

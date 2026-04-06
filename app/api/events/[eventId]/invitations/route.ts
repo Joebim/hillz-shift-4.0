@@ -110,9 +110,11 @@ export async function POST(
         {
           title: event.title,
           isMembershipForm: event.isMembershipForm,
+          bannerImage: event.branding?.bannerImage || event.branding?.thumbnail,
         },
         invitationCode,
         `${baseUrl}/events/${eventId}`,
+        validated.personalMessage
       ).catch((err) => console.error("Failed to send invitation email:", err));
     }
 

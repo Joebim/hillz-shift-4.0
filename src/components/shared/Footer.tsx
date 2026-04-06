@@ -115,9 +115,9 @@ export const Footer = ({ event }: FooterProps) => {
 
                 <div className="mt-14 md:mt-20 border-t border-white/10 pt-8 md:pt-10 text-center">
                     <p className="text-xs font-semibold text-white/50">
-                        © {new Date().getFullYear()} Hillz. All rights reserved.
+                        © {new Date().getFullYear()} theHillz. All rights reserved.
                         <span className="mx-3 text-white/20">|</span>
-                        THE PEOPLE OF HIS DOMINION
+                        THE PEOPLE OF HIS PRESENCE AND DOMINION
                     </p>
                 </div>
             </div>

@@ -1,8 +1,8 @@
-import { transporter, EMAIL_FROM } from "@/src/lib/email/transporter";
+import { resend, EMAIL_FROM } from "@/src/lib/email/transporter";
 import {
-  getRegistrationEmail,
-  getInvitationEmail,
-} from "@/src/lib/email/templates";
+  registrationTemplate,
+  invitationTemplate,
+} from "@/src/templates/email/invitationTemplate";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -29,9 +29,15 @@ export async function sendEmail(
       return null;
     }
 
-    console.log(`📧 Attempting to send email to: ${to} (Attempt ${retryCount + 1}) | Subject: ${subject}`);
+    console.log(`📧 Attempting to send email via Resend to: ${to} (Attempt ${retryCount + 1}) | Subject: ${subject}`);
     
-    const info = await transporter.sendMail({
+    // Check if resend is properly initialized
+    if (!resend) {
+      console.error("❌ Resend client is not initialized. Make sure RESEND_API_KEY is set.");
+      return null;
+    }
+
+    const { data, error } = await resend.emails.send({
       from: EMAIL_FROM,
       to,
       subject,
@@ -43,35 +49,46 @@ export async function sendEmail(
       },
     });
 
-    console.log(`✅ Email sent successfully to: ${to}. MessageId: ${info.messageId}`);
-    return info;
+    if (error) {
+      console.error("❌ Resend API Error:", error);
+      
+      // Resend specific rate limit or temporary server errors
+      const isRetryableError = 
+        error.name === 'rate_limit_exceeded' || 
+        error.name === 'internal_server_error';
+
+      if (isRetryableError && retryCount < maxRetries) {
+        console.warn(`⚠️ Retryable Resend error detected. Retrying in ${retryDelay}ms...`);
+        await delay(retryDelay);
+        return sendEmail({ to, subject, html }, retryCount + 1);
+      }
+      return null;
+    }
+
+    console.log(`✅ Email sent successfully via Resend to: ${to}. Data:`, data);
+    return data;
   } catch (error: unknown) {
     const err = error as { 
       code?: string; 
-      responseCode?: number; 
-      response?: string; 
-      command?: string; 
       message: string;
+      name?: string;
     };
 
     const isRetryableError =
-      err.responseCode === 450 ||
       err.code === 'ETIMEDOUT' ||
       err.code === 'ECONNRESET' ||
       err.code === 'ENOTFOUND' ||
       err.code === 'ESOCKET';
 
     if (isRetryableError && retryCount < maxRetries) {
-      console.warn(`⚠️ Retryable error detected (${err.code}). Retrying in ${retryDelay}ms...`);
+      console.warn(`⚠️ Network timeout/error detected (${err.code}). Retrying in ${retryDelay}ms...`);
       await delay(retryDelay);
       return sendEmail({ to, subject, html }, retryCount + 1);
     }
 
-    console.error("❌ Email send error details:", {
+    console.error("❌ Email send exception:", {
       code: err.code,
-      responseCode: err.responseCode,
-      response: err.response,
-      command: err.command,
+      name: err.name,
       to,
       subject,
       error: err.message
@@ -83,18 +100,29 @@ export async function sendEmail(
 export async function sendRegistrationEmail(
   to: string,
   userName: string,
-  event: { title: string; date: string; isMembershipForm?: boolean },
+  event: { 
+    title: string; 
+    date: string; 
+    venue?: string;
+    address?: string;
+    bannerImage?: string;
+    isMembershipForm?: boolean 
+  },
   ticketCode: string,
   ticketUrl: string,
 ) {
-  const html = getRegistrationEmail(
+  const html = registrationTemplate(
     userName,
     event.title,
     event.date,
+    event.venue || "To be announced",
+    event.address || "TBA",
     ticketCode,
     ticketUrl,
-    event.isMembershipForm,
+    event.bannerImage,
+    event.isMembershipForm
   );
+
   await sendEmail({
     to,
     subject: event.isMembershipForm
@@ -108,18 +136,28 @@ export async function sendInvitationEmail(
   to: string,
   inviteeName: string | undefined,
   inviterName: string,
-  event: { title: string; isMembershipForm?: boolean },
+  event: { 
+    title: string; 
+    date?: string;
+    venue?: string;
+    address?: string;
+    bannerImage?: string;
+    isMembershipForm?: boolean 
+  },
   invitationCode: string,
   registerUrl: string,
+  customMessage: string = "I thought you might be interested in this incredible gathering!"
 ) {
-  const html = getInvitationEmail(
-    inviteeName,
+  const html = invitationTemplate(
+    inviteeName || "Friend",
     inviterName,
+    customMessage,
+    `${registerUrl}?code=${invitationCode}`,
     event.title,
-    invitationCode,
-    registerUrl,
-    event.isMembershipForm,
+    event.bannerImage,
+    event.isMembershipForm
   );
+
   await sendEmail({
     to,
     subject: event.isMembershipForm

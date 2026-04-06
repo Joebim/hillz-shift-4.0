@@ -31,7 +31,6 @@
     "lucide-react": "^0.562.0",
     "mapbox-gl": "^3.20.0",
     "next": "16.1.1",
-    "nodemailer": "^7.0.12",
     "react": "19.2.3",
     "react-apexcharts": "^2.0.1",
     "react-dom": "19.2.3",
@@ -40,6 +39,7 @@
     "react-map-gl": "^8.1.0",
     "react-qr-code": "^2.0.12",
     "recharts": "^3.6.0",
+    "resend": "^6.10.0",
     "sharp": "^0.33.2",
     "tailwind-merge": "^3.4.0",
     "zod": "^3.22.4",
@@ -48,7 +48,6 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/nodemailer": "^7.0.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "dotenv": "^16.4.5",
