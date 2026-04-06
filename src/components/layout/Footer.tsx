@@ -47,7 +47,7 @@ export const Footer = () => {
                         <p className="text-slate-400 mb-10 text-base leading-relaxed max-w-sm font-medium italic">
                             &quot;Yet I have set My King on My holy hill of Zion.&quot; <br />
                             &quot;I will declare the decree: The Lord has said to me, <br />
-                            &apos;You are My Son, Today I have begotten You. <br />&quot; <br />
+                            You are My Son, Today I have begotten You.&quot; <br /> <br />
                             — Psalm 2:6-7
                         </p>
 

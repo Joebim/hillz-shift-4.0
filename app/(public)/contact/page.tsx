@@ -100,7 +100,7 @@ export default function ContactPage() {
                             <MapPin className="w-8 h-8" />
                         </div>
                         <h3 className="text-2xl font-black text-slate-900 mb-2">Find Us</h3>
-                        <p className="text-slate-500 font-bold mb-6">Come experience the shift in person this Sunday.</p>
+                        <p className="text-slate-500 font-bold mb-6">Come experience the hillz in person, find our meeting venue(s).</p>
                         <Link 
                             href="https://maps.app.goo.gl/RcFAHpH192Dtuy9r8" 
                             target="_blank" 
