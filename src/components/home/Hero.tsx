@@ -29,7 +29,7 @@ export const Hero = ({ upcomingEvent }: HeroProps) => {
 
                 {/* Main Heading */}
                 <h1
-                    className="text-white font-black uppercase tracking-[0.06em] text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-tight opacity-0 animate-[fadeUp_0.6s_0.2s_ease_forwards]"
+                    className="text-white font-black uppercase tracking-[0.06em] text-5xl sm:text-5xl md:text-6xl leading-tight opacity-0 animate-[fadeUp_0.6s_0.2s_ease_forwards]"
                 >
                     The Hillz
                 </h1>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFieldArray, Control, UseFormRegister, FieldErrors, FieldValues, UseFormWatch, UseFormSetValue, ArrayPath, FieldArrayPath } from 'react-hook-form';
+import { useFieldArray, Control, UseFormRegister, FieldErrors, FieldValues, UseFormWatch, UseFormSetValue, ArrayPath, FieldArrayPath, Path } from 'react-hook-form';
 import { Plus, Trash2, GripVertical, Lock, User, Mail, Phone, AlignLeft, Users } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
@@ -127,9 +127,9 @@ export function DynamicFormBuilder<TFieldValues extends FieldValues = FieldValue
 
     const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
 
-    const watchField = (name: string) => watch(name as any) as any;
-    const registerField = (name: string, options?: any) => register(name as any, options);
-    const setValueField = (name: string, value: any) => setValue(name as any, value);
+    const watchField = (name: string) => watch(name as Path<TFieldValues>);
+    const registerField = (name: string, options?: Parameters<typeof register>[1]) => register(name as Path<TFieldValues>, options);
+    const setValueField = (name: string, value: any) => setValue(name as Path<TFieldValues>, value);
 
     const addField = () => {
         append({
@@ -153,16 +153,12 @@ export function DynamicFormBuilder<TFieldValues extends FieldValues = FieldValue
 
             {fields.map((field, index) => {
                 const pathParts = path.split('.');
-                let fieldError: any = errors;
-                for (const part of pathParts) {
-                    fieldError = fieldError?.[part];
-                }
-                fieldError = fieldError?.[index];
+                const fieldError = (errors as any)?.[pathParts[0]]?.[pathParts[1]]?.[index] || (errors as any)?.[pathParts[0]]?.[index];
                 const fieldPath = `${path}.${index}`;
-                const currentType = watchField(`${fieldPath}.type`);
+                const currentType = watchField(`${fieldPath}.type`) as string;
                 const isOptionsType = ['select', 'radio', 'checkbox'].includes(currentType);
-                const hasSearch = watchField(`${fieldPath}.searchEnabled`);
-                const currentOptionsStr = (watchField(`${fieldPath}.options`) || []).join(', ');
+                const hasSearch = watchField(`${fieldPath}.searchEnabled`) as boolean;
+                const currentOptionsStr = ((watchField(`${fieldPath}.options`) as string[]) || []).join(', ');
 
                 return (
                     <div

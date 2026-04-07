@@ -309,7 +309,7 @@ export default async function HomePage() {
                 className="bg-white/5 backdrop-blur-xl rounded-[40px] p-10 border border-white/10 hover:bg-white/10 transition-all duration-500 group flex flex-col h-full"
               >
                 <Quote className="w-12 h-12 text-purple-500/30 mb-8 group-hover:text-purple-400 transition-colors" />
-                <p className="text-xl text-white/80 font-medium mb-10 leading-relaxed italic">
+                <p className="text-xl text-white/80 font-medium mb-10 leading-relaxed italic flex-grow">
                   &quot;{t.text}&quot;
                 </p>
                 <div className="flex items-center gap-4 mt-auto">

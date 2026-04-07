@@ -4,9 +4,22 @@ import { Bell } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/src/lib/utils';
 
+interface Notification {
+    id: string;
+    read: boolean;
+    type: 'registration' | 'invitation' | string;
+    actorName?: string;
+    action: string;
+    highlight: string;
+    highlightColor?: string;
+    eventTitle?: string;
+    suffix?: string;
+    time: string;
+}
+
 export function NotificationsDropdown() {
     const [isOpen, setIsOpen] = useState(false);
-    const { data: notifications, isLoading } = useQuery({
+    const { data: notifications, isLoading } = useQuery<Notification[]>({
         queryKey: ['notifications'],
         queryFn: async () => {
             const res = await fetch('/api/notifications');
@@ -17,7 +30,7 @@ export function NotificationsDropdown() {
         refetchInterval: 30000,
     });
 
-    const unreadCount = notifications ? notifications.filter((n: { read: boolean }) => !n.read).length : 0;
+    const unreadCount = notifications ? notifications.filter((n: Notification) => !n.read).length : 0;
 
     return (
         <div className="relative">
@@ -54,7 +67,7 @@ export function NotificationsDropdown() {
                                 </div>
                             ) : notifications && notifications.length > 0 ? (
                                 <div className="py-2">
-                                    {notifications.map((notif: any) => (
+                                    {notifications.map((notif: Notification) => (
                                         <div key={notif.id} className="flex gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-none relative group">
                                             {!notif.read && (
                                                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 bg-violet-500 rounded-r" />
