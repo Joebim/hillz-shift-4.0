@@ -129,6 +129,7 @@ export function DynamicFormBuilder<TFieldValues extends FieldValues = FieldValue
 
     const watchField = (name: string) => watch(name as Path<TFieldValues>);
     const registerField = (name: string, options?: Parameters<typeof register>[1]) => register(name as Path<TFieldValues>, options);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const setValueField = (name: string, value: any) => setValue(name as Path<TFieldValues>, value);
 
     const addField = () => {
@@ -153,6 +154,7 @@ export function DynamicFormBuilder<TFieldValues extends FieldValues = FieldValue
 
             {fields.map((field, index) => {
                 const pathParts = path.split('.');
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const fieldError = (errors as any)?.[pathParts[0]]?.[pathParts[1]]?.[index] || (errors as any)?.[pathParts[0]]?.[index];
                 const fieldPath = `${path}.${index}`;
                 const currentType = watchField(`${fieldPath}.type`) as string;

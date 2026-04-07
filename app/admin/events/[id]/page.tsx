@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, UseMutationResult } from '@tanstack/react-query';
 import { Event } from '@/src/types/event';
 import { Registration } from '@/src/types/registration';
 import { Invitation } from '@/src/types/invitation';
@@ -699,7 +699,7 @@ function PeoplePanel({ event, rightTab, setRightTab }: {
 interface ActionButtonsProps {
     event: Event;
     size?: 'sm' | 'md';
-    featuredMutation: any;
+    featuredMutation: UseMutationResult<Event, Error, boolean, unknown>;
     copySuccess: boolean;
     copyEventLink: () => void;
     scrollToAttachments: () => void;

@@ -21,9 +21,22 @@ function SimpleModal({ isOpen, onClose, title, children }: { isOpen: boolean; on
     );
 }
 
+interface RegistrationFormData {
+    name: string;
+    email: string;
+    type: string;
+    attendee: {
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: string;
+        customFields: Record<string, string | number | boolean>;
+    };
+}
+
 export function AddRegistrationModal({ event, isOpen, onClose }: { event: Event, isOpen: boolean, onClose: () => void }) {
     const queryClient = useQueryClient();
-    const [formData, setFormData] = useState<any>({ 
+    const [formData, setFormData] = useState<RegistrationFormData>({ 
         name: '', 
         email: '', 
         type: 'Attendee',
@@ -37,7 +50,7 @@ export function AddRegistrationModal({ event, isOpen, onClose }: { event: Event,
     });
 
     const mutation = useMutation({
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: unknown) => {
             const res = await fetch(`/api/events/${event.id}/registrations`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -137,7 +150,7 @@ export function AddRegistrationModal({ event, isOpen, onClose }: { event: Event,
                             <input
                                 type={field.type}
                                 className="w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
-                                value={formData.attendee.customFields[field.id] || ''}
+                                value={(formData.attendee.customFields[field.id] as any) || ''}
                                 onChange={e => handleCustomFieldChange(field.id, e.target.value)}
                                 placeholder={field.placeholder}
                             />
@@ -160,9 +173,16 @@ export function AddRegistrationModal({ event, isOpen, onClose }: { event: Event,
     );
 }
 
+interface InvitationFormData {
+    recipientName: string;
+    recipientEmail: string;
+    personalMessage: string;
+    customFields: Record<string, string | number | boolean>;
+}
+
 export function AddInvitationModal({ event, isOpen, onClose }: { event: Event, isOpen: boolean, onClose: () => void }) {
     const queryClient = useQueryClient();
-    const [formData, setFormData] = useState<any>({ 
+    const [formData, setFormData] = useState<InvitationFormData>({ 
         recipientName: '', 
         recipientEmail: '',
         personalMessage: '',
@@ -170,7 +190,7 @@ export function AddInvitationModal({ event, isOpen, onClose }: { event: Event, i
     });
 
     const mutation = useMutation({
-        mutationFn: async (data: any) => {
+        mutationFn: async (data: unknown) => {
             const res = await fetch(`/api/events/${event.id}/invitations`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
