@@ -36,7 +36,7 @@ export default async function AboutPage() {
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
                     <Image
-                        src="/about_hero.png"
+                        src="/our_ministry.png"
                         alt="About Us"
                         fill
                         className="object-cover opacity-60"
@@ -67,7 +67,7 @@ export default async function AboutPage() {
                         <div className="absolute -inset-4 bg-linear-to-tr from-purple-100 to-indigo-100 rounded-[60px] blur-2xl opacity-50" />
                         <div className="relative rounded-[60px] overflow-hidden shadow-2xl h-[600px]">
                             <Image
-                                src="/our_ministry.png"
+                                src="/ministry_impact_section.png"
                                 alt="Our Vision"
                                 fill
                                 className="object-cover"
