@@ -133,7 +133,7 @@ export function AddRegistrationModal({ event, isOpen, onClose }: { event: Event,
                         {field.type === 'select' ? (
                             <select
                                 className="w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
-                                value={formData.attendee.customFields[field.id] || ''}
+                                value={(formData.attendee.customFields[field.id] as any) || ''}
                                 onChange={e => handleCustomFieldChange(field.id, e.target.value)}
                             >
                                 <option value="">Select {field.label}</option>
@@ -142,7 +142,7 @@ export function AddRegistrationModal({ event, isOpen, onClose }: { event: Event,
                         ) : field.type === 'textarea' ? (
                             <textarea
                                 className="w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
-                                value={formData.attendee.customFields[field.id] || ''}
+                                value={(formData.attendee.customFields[field.id] as any) || ''}
                                 onChange={e => handleCustomFieldChange(field.id, e.target.value)}
                                 placeholder={field.placeholder}
                             />
@@ -253,7 +253,7 @@ export function AddInvitationModal({ event, isOpen, onClose }: { event: Event, i
                         {field.type === 'select' ? (
                             <select
                                 className="w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
-                                value={formData.customFields[field.id] || ''}
+                                value={(formData.customFields[field.id] as any) || ''}
                                 onChange={e => handleCustomFieldChange(field.id, e.target.value)}
                             >
                                 <option value="">Select {field.label}</option>
@@ -262,7 +262,7 @@ export function AddInvitationModal({ event, isOpen, onClose }: { event: Event, i
                         ) : field.type === 'textarea' ? (
                             <textarea
                                 className="w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
-                                value={formData.customFields[field.id] || ''}
+                                value={(formData.customFields[field.id] as any) || ''}
                                 onChange={e => handleCustomFieldChange(field.id, e.target.value)}
                                 placeholder={field.placeholder}
                             />
@@ -270,7 +270,7 @@ export function AddInvitationModal({ event, isOpen, onClose }: { event: Event, i
                             <input
                                 type={field.type}
                                 className="w-full p-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
-                                value={formData.customFields[field.id] || ''}
+                                value={(formData.customFields[field.id] as any) || ''}
                                 onChange={e => handleCustomFieldChange(field.id, e.target.value)}
                                 placeholder={field.placeholder}
                             />

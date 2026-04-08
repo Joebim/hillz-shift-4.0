@@ -1,27 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getFirestore } from "firebase-admin/firestore";
+import { db, auth } from "@/src/lib/firebaseAdmin";
 import { getSession } from "@/src/lib/auth/session";
 import { User } from "@/src/types/user";
-import admin from "firebase-admin";
 import { resend, EMAIL_FROM } from "@/src/lib/email/transporter";
 import crypto from "crypto";
 
-if (admin.apps.length === 0) {
-  if (process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(
-          /\\n/g,
-          "\n",
-        ),
-      }),
-    });
-  }
-}
-
-const db = getFirestore();
 
 function generatePassword(length = 12) {
   const charset =
@@ -106,7 +89,7 @@ export async function POST(request: NextRequest) {
     let firebaseAuthUid = "";
 
     try {
-      const userRecord = await admin.auth().createUser({
+      const userRecord = await auth.createUser({
         email,
         password,
         displayName,
@@ -117,7 +100,7 @@ export async function POST(request: NextRequest) {
       // Set custom claims so the login route can verify the admin role.
       // Without this, the login endpoint returns 403 "User does not have admin access"
       // because it checks userRecord.customClaims.role, not Firestore.
-      await admin.auth().setCustomUserClaims(firebaseAuthUid, { role });
+      await auth.setCustomUserClaims(firebaseAuthUid, { role });
     } catch (authError: unknown) {
       const err = authError as { code?: string };
       if (err.code === "auth/email-already-exists") {

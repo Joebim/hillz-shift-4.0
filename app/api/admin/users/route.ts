@@ -1,5 +1,5 @@
-﻿import { NextRequest, NextResponse } from "next/server";
-import { getFirestore } from "firebase-admin/firestore";
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/src/lib/firebaseAdmin";
 import { getSession } from "@/src/lib/auth/session";
 import { User, CreateUserInput } from "@/src/types/user";
 import admin from "firebase-admin";
@@ -18,8 +18,6 @@ if (admin.apps.length === 0) {
     });
   }
 }
-
-const db = getFirestore();
 
 async function isSuperAdmin(userId: string) {
   const userDoc = await db.collection("users").doc(userId).get();
