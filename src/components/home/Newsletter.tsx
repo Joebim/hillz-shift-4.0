@@ -10,7 +10,7 @@ import { useToast } from '@/src/contexts/ToastContext';
 export const Newsletter = () => {
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { showToast } = useToast();
+    const { success, error } = useToast();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,13 +26,13 @@ export const Newsletter = () => {
             const data = await response.json();
 
             if (response.ok) {
-                showToast(data.message || 'Subscribed successfully!', 'success');
+                success(data.message || 'Subscribed successfully!');
                 setEmail('');
             } else {
-                showToast(data.error || 'Failed to subscribe', 'error');
+                error(data.error || 'Failed to subscribe');
             }
-        } catch (error) {
-            showToast('Something went wrong. Please try again.', 'error');
+        } catch (err) {
+            error('Something went wrong. Please try again.');
         } finally {
             setIsLoading(false);
         }

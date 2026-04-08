@@ -36,7 +36,7 @@ export const Footer = () => {
             <div className="container mx-auto px-6 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 mb-20">
                     {}
-                    <div className="lg:col-span-4 space-y-8">
+                    <div className="lg:col-span-4 space-y-4">
                         <Link href="/" className=" block group">
                             <img 
                                 src="/icons/hillz-logo-dark-transparent.svg" 
