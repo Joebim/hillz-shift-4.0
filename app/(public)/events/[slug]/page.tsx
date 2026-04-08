@@ -70,56 +70,63 @@ export default async function EventDetailPage({
             <Header />
 
             {}
-            <section className="relative pt-48 pb-64 overflow-hidden bg-slate-900">
-                <div className="absolute inset-0 z-0">
-                    <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-white z-10" />
+            {}
+            <section className="relative overflow-hidden bg-slate-900 min-h-[500px]">
+                <div className="relative w-full">
+                    {/* Effects Overlay - now strictly on image height */}
                     <Image
                         src={event.branding.bannerImage || 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2069&auto=format&fit=crop'}
                         alt={event.title}
-                        fill
-                        className="object-cover opacity-60"
+                        width={1920}
+                        height={1080}
+                        className="w-full h-auto opacity-60 block"
                         priority
                     />
+                    <div className="absolute inset-0 bg-linear-to-b from-black/80 via-slate-900/40 to-white z-10" />
                 </div>
-                <div className="container mx-auto px-6 relative z-10">
-                    <div className="max-w-4xl">
-                        <Link href="/events" className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-12 transition-colors font-black text-[10px] uppercase tracking-[0.3em] group">
-                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                            Back to Calendar
-                        </Link>
+                
+                {/* Content Overlay */}
+                <div className="absolute inset-0 z-20 pt-48 pb-32 md:pb-64">
+                    <div className="container mx-auto px-6 h-full flex items-end">
+                        <div className="max-w-4xl w-full">
+                            <Link href="/events" className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-12 transition-colors font-black text-[10px] uppercase tracking-[0.3em] group">
+                                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                                Back to Calendar
+                            </Link>
 
-                        <div className="flex flex-wrap gap-3 mb-8">
-                            <div className="bg-purple-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-xl">
-                                {event.category}
-                            </div>
-                            {event.featured && (
-                                <div className="bg-[#D4AF37] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-[#1F2937] shadow-xl">
-                                    Featured Gathering
+                            <div className="flex flex-wrap gap-3 mb-8">
+                                <div className="bg-purple-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-xl">
+                                    {event.category}
                                 </div>
-                            )}
-                            {days > 0 && days <= 30 && (
-                                <div className="bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-purple-600 shadow-xl">
-                                    {days === 0 ? 'Today' : days === 1 ? 'Tomorrow' : `In ${days} days`}
+                                {event.featured && (
+                                    <div className="bg-[#D4AF37] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-[#1F2937] shadow-xl">
+                                        Featured Gathering
+                                    </div>
+                                )}
+                                {days > 0 && days <= 30 && (
+                                    <div className="bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-purple-600 shadow-xl">
+                                        {days === 0 ? 'Today' : days === 1 ? 'Tomorrow' : `In ${days} days`}
+                                    </div>
+                                )}
+                            </div>
+
+                            <h1 className="text-4xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-[0.9] animate-fade-in-up">
+                                {event.title}
+                            </h1>
+
+                            <div className="flex flex-wrap gap-8 text-white/80 font-bold uppercase tracking-widest text-xs">
+                                <div className="flex items-center gap-3">
+                                    <Calendar className="w-5 h-5 text-purple-400" />
+                                    <span>{formatDate(event.startDate, 'full')}</span>
                                 </div>
-                            )}
-                        </div>
-
-                        <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-[0.9] animate-fade-in-up">
-                            {event.title}
-                        </h1>
-
-                        <div className="flex flex-wrap gap-8 text-white/80 font-bold uppercase tracking-widest text-xs">
-                            <div className="flex items-center gap-3">
-                                <Calendar className="w-5 h-5 text-purple-400" />
-                                <span>{formatDate(event.startDate, 'full')}</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <Clock className="w-5 h-5 text-indigo-400" />
-                                <span>{formatTime(event.startDate)}</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <MapPin className="w-5 h-5 text-pink-400" />
-                                <span>{event.venue.name}</span>
+                                <div className="flex items-center gap-3">
+                                    <Clock className="w-5 h-5 text-indigo-400" />
+                                    <span>{formatTime(event.startDate)}</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <MapPin className="w-5 h-5 text-pink-400" />
+                                    <span>{event.venue.name}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -127,8 +134,8 @@ export default async function EventDetailPage({
             </section>
 
             {}
-            <Section className="py-0 relative z-20">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 -mt-16 md:-mt-24">
+            <Section className="py-0 relative z-30">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 mt-12 md:-mt-24">
                     {}
                     <div className="lg:col-span-2 space-y-20 pb-32">
                         {}

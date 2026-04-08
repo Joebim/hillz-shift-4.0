@@ -34,7 +34,7 @@ export default async function SermonsPage() {
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/60 via-slate-900/40 to-slate-900 z-10" />
                     <Image
-                        src="/sermon_hero.png"
+                        src="/history_hero.png"
                         alt="Sermons"
                         fill
                         className="object-cover opacity-60"

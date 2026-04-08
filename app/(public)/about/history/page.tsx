@@ -20,7 +20,7 @@ export default function HistoryPage() {
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/70 via-slate-900/50 to-slate-900 z-10" />
                     <Image
-                        src="/history_hero.png"
+                        src="/history_new.png"
                         alt="Our History"
                         fill
                         className="object-cover opacity-60"

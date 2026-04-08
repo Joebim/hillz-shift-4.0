@@ -22,7 +22,7 @@ export default function PrayerMeetingsPage() {
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-linear-to-b from-black/70 via-slate-900/50 to-slate-900 z-10" />
                     <Image
-                        src="https://images.unsplash.com/photo-1544427928-c49cdfebf49c?q=80&w=2035&auto=format&fit=crop"
+                        src="/prayer_meetings_hero.png"
                         alt="Prayer Meetings"
                         fill
                         className="object-cover opacity-50"
@@ -87,7 +87,7 @@ export default function PrayerMeetingsPage() {
                         <div className="absolute -inset-4 bg-linear-to-tr from-purple-100 to-indigo-100 rounded-[60px] blur-2xl opacity-50" />
                         <div className="relative rounded-[60px] overflow-hidden shadow-2xl h-[600px]">
                             <Image
-                                src="https://images.unsplash.com/photo-1438232992991-995b7058633e?q=80&w=2069&auto=format&fit=crop"
+                                src="/prayer_meetings_presence.png"
                                 alt="Prayer Gathering"
                                 fill
                                 className="object-cover"

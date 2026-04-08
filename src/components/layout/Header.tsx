@@ -17,7 +17,6 @@ import {
 } from '@/src/components/ui/NavigationMenu';
 
 const navigation = [
-    { name: 'Home', href: '/' },
     {
         name: 'About',
         href: '/about',
