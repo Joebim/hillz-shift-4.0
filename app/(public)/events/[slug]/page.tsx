@@ -128,7 +128,7 @@ export default async function EventDetailPage({
 
             {}
             <Section className="py-0 relative z-20">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 -mt-24">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 -mt-16 md:-mt-24">
                     {}
                     <div className="lg:col-span-2 space-y-20 pb-32">
                         {}

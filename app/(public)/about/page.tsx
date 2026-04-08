@@ -3,7 +3,7 @@ import { Header } from '@/src/components/layout/Header';
 import { Footer } from '@/src/components/layout/Footer';
 import { Section } from '@/src/components/shared/Section';
 import { Button } from '@/src/components/ui/Button';
-import { CheckCircle2, Heart, Shield, Star, Users, Sparkles } from 'lucide-react';
+import { CheckCircle2, Heart, Shield, Star, Sparkles, BookOpen, Target, Award } from 'lucide-react';
 import Link from 'next/link';
 import { queryDocuments } from '@/src/lib/firebase/firestore';
 import { Event } from '@/src/types/event';
@@ -89,7 +89,7 @@ export default async function AboutPage() {
                             {[
                                 {
                                     title: 'Our Mandate',
-                                    desc: "Our Mandate is to raise a people fully awake to their purpose in God. A people of His presence, His kingdom and dominion",
+                                    desc: "Our Mandate is to raise a nation of Priest and Kings fully awake to their purpose in God. A people of His presence, His kingdom and His dominion.",
                                     icon: Sparkles
                                 },
                                 {
@@ -126,12 +126,12 @@ export default async function AboutPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {[
-                        { title: 'The Word', desc: <>We receive grace and truth as we behold the glory of the Lord in meditation and obedience, shaping our everyday reality by the truth of the word of God.<br /> — John 1:14</>, icon: Star },
-                        { title: 'Holy Spirit', desc: <>We believe in, submit to and walk by the spirit, the executor-in-chief of God&apos;s purposes on earth. <br /> — Luke 1:35</>, icon: Sparkles },
+                        { title: 'The Word', desc: <>We receive grace and truth as we behold the glory of the Lord in meditation and obedience, shaping our everyday reality by the truth of the word of God.<br /> — John 1:14</>, icon: BookOpen },
+                        { title: 'The Spirit', desc: <>We believe in, submit to and walk by the spirit. We understand that the Holy Spirit is the executor-in-chief of God&apos;s purposes on earth. <br /> — Luke 1:35</>, icon: Sparkles },
                         { title: 'Righteousness', desc: <>We receive capacity for righteousness via the activities of the word and the spirit, producing transformation of our nature. <br /> — 2 Corinthians 3:18</>, icon: Shield },
                         { title: 'Devotion', desc: <>We continue steadfastly in prayers, fasting, communion and giving as we receive grace to stand before God continually.<br /> — Acts 2:42</>, icon: Heart },
-                        { title: 'Purpose', desc: <>We are committed to everlasting covenant between God and the Church to be the light of the world, as a city that is set on the hill, we will not be hidden. <br /> — Matthew 5:14</>, icon: Users },
-                        { title: 'Excellence', desc: <>We strive to do all things as unto the Lord.Always working worthy of our great calling in love, diligence and excellence. <br /> — Ephesians 1:4</>, icon: CheckCircle2 }
+                        { title: 'Divine Purpose', desc: <>We are committed to the everlasting covenant between God and the Church to be the light of the world, a city that is set on the hill, we will not be hidden. <br /> — Matthew 5:14</>, icon: Target },
+                        { title: 'Excellence', desc: <>We strive to do all things as unto the Lord. Always working worthy of our great calling in love, diligence and excellence. <br /> — Ephesians 1:4</>, icon: Award }
                     ].map((value, i) => (
 
                         <div key={i} className="bg-white p-10 rounded-[40px] shadow-xl shadow-slate-200/50 border border-slate-100 hover:-translate-y-2 transition-all duration-500">

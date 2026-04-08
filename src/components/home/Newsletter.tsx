@@ -1,9 +1,43 @@
+"use client";
+
 import { Section } from '@/src/components/shared/Section';
 import { Button } from '@/src/components/ui/Button';
 import { Input } from '@/src/components/ui/Input';
-import { Send } from 'lucide-react';
+import { Send, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { useToast } from '@/src/contexts/ToastContext';
 
 export const Newsletter = () => {
+    const [email, setEmail] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const { showToast } = useToast();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        try {
+            const response = await fetch('/api/newsletter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showToast(data.message || 'Subscribed successfully!', 'success');
+                setEmail('');
+            } else {
+                showToast(data.error || 'Failed to subscribe', 'error');
+            }
+        } catch (error) {
+            showToast('Something went wrong. Please try again.', 'error');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <Section bg="none" className="py-24 relative overflow-hidden">
             <div className="absolute inset-0 bg-linear-to-br from-indigo-900 via-purple-900 to-slate-900" />
@@ -20,15 +54,26 @@ export const Newsletter = () => {
                     delivered directly to your digital space.
                 </p>
 
-                <form className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto bg-white/5 p-3 rounded-[32px] backdrop-blur-2xl border border-white/10 shadow-3xl">
+                <form 
+                    onSubmit={handleSubmit}
+                    className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto bg-white/5 p-3 rounded-[32px] backdrop-blur-2xl border border-white/10 shadow-3xl"
+                >
                     <Input
                         type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         placeholder="your@email.com"
                         className="flex-1 h-16 px-8 rounded-full bg-white/10 border-transparent focus:bg-white/20 focus:ring-0 placeholder:text-white/40 text-white font-bold text-lg"
                         required
+                        disabled={isLoading}
                     />
-                    <Button type="submit" variant="secondary" className="h-16 px-10 rounded-full bg-white text-black hover:bg-gray-100 font-black text-lg transition-transform hover:scale-105 active:scale-95 shadow-xl">
-                        SUBSCRIBE
+                    <Button 
+                        type="submit" 
+                        variant="secondary" 
+                        className="h-16 px-10 rounded-full bg-white text-black hover:bg-gray-100 font-black text-lg transition-transform hover:scale-105 active:scale-95 shadow-xl disabled:opacity-50"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : 'SUBSCRIBE'}
                     </Button>
                 </form>
                 <p className="mt-8 text-[10px] font-black text-white/30 tracking-[0.2em] uppercase">No Spam • Just Glory • Unsubscribe Anytime</p>
@@ -36,3 +81,4 @@ export const Newsletter = () => {
         </Section>
     );
 };
+

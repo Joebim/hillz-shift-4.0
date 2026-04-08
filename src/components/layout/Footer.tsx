@@ -36,18 +36,18 @@ export const Footer = () => {
             <div className="container mx-auto px-6 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 mb-20">
                     {}
-                    <div className="lg:col-span-4">
-                        <Link href="/" className="mb-8 block group">
+                    <div className="lg:col-span-4 space-y-8">
+                        <Link href="/" className=" block group">
                             <img 
                                 src="/icons/hillz-logo-dark-transparent.svg" 
                                 alt="The Hillz Logo" 
                                 className="h-16 md:h-20 w-auto object-contain group-hover:scale-110 transition-transform duration-300" 
                             />
                         </Link>
-                        <p className="text-slate-400 mb-10 text-base leading-relaxed max-w-sm font-medium italic">
+                        <p className="text-slate-400 text-base leading-relaxed max-w-sm font-medium italic">
                             &quot;Yet I have set My King on My holy hill of Zion.&quot; <br />
                             &quot;I will declare the decree: The Lord has said to me, <br />
-                            You are My Son, Today I have begotten You.&quot; <br /> <br />
+                            You are My Son, Today I have begotten You.&quot; <br />
                             — Psalm 2:6-7
                         </p>
 
@@ -70,7 +70,7 @@ export const Footer = () => {
                         </div>
                     </div>
 
-                    {}
+                
                     <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-8">
                         <div>
                             <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/40 mb-8">Ministry</h3>

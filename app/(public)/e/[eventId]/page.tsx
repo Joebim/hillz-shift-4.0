@@ -14,6 +14,29 @@ import { queryDocuments, getDocument } from '@/src/lib/firebase/firestore';
 import { Event } from '@/src/types/event';
 import { format } from 'date-fns';
 import { toJsDate } from '@/src/lib/utils';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ eventId: string }> }): Promise<Metadata> {
+    const { eventId } = await params;
+    let ArrayEvents = await queryDocuments<Event>('events', { slug: eventId });
+    let event: Event | null = ArrayEvents.length > 0 ? ArrayEvents[0] : null;
+
+    if (!event) {
+        event = await getDocument<Event>('events', eventId);
+    }
+
+    if (!event) return { title: 'Event Not Found | The Hillz' };
+
+    return {
+        title: `${event.title} | The Hillz`,
+        description: event.description || `Join us for ${event.title}. Register now on The Hillz platform.`,
+        openGraph: {
+            title: event.title,
+            description: event.description,
+            images: event.branding.bannerImage ? [{ url: event.branding.bannerImage }] : [],
+        },
+    };
+}
 
 export default async function EventHomePage({ params }: { params: Promise<{ eventId: string }> }) {
     const { eventId } = await params;
@@ -253,7 +276,7 @@ export default async function EventHomePage({ params }: { params: Promise<{ even
                                         <div className="aspect-square w-52 relative group cursor-pointer overflow-hidden rounded-3xl bg-white flex items-center justify-center">
                                             <div className="relative w-44 h-44">
                                                 <Image
-                                                    src="/graphics/Mastering_The_Misteries_of_Christ_-_Temi_Adenigba-1024.png"
+                                                    src="/qr-code.png"
                                                     alt="Scan QR code to listen on Spotify"
                                                     fill
                                                     className="object-contain rounded-2xl"

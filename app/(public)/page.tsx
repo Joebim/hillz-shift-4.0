@@ -181,13 +181,14 @@ export default async function HomePage() {
                 Maximizing their dominion inheritance in Christ via a thriving
                 prayer life
               </p>
-              <Link href="/ministeries"></Link>
-              <Button
-                variant="outline"
-                className="w-full rounded-2xl h-14 border-slate-200 group-hover:border-purple-600 group-hover:text-purple-600 font-bold transition-all"
-              >
-                Learn more
-              </Button>
+              <Link href="/prayer-meetings">
+                <Button
+                  variant="outline"
+                  className="w-full rounded-2xl h-14 border-slate-200 group-hover:border-purple-600 group-hover:text-purple-600 font-bold transition-all"
+                >
+                  Learn more
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -205,13 +206,15 @@ export default async function HomePage() {
               </span>
             </h2>
             <p className="text-xl text-slate-500 font-medium leading-relaxed mb-10">
-              Hillz is a global movement of people whose dwelling place is with
-              the King on His Holy Hill of Zion. Men and women, young and old
-              who identifies with Christ dominion mandate and recognizes their
-              place as the people of His presence. <br />Our mandate is to raise a nation
-              of priests and kings positioned to radiate the glory of God to the
-              ends of the earth, a people revealing the manifest presence of
-              Jesus in every situation, to every people and in every place.
+              The Hillz is a global movement of people who seek the Lord and a
+              dwelling place with the King on the Father&apos;s Holy Hill of Zion. <br />
+              Men and women, young and old who identifies with Christ&apos;s dominion
+              mandate and recognizes their place as the people of His kingdom,
+              His presence and His Dominion. <br />
+              We are a nation of priests and kings positioned to radiate the
+              glory of God to the ends of the earth, a people revealing the
+              manifest presence of Jesus in every situation, to every people and
+              in every place.
             </p>
             <div className="space-y-4 mb-10">
               {[
@@ -295,7 +298,7 @@ export default async function HomePage() {
               },
               {
                 name: "David T",
-                role: "Youth Leader",
+                role: "member",
                 text: "The sermons are inspiring and relevant. I leave feeling uplifted and motivated. This platform truly feels like home.",
               },
               {

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -8,12 +8,13 @@ import { useQuery } from '@tanstack/react-query';
 import {
   Calendar, Settings, LogOut, Building,
   Mic, FileText, Sparkles, Menu, X,
-  PanelLeftClose, PanelLeftOpen, Image, User, MessageSquare, Heart
+  PanelLeftClose, PanelLeftOpen, Image, User, MessageSquare, Heart, Mail
 } from 'lucide-react';
 import { SessionUser, ADMIN_ROLES } from '@/src/types/user';
 
 const allNavigation = [
   { name: 'Events', href: '/admin/events', icon: Calendar, adminOnly: false },
+  { name: 'Newsletter', href: '/admin/newsletter', icon: Mail, adminOnly: true },
   { name: 'Sermons', href: '/admin/sermons', icon: Mic, adminOnly: true },
   { name: 'Blog Posts', href: '/admin/blog', icon: FileText, adminOnly: true },
   { name: 'Ministries', href: '/admin/ministries', icon: Building, adminOnly: true },

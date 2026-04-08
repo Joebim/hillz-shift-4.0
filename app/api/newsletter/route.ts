@@ -1,51 +1,51 @@
-﻿import { NextRequest } from "next/server";
-import {
-  successResponse,
-  errorResponse,
-  validationErrorResponse,
-} from "@/src/lib/api/response";
-import { createDocument, queryDocuments } from "@/src/lib/firebase/firestore";
-import { newsletterSubscriptionSchema } from "@/src/schemas/forms.schema";
-import { ZodError } from "zod";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/src/lib/firebaseAdmin';
+import { getSession } from '@/src/lib/auth/session';
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
+    try {
+        const { email } = await request.json();
 
-    const validated = newsletterSubscriptionSchema.parse(body);
+        if (!email || !email.includes('@')) {
+            return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
+        }
 
-    const existing = await queryDocuments("newsletter_subscribers", {
-      email: validated.email,
-    });
+        // Check if already exists
+        const existing = await db.collection('newsletter').where('email', '==', email).get();
+        if (!existing.empty) {
+            return NextResponse.json({ message: 'Already subscribed' });
+        }
 
-    if (existing.length > 0) {
-      return errorResponse(
-        "ALREADY_SUBSCRIBED",
-        "This email is already subscribed",
-        null,
-        400,
-      );
+        await db.collection('newsletter').add({
+            email,
+            subscribedAt: new Date(),
+            active: true
+        });
+
+        return NextResponse.json({ message: 'Subscribed successfully' });
+    } catch (error) {
+        console.error('Newsletter subscription error:', error);
+        return NextResponse.json({ error: 'Failed to subscribe' }, { status: 500 });
     }
+}
 
-    const subscriptionId = await createDocument("newsletter_subscribers", {
-      ...validated,
-      status: "active",
-      subscribedAt: new Date(),
-    });
+export async function GET(request: NextRequest) {
+    try {
+        const session = await getSession();
+        if (!session || (session.role !== 'admin' && session.role !== 'super_admin')) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
-    return successResponse(
-      { id: subscriptionId },
-      "Thank you for subscribing to our newsletter!",
-    );
-  } catch (error) {
-    if (error instanceof ZodError) {
-      return validationErrorResponse(error.errors);
+        const snapshot = await db.collection('newsletter').orderBy('subscribedAt', 'desc').get();
+        const emails = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            subscribedAt: doc.data().subscribedAt?.toDate?.() || doc.data().subscribedAt
+        }));
+
+        return NextResponse.json({ data: emails });
+    } catch (error) {
+        console.error('Newsletter fetch error:', error);
+        return NextResponse.json({ error: 'Failed to fetch newsletter emails' }, { status: 500 });
     }
-
-    return errorResponse(
-      "SUBSCRIPTION_ERROR",
-      "Failed to subscribe",
-      (error as Error).message,
-    );
-  }
 }
