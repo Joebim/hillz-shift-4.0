@@ -71,6 +71,7 @@ export default function MandateMissionPage() {
                                     <p className="text-lg text-slate-600 leading-relaxed font-medium mb-6">
                                         Our Mission is to equip millions around the world with what it takes to ascend and remain on the Father&apos;s Hillz. Our teachings and ministries focuses on:
                                     </p>
+                                    
                                     <ul className="space-y-4">
                                         {[
                                             'Repairing foundations',
