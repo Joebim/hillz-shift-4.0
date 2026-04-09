@@ -12,7 +12,7 @@ export const getResend = () => {
 };
 
 // For backward compatibility, keep the old export but initialize safely
-export const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : (null as any);
+export const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : (null as unknown as Resend);
 
 console.log("📨 Resend Client Initialized");
 

@@ -1,4 +1,4 @@
-﻿import { adminAuth } from "../firebase/admin";
+import { adminAuth } from "../firebase/admin";
 import { cookies } from "next/headers";
 import { AuthSession, UserRole } from "@/src/types/user";
 
@@ -40,7 +40,7 @@ export async function getSession(): Promise<AuthSession | null> {
       role: (decodedClaims.role as UserRole) || "admin",
       expiresAt: decodedClaims.exp * 1000,
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }

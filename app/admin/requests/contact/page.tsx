@@ -8,6 +8,15 @@ import { useState } from 'react';
 import { AdminTopNav } from '@/src/components/admin/AdminTopNav';
 import { MessageSquare } from 'lucide-react';
 
+interface ContactRequest {
+    id: string;
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+    createdAt: string | Date;
+}
+
 export default function ContactRequestsPage() {
     const { data: requests, isLoading } = useQuery({
         queryKey: ['admin-contact-requests'],
@@ -23,7 +32,7 @@ export default function ContactRequestsPage() {
 
     if (isLoading) return <SkeletonDashboard />;
 
-    const filteredRequests = requests?.filter((req: any) => 
+    const filteredRequests = (requests as ContactRequest[])?.filter((req: ContactRequest) => 
         req.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
         req.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         req.subject?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -48,7 +57,7 @@ export default function ContactRequestsPage() {
                     columns={[
                         {
                             header: 'Name',
-                            cell: (req: any) => (
+                            cell: (req: ContactRequest) => (
                                 <div>
                                     <p className="font-semibold text-gray-900">{req.name || 'Anonymous'}</p>
                                     <p className="text-xs text-gray-500">{req.email}</p>
@@ -57,11 +66,11 @@ export default function ContactRequestsPage() {
                         },
                         {
                             header: 'Subject',
-                            cell: (req: any) => <p className="text-sm font-medium text-gray-700">{req.subject}</p>
+                            cell: (req: ContactRequest) => <p className="text-sm font-medium text-gray-700">{req.subject}</p>
                         },
                         {
                             header: 'Message',
-                            cell: (req: any) => (
+                            cell: (req: ContactRequest) => (
                                 <p className="text-sm text-gray-600 line-clamp-2 max-w-sm" title={req.message}>
                                     {req.message}
                                 </p>
@@ -69,7 +78,7 @@ export default function ContactRequestsPage() {
                         },
                         {
                             header: 'Date',
-                            cell: (req: any) => (
+                            cell: (req: ContactRequest) => (
                                 <span className="text-xs text-gray-500 font-medium">
                                     {req.createdAt ? format(new Date(req.createdAt), 'MMM d, yyyy') : 'Unknown'}
                                 </span>
