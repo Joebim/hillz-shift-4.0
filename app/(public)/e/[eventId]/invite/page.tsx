@@ -78,7 +78,12 @@ export default async function InvitePage({ params }: { params: Promise<{ eventId
                         </div>
                     </div>
 
-                    <InvitationForm eventId={eventData.id} eventTitle={eventData.title} config={eventData.invitationConfig} />
+                    <InvitationForm 
+                        eventId={eventData.id} 
+                        eventSlug={eventData.slug} 
+                        eventTitle={eventData.title} 
+                        config={eventData.invitationConfig} 
+                    />
                 </div>
             </main>
 

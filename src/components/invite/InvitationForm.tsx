@@ -14,11 +14,12 @@ import { EventInvitationConfig } from '@/src/types/event';
 
 interface Props {
     eventId?: string;
+    eventSlug?: string;
     eventTitle?: string;
     config?: EventInvitationConfig;
 }
 
-export const InvitationForm = ({ eventId, eventTitle, config }: Props) => {
+export const InvitationForm = ({ eventId, eventSlug, eventTitle, config }: Props) => {
     const { form, setField, setCustomField, isSubmitting, setIsSubmitting, resetForm } = useInvitationStore();
     const toast = useToast();
     const [errors, setErrors] = React.useState<Record<string, string>>({});
@@ -97,7 +98,10 @@ export const InvitationForm = ({ eventId, eventTitle, config }: Props) => {
             const result = await response.json();
             if (result.success) {
                 const registrationLink =
-                    result.registrationLink || `${window.location.origin}/register?ref=${result.id}`;
+                    result.registrationLink || 
+                    (eventSlug 
+                        ? `${window.location.origin}/e/${eventSlug}/register?ref=${result.id}`
+                        : `${window.location.origin}/register?ref=${result.id}`);
                 const waLink = generateWhatsAppInvite(
                     form.inviteeName,
                     form.inviterName,
