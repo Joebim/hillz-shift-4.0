@@ -995,7 +995,7 @@ export const EventForm = ({ initialData, onSubmit, isLoading }: EventFormProps) 
                                     </div>
                                     <div>
                                         <p className="text-xs font-bold text-violet-800">Default fields are always collected</p>
-                                        <p className="text-xs text-violet-600 mt-0.5">Inviter name, Guest name, Phone, Email, and a Personal Note are automatically included. Add custom fields below for event-specific questions.</p>
+                                        <p className="text-xs text-violet-600 mt-0.5">Inviter name, Guest name, Phone, and Email are default. A Personal Note is optional. Add custom fields below for event-specific questions.</p>
                                     </div>
                                 </div>
                                 <DynamicFormBuilder

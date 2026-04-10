@@ -14,10 +14,11 @@ import { EventInvitationConfig } from '@/src/types/event';
 
 interface Props {
     eventId?: string;
+    eventTitle?: string;
     config?: EventInvitationConfig;
 }
 
-export const InvitationForm = ({ eventId, config }: Props) => {
+export const InvitationForm = ({ eventId, eventTitle, config }: Props) => {
     const { form, setField, setCustomField, isSubmitting, setIsSubmitting, resetForm } = useInvitationStore();
     const toast = useToast();
     const [errors, setErrors] = React.useState<Record<string, string>>({});
@@ -45,7 +46,8 @@ export const InvitationForm = ({ eventId, config }: Props) => {
             }
         }
 
-        if (!form.customMessage?.trim()) newErrors.customMessage = 'Invitation message is required';
+        // customMessage is now optional
+        // if (!form.customMessage?.trim()) newErrors.customMessage = 'Invitation message is required';
 
         if (config?.fields) {
             config.fields.forEach(field => {
@@ -101,7 +103,8 @@ export const InvitationForm = ({ eventId, config }: Props) => {
                     form.inviterName,
                     form.customMessage,
                     registrationLink,
-                    form.inviteePhone
+                    form.inviteePhone,
+                    eventTitle
                 );
 
                 resetForm();
@@ -199,9 +202,8 @@ export const InvitationForm = ({ eventId, config }: Props) => {
 
                 {}
                 <Textarea
-                    label="Personal Invitation Note"
+                    label="Personal Invitation Note (Optional)"
                     placeholder="Write a message to your guest..."
-                    required
                     value={form.customMessage}
                     onChange={(e) => setField('customMessage', e.target.value)}
                     className="min-h-[120px]"

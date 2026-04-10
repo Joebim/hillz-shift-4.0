@@ -12,15 +12,16 @@ export const generateWhatsAppInvite = (
   inviterName: string,
   customMessage: string,
   registrationLink: string,
-  inviteePhone?: string | null
+  inviteePhone?: string | null,
+  eventTitle: string = "Shift 4.0"
 ): string => {
-  const message = `*Shift 4.0 - A Personal Invitation*
+  const message = `*${eventTitle} - A Personal Invitation*
 
 Hi ${inviteeName},
 
-${customMessage}
+${customMessage || "I'm personally inviting you to join us for this life-changing encounter."}
 
-This is a special invitation. Come expecting clarity, fellowship and an enveiling of Christ.
+This is a special invitation. Come expecting clarity, fellowship and an unveiling of Christ.
 
 *You're Invited:*
 ${inviteeName}
@@ -33,7 +34,7 @@ Please register using the link below,
 *Register Here:*
 ${registrationLink}
 
-Looking forward to seeing you at Shift 4.0!`;
+Looking forward to seeing you at ${eventTitle}!`;
 
   const encodedMessage = encodeURIComponent(message);
 
