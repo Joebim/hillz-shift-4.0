@@ -154,6 +154,7 @@ export interface Event {
   slug: string;
   description: string;
   shortDescription: string;
+  order?: number;
 
   eventBibleVerse?: string;
   theme?: string;

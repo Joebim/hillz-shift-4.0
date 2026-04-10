@@ -45,9 +45,12 @@ export async function GET(request: NextRequest) {
     const events = await queryDocuments<Event>(
       "events",
       filters,
-      "startDate",
-      validated.limit || 50,
+      "order",
+      validated.limit || 100,
     );
+
+    // If order is missing, they might just come in whatever order or by default sort.
+    // We can also fallback to startDate in memory if needed, but for now let's rely on Firestore order.
 
     let filteredEvents = events;
     if (validated.search) {
@@ -69,6 +72,37 @@ export async function GET(request: NextRequest) {
     return errorResponse(
       "FETCH_ERROR",
       "Failed to fetch events",
+      (error as Error).message,
+    );
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await getSession();
+    if (!session || !["super_admin", "admin"].includes(session.role)) {
+      return unauthorizedResponse("Admin access required");
+    }
+
+    const body = await request.json();
+    const { orders } = body; // Array of { id: string, order: number }
+
+    if (!Array.isArray(orders)) {
+      return errorResponse("INVALID_INPUT", "Expected an array of orders");
+    }
+
+    const updates = orders.map((item) => ({
+      id: item.id,
+      data: { order: item.order },
+    }));
+
+    await batchUpdateDocuments("events", updates);
+
+    return successResponse(null, "Event orders updated successfully");
+  } catch (error) {
+    return errorResponse(
+      "UPDATE_ERROR",
+      "Failed to update event orders",
       (error as Error).message,
     );
   }

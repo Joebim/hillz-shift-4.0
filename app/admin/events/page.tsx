@@ -19,8 +19,12 @@ import {
     Calendar,
     Mail,
     Users,
-    History
+    History,
+    GripVertical,
+    Save
 } from 'lucide-react';
+import { Reorder, useDragControls } from 'framer-motion';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { cn, toJsDate } from '@/src/lib/utils';
 import { useRef, useEffect, useState } from 'react';
 import type { ApexOptions } from 'apexcharts';
@@ -305,6 +309,26 @@ export default function EventsDashboardPage() {
             return json.data;
         }
     });
+    
+    const queryClient = useQueryClient();
+    const [isReordering, setIsReordering] = useState(false);
+    const [orderedEvents, setOrderedEvents] = useState<Event[]>([]);
+
+    const reorderMutation = useMutation({
+        mutationFn: async (newOrders: { id: string, order: number }[]) => {
+            const res = await fetch('/api/events', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orders: newOrders }),
+            });
+            if (!res.ok) throw new Error('Failed to update order');
+            return res.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['events'] });
+            setIsReordering(false);
+        }
+    });
 
     const { data: events, isLoading: isEventsLoading } = useQuery({
         queryKey: ['events'],
@@ -312,9 +336,25 @@ export default function EventsDashboardPage() {
             const res = await fetch('/api/events');
             if (!res.ok) throw new Error('Failed to fetch events');
             const json = await res.json();
-            return json.data as Event[];
+            const fetchedEvents = json.data as Event[];
+            // Sort by order ascending
+            return fetchedEvents.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
         },
     });
+
+    useEffect(() => {
+        if (events) {
+            setOrderedEvents(events);
+        }
+    }, [events]);
+
+    const saveNewOrder = () => {
+        const newOrders = orderedEvents.map((e, index) => ({
+            id: e.id,
+            order: index
+        }));
+        reorderMutation.mutate(newOrders);
+    };
 
     const { data: metrics, isLoading: isMetricsLoading } = useQuery({
         queryKey: ['event-metrics'],
@@ -702,16 +742,61 @@ export default function EventsDashboardPage() {
                         <div className="space-y-6">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-xl md:text-2xl font-bold text-gray-900">All Events</h2>
-                                <button
-                                    onClick={() => setView('dashboard')}
-                                    className="text-sm font-semibold text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5"
-                                >
-                                    <span>←</span> Back
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => {
+                                            if (isReordering) {
+                                                setOrderedEvents(events || []);
+                                            }
+                                            setIsReordering(!isReordering);
+                                        }}
+                                        className={cn(
+                                            "text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors border",
+                                            isReordering 
+                                                ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100" 
+                                                : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                                        )}
+                                    >
+                                        {isReordering ? 'Cancel Reorder' : 'Reorder List'}
+                                    </button>
+                                    <button
+                                        onClick={() => setView('dashboard')}
+                                        className="text-sm font-semibold text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5"
+                                    >
+                                        <span>←</span> Back
+                                    </button>
+                                </div>
                             </div>
-                            <AdminTable
-                                data={events || []}
-                                columns={[
+
+                            {isReordering ? (
+                                <div className="space-y-4">
+                                    <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                                <GripVertical className="w-4 h-4" />
+                                            </div>
+                                            <p className="text-sm text-blue-800 font-medium">Drag the handles to rearrange events. This order will be reflected on the public pages.</p>
+                                        </div>
+                                        <button
+                                            onClick={saveNewOrder}
+                                            disabled={reorderMutation.isPending}
+                                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm shadow-blue-200 transition-all flex items-center gap-2 disabled:opacity-50"
+                                        >
+                                            <Save className="w-4 h-4" />
+                                            {reorderMutation.isPending ? 'Saving...' : 'Save Order'}
+                                        </button>
+                                    </div>
+
+                                    <Reorder.Group axis="y" values={orderedEvents} onReorder={setOrderedEvents} className="space-y-3">
+                                        {orderedEvents.map((item) => (
+                                            <ReorderItem key={item.id} item={item} />
+                                        ))}
+                                    </Reorder.Group>
+                                </div>
+                            ) : (
+                                <AdminTable
+                                    data={events || []}
+                                    columns={[
                                     {
                                         header: 'Event',
                                         cell: (e: Event) => (
@@ -758,6 +843,7 @@ export default function EventsDashboardPage() {
                                     edit: (e) => `/admin/events/${e.id}/edit`,
                                 }}
                             />
+                             )}
                         </div>
                     )}
                 </main>
@@ -790,5 +876,48 @@ export default function EventsDashboardPage() {
                 </div>
             </aside>
         </div>
+    );
+}
+
+function ReorderItem({ item }: { item: Event }) {
+    const controls = useDragControls();
+    return (
+        <Reorder.Item
+            value={item}
+            dragListener={false}
+            dragControls={controls}
+            className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 group cursor-default select-none"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            whileDrag={{ scale: 1.02, boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)" }}
+        >
+            <div
+                onPointerDown={(e) => controls.start(e)}
+                className="p-2 -m-2 hover:bg-gray-50 rounded-lg cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 transition-colors"
+            >
+                <GripVertical className="w-5 h-5" />
+            </div>
+
+            <div className="w-12 h-12 rounded-xl bg-violet-100 overflow-hidden shrink-0 border border-violet-100 relative">
+                {item.branding?.thumbnail || item.branding?.bannerImage ? (
+                    <Image src={item.branding.thumbnail || item.branding.bannerImage!} alt={item.title} fill className="object-cover" />
+                ) : (
+                    <div className="w-full h-full bg-linear-to-br from-violet-500 to-indigo-600" />
+                )}
+            </div>
+
+            <div className="flex-1 min-w-0">
+                <p className="font-bold text-gray-900 line-clamp-1">{item.title}</p>
+                <p className="text-xs text-gray-500 capitalize">{item.category}</p>
+            </div>
+
+            <div className="flex flex-col items-end gap-1 shrink-0">
+                <StatusBadge status={item.status} />
+                <span className="text-[10px] text-gray-400 font-medium">
+                    {item.startDate ? format(toJsDate(item.startDate), 'MMM d, yyyy') : 'No Date'}
+                </span>
+            </div>
+        </Reorder.Item>
     );
 }
