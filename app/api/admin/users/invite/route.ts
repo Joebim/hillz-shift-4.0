@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, auth } from "@/src/lib/firebaseAdmin";
 import { getSession } from "@/src/lib/auth/session";
 import { User } from "@/src/types/user";
-import { resend, EMAIL_FROM } from "@/src/lib/email/transporter";
+import { sendEmail } from "@/src/lib/email/send";
+import { EMAIL_FROM } from "@/src/lib/email/transporter";
 import crypto from "crypto";
 
 
@@ -24,8 +25,7 @@ async function sendInviteEmail(
 ) {
   const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/admin/login`;
 
-  const { data, error } = await resend.emails.send({
-    from: EMAIL_FROM,
+  const result = await sendEmail({
     to: email,
     subject: "You have been invited to the Admin Dashboard",
     html: `
@@ -43,11 +43,11 @@ async function sendInviteEmail(
         `,
   });
   
-  if (error) {
-    throw new Error(error.message);
+  if (!result) {
+    throw new Error("Failed to send admin invitation email");
   }
   
-  return data;
+  return result;
 }
 
 export async function POST(request: NextRequest) {

@@ -1,5 +1,6 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createDocument } from "@/src/lib/firebase/firestore";
+import { createAdminNotification } from "@/src/lib/notification";
 
 export async function POST(req: Request) {
   try {
@@ -16,6 +17,14 @@ export async function POST(req: Request) {
       ...data,
       status: "pending",
       createdAt: new Date().toISOString(),
+    });
+
+    await createAdminNotification({
+      type: "contact",
+      actorName: data.name || "Anonymous",
+      action: "filled the contact form",
+      highlight: data.subject || "No Subject",
+      suffix: "",
     });
 
     return NextResponse.json({ success: true, data: { id: requestId } });

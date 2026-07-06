@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AdminTable } from '@/src/components/admin/AdminTable';
 import { SkeletonDashboard } from '@/src/components/skeletons/SkeletonDashboard';
 import { format } from 'date-fns';
+import { toJsDate } from '@/src/lib/utils';
 import { useState } from 'react';
 import { AdminTopNav } from '@/src/components/admin/AdminTopNav';
 import { Heart } from 'lucide-react';
@@ -94,7 +95,7 @@ export default function PrayerRequestsPage() {
                             header: 'Date',
                             cell: (req: PrayerRequest) => (
                                 <span className="text-xs text-gray-500 font-medium">
-                                    {req.createdAt ? format(new Date(req.createdAt), 'MMM d, yyyy') : 'Unknown'}
+                                    {req.createdAt ? format(toJsDate(req.createdAt), 'MMM d, yyyy') : 'Unknown'}
                                 </span>
                             )
                         }

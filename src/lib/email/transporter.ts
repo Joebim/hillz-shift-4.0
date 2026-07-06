@@ -1,21 +1,28 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || "587");
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const SMTP_SECURE = process.env.SMTP_SECURE === "true";
 
-let resendInstance: Resend | null = null;
-
-export const getResend = () => {
-  if (!resendInstance && RESEND_API_KEY) {
-    resendInstance = new Resend(RESEND_API_KEY);
+export const getTransporter = () => {
+  if (!SMTP_USER || !SMTP_PASS) {
+    console.warn("⚠️ SMTP credentials not set in environment variables");
   }
-  return resendInstance;
+  return nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_SECURE, // true for port 465, false for other ports
+    auth: {
+      user: SMTP_USER,
+      pass: SMTP_PASS,
+    },
+    tls: {
+      rejectUnauthorized: false, // Ensure custom/self-signed certs are supported
+    },
+  });
 };
 
-// For backward compatibility, keep the old export but initialize safely
-export const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : (null as unknown as Resend);
-
-console.log("📨 Resend Client Initialized");
-
-export const EMAIL_FROM =
-  process.env.EMAIL_FROM || '"The Hillz" <noreply@thehillz.org>';
-
+const FROM_NAME = process.env.EMAIL_FROM || "The Hillz";
+export const EMAIL_FROM = `"${FROM_NAME}" <${SMTP_USER || "noreply@thehillz.org"}>`;

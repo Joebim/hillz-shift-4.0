@@ -1,4 +1,4 @@
-import { resend, EMAIL_FROM } from "@/src/lib/email/transporter";
+import { getTransporter, EMAIL_FROM } from "@/src/lib/email/transporter";
 import {
   registrationTemplate,
   invitationTemplate,
@@ -29,15 +29,11 @@ export async function sendEmail(
       return null;
     }
 
-    console.log(`📧 Attempting to send email via Resend to: ${to} (Attempt ${retryCount + 1}) | Subject: ${subject}`);
+    console.log(`📧 Attempting to send email via SMTP to: ${to} (Attempt ${retryCount + 1}) | Subject: ${subject}`);
     
-    // Check if resend is properly initialized
-    if (!resend) {
-      console.error("❌ Resend client is not initialized. Make sure RESEND_API_KEY is set.");
-      return null;
-    }
+    const transporter = getTransporter();
 
-    const { data, error } = await resend.emails.send({
+    const info = await transporter.sendMail({
       from: EMAIL_FROM,
       to,
       subject,
@@ -49,24 +45,8 @@ export async function sendEmail(
       },
     });
 
-    if (error) {
-      console.error("❌ Resend API Error:", error);
-      
-      // Resend specific rate limit or temporary server errors
-      const isRetryableError = 
-        error.name === 'rate_limit_exceeded' || 
-        error.name === 'internal_server_error';
-
-      if (isRetryableError && retryCount < maxRetries) {
-        console.warn(`⚠️ Retryable Resend error detected. Retrying in ${retryDelay}ms...`);
-        await delay(retryDelay);
-        return sendEmail({ to, subject, html }, retryCount + 1);
-      }
-      return null;
-    }
-
-    console.log(`✅ Email sent successfully via Resend to: ${to}. Data:`, data);
-    return data;
+    console.log(`✅ Email sent successfully via SMTP to: ${to}. MessageId: ${info.messageId}`);
+    return info;
   } catch (error: unknown) {
     const err = error as { 
       code?: string; 
@@ -86,7 +66,7 @@ export async function sendEmail(
       return sendEmail({ to, subject, html }, retryCount + 1);
     }
 
-    console.error("❌ Email send exception:", {
+    console.error("❌ Email send exception via SMTP:", {
       code: err.code,
       name: err.name,
       to,

@@ -15,6 +15,7 @@ import { createRegistrationSchema } from "@/src/schemas/registration.schema";
 import { ZodError } from "zod";
 import { generateRandomString } from "@/src/lib/utils";
 import { sendRegistrationEmail } from "@/src/lib/email/send";
+import { createAdminNotification } from "@/src/lib/notification";
 
 type FirestoreDate = Date | string | number | { toDate: () => Date };
 const toDate = (d: FirestoreDate) =>
@@ -88,6 +89,17 @@ export async function POST(
 
     await updateDocument("events", eventId, {
       registrationCount: event.registrationCount + 1,
+    });
+
+    // Create a notification for the registration
+    await createAdminNotification({
+      type: "registration",
+      actorName: `${validated.attendee.firstName} ${validated.attendee.lastName}`,
+      action: "registered for",
+      highlight: validated.ticketType || "Attendee",
+      suffix: "",
+      eventTitle: event.title,
+      eventId: event.id,
     });
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;

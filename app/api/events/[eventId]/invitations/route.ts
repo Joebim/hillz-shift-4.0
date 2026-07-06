@@ -18,6 +18,7 @@ import { generateRandomString } from "@/src/lib/utils";
 import { sendInvitationEmail } from "@/src/lib/email/send";
 import { getSession } from "@/src/lib/auth/session";
 import { Invitation } from "@/src/types/invitation";
+import { createAdminNotification } from "@/src/lib/notification";
 
 export async function GET(
   request: NextRequest,
@@ -98,6 +99,17 @@ export async function POST(
 
     await updateDocument("events", eventId, {
       invitationCount: (event.invitationCount || 0) + 1,
+    });
+
+    // Create a notification for the invitation
+    await createAdminNotification({
+      type: "invitation",
+      actorName: validated.senderName,
+      action: "invited",
+      highlight: validated.recipientName,
+      suffix: `to ${event.title}`,
+      eventTitle: event.title,
+      eventId: event.id,
     });
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;

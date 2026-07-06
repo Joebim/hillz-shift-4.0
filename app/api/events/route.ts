@@ -45,12 +45,29 @@ export async function GET(request: NextRequest) {
     const events = await queryDocuments<Event>(
       "events",
       filters,
-      "order",
+      undefined,
       validated.limit || 100,
     );
 
-    // If order is missing, they might just come in whatever order or by default sort.
-    // We can also fallback to startDate in memory if needed, but for now let's rely on Firestore order.
+    // Sort in-memory to handle documents that do not have the 'order' field defined
+    // (otherwise they would be completely omitted by Firestore's orderBy query).
+    events.sort((a, b) => {
+      const orderA = a.order ?? 999;
+      const orderB = b.order ?? 999;
+      if (orderA !== orderB) return orderA - orderB;
+
+      const timeA = a.createdAt
+        ? typeof (a.createdAt as any).toDate === "function"
+          ? (a.createdAt as any).toDate().getTime()
+          : new Date(a.createdAt as any).getTime()
+        : 0;
+      const timeB = b.createdAt
+        ? typeof (b.createdAt as any).toDate === "function"
+          ? (b.createdAt as any).toDate().getTime()
+          : new Date(b.createdAt as any).getTime()
+        : 0;
+      return timeB - timeA;
+    });
 
     let filteredEvents = events;
     if (validated.search) {

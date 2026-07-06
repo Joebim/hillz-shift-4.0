@@ -1,4 +1,4 @@
-﻿import { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import {
   successResponse,
   errorResponse,
@@ -27,9 +27,29 @@ export async function GET() {
     const ministries = await queryDocuments<Ministry>(
       "ministries",
       filters,
-      "order",
+      undefined,
       100,
     );
+
+    // Sort in-memory to handle documents that do not have the 'order' field defined
+    // (otherwise they would be completely omitted by Firestore's orderBy query).
+    ministries.sort((a, b) => {
+      const orderA = a.order ?? 999;
+      const orderB = b.order ?? 999;
+      if (orderA !== orderB) return orderA - orderB;
+
+      const timeA = a.createdAt
+        ? typeof (a.createdAt as any).toDate === "function"
+          ? (a.createdAt as any).toDate().getTime()
+          : new Date(a.createdAt as any).getTime()
+        : 0;
+      const timeB = b.createdAt
+        ? typeof (b.createdAt as any).toDate === "function"
+          ? (b.createdAt as any).toDate().getTime()
+          : new Date(b.createdAt as any).getTime()
+        : 0;
+      return timeB - timeA;
+    });
 
     return successResponse(ministries);
   } catch (error) {
