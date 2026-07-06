@@ -70,7 +70,7 @@ export function AdminTopNav({
 
     return (
         <>
-            <header className="bg-white border-b border-gray-100 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3 sticky top-0 z-20">
+            <header className="bg-white border-b border-gray-100 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3 sticky top-0 z-40">
                 {/* ── Left Side (Title / Icon) ── */}
                 <div className="flex items-center gap-3 shrink-0">
                     {titleIcon && (

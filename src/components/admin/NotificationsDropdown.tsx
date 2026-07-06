@@ -46,8 +46,8 @@ export function NotificationsDropdown() {
 
             {isOpen && (
                 <>
-                    <div className="fixed inset-0 z-30" onClick={() => setIsOpen(false)} />
-                    <div className="absolute right-0 left-auto mt-2 !mr-[-130px] !sm:mr-0 w-80 md:w-96 max-w-[calc(100vw-4rem)] bg-white rounded-2xl shadow-xl border border-gray-100 z-40 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                    <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+                    <div className="absolute right-0 left-auto mt-2 !mr-[-130px] !sm:mr-0 w-80 md:w-96 max-w-[calc(100vw-4rem)] bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
                         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50/50">
                             <h3 className="font-bold text-gray-900 text-sm">Notifications</h3>
                             <Link href="#" className="text-xs text-violet-600 font-medium hover:underline">Mark all as read</Link>
