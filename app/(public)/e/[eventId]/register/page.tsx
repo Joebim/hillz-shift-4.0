@@ -11,7 +11,7 @@ import { Metadata } from 'next';
 export async function generateMetadata({ params }: { params: Promise<{ eventId: string }> }): Promise<Metadata> {
     const { eventId } = await params;
     let ArrayEvents = await queryDocuments<Event>('events', { slug: eventId });
-    let event: Event | null = ArrayEvents.length > 0 ? ArrayEvents[0] : null;
+    let event: Event | null = ArrayEvents.find(e => e.status === 'published' || e.status === 'archived') || ArrayEvents[0] || null;
 
     if (!event) {
         event = await getDocument<Event>('events', eventId);
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ eventId: 
 export default async function RegisterPage({ params }: { params: Promise<{ eventId: string }> }) {
     const { eventId } = await params;
     let ArrayEvents = await queryDocuments<Event>('events', { slug: eventId });
-    let event: Event | null = ArrayEvents.length > 0 ? ArrayEvents[0] : null;
+    let event: Event | null = ArrayEvents.find(e => e.status === 'published' || e.status === 'archived') || ArrayEvents[0] || null;
 
     if (!event) {
         event = await getDocument<Event>('events', eventId);
