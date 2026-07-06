@@ -42,9 +42,21 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const queryClient = useQueryClient();
     const confirmCheck = useConfirmModal();
     const { toast } = useToast();
+
+    const toggleSelectMedia = (id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const newSelected = new Set(selectedIds);
+        if (newSelected.has(id)) {
+            newSelected.delete(id);
+        } else {
+            newSelected.add(id);
+        }
+        setSelectedIds(newSelected);
+    };
 
     const { data: mediaList, isLoading } = useQuery({
         queryKey: ['uploads', searchQuery],
@@ -97,6 +109,47 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
             toast({ title: 'File deleted', type: 'success' });
         }
     });
+
+    const bulkDeleteMutation = useMutation({
+        mutationFn: async (items: { public_id: string, resource_type: string }[]) => {
+            const promises = items.map(async (item) => {
+                const res = await fetch(`/api/uploads/${encodeURIComponent(item.public_id)}?resource_type=${item.resource_type}`, {
+                    method: 'DELETE',
+                });
+                if (!res.ok) throw new Error('Delete failed for ' + item.public_id);
+                return res.json();
+            });
+            return Promise.all(promises);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['uploads'] });
+            setSelectedIds(new Set());
+            setSelectedMedia(null);
+            toast({ title: 'Selected files deleted successfully', type: 'success' });
+        },
+        onError: () => {
+            toast({ title: 'Failed to delete some files', type: 'error' });
+        }
+    });
+
+    const handleBulkDelete = () => {
+        confirmCheck.open({
+            title: 'Delete Selected Assets?',
+            description: `Are you sure you want to permanently delete the ${selectedIds.size} selected assets? This action cannot be undone.`,
+            confirmText: 'Delete Forever',
+            variant: 'danger',
+            onConfirm: () => {
+                const itemsToDelete = Array.from(selectedIds).map(pid => {
+                    const found = mediaList?.find(m => m.public_id === pid);
+                    return {
+                        public_id: pid,
+                        resource_type: found?.resource_type || 'image'
+                    };
+                });
+                bulkDeleteMutation.mutate(itemsToDelete);
+            }
+        });
+    };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -179,6 +232,33 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
             )}
             <div className="flex flex-1 transition-all overflow-hidden relative">
             <div className="flex-1 flex flex-col h-full overflow-hidden border-r border-gray-100">
+                {selectedIds.size > 0 && (
+                    <div className="bg-violet-50 border-b border-violet-100 px-6 py-3 flex items-center justify-between animate-in slide-in-from-top duration-200 shrink-0">
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-violet-800 uppercase tracking-wider">{selectedIds.size} assets selected</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setSelectedIds(new Set())}
+                                className="text-xs font-bold text-gray-500 hover:text-gray-700 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                                Clear Selection
+                            </button>
+                            <button
+                                onClick={handleBulkDelete}
+                                disabled={bulkDeleteMutation.isPending}
+                                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-red-200 transition-all flex items-center gap-1.5 animate-pulse-subtle"
+                            >
+                                {bulkDeleteMutation.isPending ? (
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                ) : (
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                )}
+                                Delete Selected
+                            </button>
+                        </div>
+                    </div>
+                )}
                 {selectionMode && (
                 <div className="p-4 border-b border-gray-100 flex flex-wrap gap-4 items-center justify-between bg-white sticky top-0 z-10">
                     <div className="flex items-center gap-3 flex-1 min-w-[240px]">
@@ -231,6 +311,33 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                 )}
 
                 <div className="flex-1 overflow-y-auto p-6 bg-gray-50/30">
+                    {mediaList && mediaList.length > 0 && (
+                        <div className="flex items-center justify-between mb-6 bg-white px-4 py-3 rounded-2xl border border-gray-100 shadow-sm shrink-0">
+                            <button
+                                onClick={() => {
+                                    if (selectedIds.size === mediaList.length) {
+                                        setSelectedIds(new Set());
+                                    } else {
+                                        setSelectedIds(new Set(mediaList.map(m => m.public_id)));
+                                    }
+                                }}
+                                className="text-xs font-bold text-gray-500 hover:text-violet-600 transition-colors flex items-center gap-2"
+                            >
+                                <span className={cn(
+                                    "w-4 h-4 rounded-md border flex items-center justify-center transition-all",
+                                    selectedIds.size === mediaList.length ? "bg-violet-600 border-violet-600" : "border-gray-300 bg-white"
+                                )}>
+                                    {selectedIds.size === mediaList.length && <Check className="w-2.5 h-2.5 text-white" />}
+                                </span>
+                                {selectedIds.size === mediaList.length ? "Deselect All" : "Select All Assets"}
+                            </button>
+                            {selectedIds.size > 0 && (
+                                <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">
+                                    {selectedIds.size} of {mediaList.length} Selected
+                                </span>
+                            )}
+                        </div>
+                    )}
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center h-full gap-4">
                             <div className="relative">
@@ -270,7 +377,7 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                     className={cn(
                                         "group rounded-3xl overflow-hidden transition-all cursor-pointer relative",
                                         viewMode === 'grid' ? "aspect-square" : "flex items-center gap-4 p-3 bg-white border border-transparent shadow-sm hover:border-violet-100",
-                                        selectedMedia?._id === media._id
+                                        selectedIds.has(media.public_id) || selectedMedia?._id === media._id
                                             ? viewMode === 'grid' ? "ring-4 ring-violet-500/20" : "bg-violet-50/50 border-violet-200"
                                             : "hover:shadow-xl hover:shadow-gray-200/50"
                                     )}
@@ -299,15 +406,18 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                                     />
                                                 )}
 
-                                                {}
-                                                <div className={cn(
-                                                    "absolute top-3 right-3 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center transition-all",
-                                                    selectedMedia?._id === media._id ? "bg-violet-600 scale-110" : "bg-black/20 opacity-0 group-hover:opacity-100"
-                                                )}>
+                                                {/* Check circle for multi-select */}
+                                                <div 
+                                                    onClick={(e) => toggleSelectMedia(media.public_id, e)}
+                                                    className={cn(
+                                                        "absolute top-3 right-3 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center transition-all z-10",
+                                                        selectedIds.has(media.public_id) ? "bg-violet-600 scale-110 opacity-100" : "bg-black/20 opacity-0 group-hover:opacity-100"
+                                                    )}
+                                                >
                                                     <Check className="w-3 h-3 text-white" />
                                                 </div>
 
-                                                {}
+                                                {/* Hover details overlay */}
                                                 <div className="absolute inset-x-0 bottom-0 p-3 bg-linear-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <p className="text-white text-[10px] font-bold uppercase tracking-wider truncate mb-1">{media.public_id.split('/').pop()}</p>
                                                     <div className="flex items-center justify-between">
@@ -319,6 +429,16 @@ export function MediaLibrary({ onSelect, selectionMode = false }: { onSelect?: (
                                         </>
                                     ) : (
                                         <>
+                                            {/* Row checkbox for list view */}
+                                            <div 
+                                                onClick={(e) => toggleSelectMedia(media.public_id, e)}
+                                                className={cn(
+                                                    "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all z-10 mr-1",
+                                                    selectedIds.has(media.public_id) ? "bg-violet-600 border-violet-600" : "border-gray-300 hover:border-violet-600 bg-white"
+                                                )}
+                                            >
+                                                {selectedIds.has(media.public_id) && <Check className="w-3 h-3 text-white" />}
+                                            </div>
                                             <div className="w-12 h-12 rounded-xl relative overflow-hidden bg-gray-100 shrink-0">
                                                 {media.resource_type === 'video' ? (
                                                     <FileVideo className="w-full h-full p-3 text-gray-400" />
