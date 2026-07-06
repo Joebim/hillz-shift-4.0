@@ -16,11 +16,12 @@ import {
     Users, Mail, Globe, Phone, BookOpen,
     Edit, Share2, ExternalLink, Calendar,
     DollarSign, Hash, Building2, Search,
-    BarChart3, TrendingUp, CheckCircle2,
+    BarChart3, TrendingUp, CheckCircle2, Trash2,
 } from 'lucide-react';
 import { AddRegistrationModal, AddInvitationModal } from './modals';
 import { StatusBadge, SectionLabel, Divider, InfoCard } from '@/src/components/admin/AdminSharedUI';
 import { SkeletonDetail } from '@/src/components/skeletons/SkeletonDetail';
+import { useConfirmModal } from '@/src/hooks/useConfirmModal';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -705,6 +706,9 @@ interface ActionButtonsProps {
     scrollToAttachments: () => void;
     setAnalyticsOpen: (open: boolean) => void;
     shareEvent: () => void;
+    isSuperAdmin?: boolean;
+    onDelete?: () => void;
+    isDeleting?: boolean;
 }
 
 const ActionButtons = ({
@@ -715,7 +719,10 @@ const ActionButtons = ({
     copyEventLink,
     scrollToAttachments,
     setAnalyticsOpen,
-    shareEvent
+    shareEvent,
+    isSuperAdmin = false,
+    onDelete,
+    isDeleting = false
 }: ActionButtonsProps) => {
     const s = size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4';
     const showLabel = size === 'md';
@@ -793,6 +800,19 @@ const ActionButtons = ({
                 <Share2 className={s} />
                 {showLabel && <span>Share</span>}
             </button>
+
+            {/* Delete (Super Admin only) */}
+            {isSuperAdmin && onDelete && (
+                <button
+                    onClick={onDelete}
+                    disabled={isDeleting}
+                    title="Delete event"
+                    className={cn(btnBase, 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-50')}
+                >
+                    <Trash2 className={s} />
+                    {showLabel && <span>{isDeleting ? 'Deleting...' : 'Delete'}</span>}
+                </button>
+            )}
         </div>
     );
 };
@@ -808,6 +828,55 @@ export default function EventDetailsPage() {
     const [analyticsOpen, setAnalyticsOpen] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
     const attachmentsRef = useRef<HTMLDivElement>(null);
+
+    const confirmCheck = useConfirmModal();
+
+    // Fetch user session
+    const { data: session } = useQuery({
+        queryKey: ['session'],
+        queryFn: async () => {
+            const res = await fetch('/api/auth/session');
+            if (!res.ok) return null;
+            const json = await res.json();
+            return json.data;
+        }
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: async () => {
+            const res = await fetch(`/api/events/${eventId}`, {
+                method: 'DELETE',
+            });
+            if (!res.ok) {
+                const json = await res.json();
+                throw new Error(json.error || 'Failed to delete event');
+            }
+            return res.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['events'] });
+            router.push('/admin/events');
+        }
+    });
+
+    const handleDeleteEvent = () => {
+        confirmCheck.open({
+            title: 'Delete Event',
+            description: 'Are you sure you want to delete this event? This action cannot be undone and will delete all associated registrations and invitations.',
+            confirmText: 'Delete',
+            variant: 'danger',
+            onConfirm: async () => {
+                try {
+                    await deleteMutation.mutateAsync();
+                } catch (error) {
+                    console.error('Delete failed:', error);
+                    alert((error as Error).message);
+                }
+            }
+        });
+    };
+
+    const isSuperAdmin = session?.role === 'super_admin';
 
     const { data: event, isLoading, isError } = useQuery({
         queryKey: ['event', eventId],
@@ -916,7 +985,10 @@ export default function EventDetailsPage() {
         copyEventLink,
         scrollToAttachments,
         setAnalyticsOpen,
-        shareEvent
+        shareEvent,
+        isSuperAdmin,
+        onDelete: handleDeleteEvent,
+        isDeleting: deleteMutation.isPending
     };
 
     return (

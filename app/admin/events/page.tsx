@@ -330,6 +330,32 @@ export default function EventsDashboardPage() {
         }
     });
 
+    const deleteMutation = useMutation({
+        mutationFn: async (eventId: string) => {
+            const res = await fetch(`/api/events/${eventId}`, {
+                method: 'DELETE',
+            });
+            if (!res.ok) {
+                const json = await res.json();
+                throw new Error(json.error || 'Failed to delete event');
+            }
+            return res.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['events'] });
+            queryClient.invalidateQueries({ queryKey: ['event-metrics'] });
+        }
+    });
+
+    const handleDeleteEvent = async (eventId: string) => {
+        try {
+            await deleteMutation.mutateAsync(eventId);
+        } catch (error) {
+            console.error('Delete failed:', error);
+            alert((error as Error).message);
+        }
+    };
+
     const { data: events, isLoading: isEventsLoading } = useQuery({
         queryKey: ['events'],
         queryFn: async () => {
@@ -839,8 +865,11 @@ export default function EventsDashboardPage() {
                                     }
                                 ]}
                                 actions={{
-                                    view: (e) => `/admin/events/${e.id}`,
-                                    edit: (e) => `/admin/events/${e.id}/edit`,
+                                    view: (e: Event) => `/admin/events/${e.id}`,
+                                    edit: (e: Event) => `/admin/events/${e.id}/edit`,
+                                    delete: session?.role === 'super_admin'
+                                        ? async (e: Event) => { await handleDeleteEvent(e.id); }
+                                        : undefined
                                 }}
                             />
                              )}
