@@ -114,7 +114,7 @@ export const Footer = () => {
                                     <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors border border-white/5">
                                         <Mail className="w-4 h-4" />
                                     </div>
-                                    <span className="text-sm font-bold leading-relaxed pt-1 break-all">
+                                    <span className="text-sm font-bold leading-relaxed pt-1 break-all whitespace-nowrap">
                                         Convener@themysteryofchrist.org
                                     </span>
                                 </a>
