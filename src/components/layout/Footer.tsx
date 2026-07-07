@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Facebook, Twitter, Instagram, Youtube, Phone, Mail, Music } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Youtube, Mail, Music } from 'lucide-react';
 
 const footerLinks = {
     ministry: [
@@ -117,15 +117,6 @@ export const Footer = () => {
                                     <span className="text-sm font-bold leading-relaxed pt-1 break-all">
                                         Convener@themysteryofchrist.org
                                     </span>
-                                </a>
-                                <a 
-                                    href="tel:+2348143375628"
-                                    className="flex items-center gap-4 text-slate-400 group lg:hover:text-white transition-colors"
-                                >
-                                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors border border-white/5">
-                                        <Phone className="w-4 h-4" />
-                                    </div>
-                                    <span className="text-sm font-bold tracking-tight">+234 814 337 5628</span>
                                 </a>
                                 <a 
                                     href="https://wa.me/2348143375628"
